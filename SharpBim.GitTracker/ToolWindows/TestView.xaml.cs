@@ -13,7 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SharpBim.GitTracker.Auth;
+using SharpBim.GitTracker.GitHttp;
 using SharpBIM.Utility.Extensions;
+using SharpBIM.WPF.Controls.UserControls;
 using MessageBox = System.Windows.MessageBox;
 
 namespace SharpBim.GitTracker.Mvvm
@@ -21,7 +23,7 @@ namespace SharpBim.GitTracker.Mvvm
     /// <summary>
     /// Interaction logic for TestView.xaml
     /// </summary>
-    public partial class TestView : UserControl
+    public partial class TestView : SharpBIMUserControl
     {
         public TestView()
         {
@@ -43,6 +45,9 @@ namespace SharpBim.GitTracker.Mvvm
                 Properties.Settings.Default.AccessToken = cl.user.JSerialize();
                 Properties.Settings.Default.Save();
                 Background = Brushes.DarkGreen;
+
+                var gitRepos = new GitRepos();
+                var repos = gitRepos.GetRepos();
             }
             else
                 Background = Brushes.Red;

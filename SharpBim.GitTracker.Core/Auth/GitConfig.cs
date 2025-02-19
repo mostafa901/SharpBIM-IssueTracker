@@ -14,12 +14,12 @@ namespace SharpBim.GitTracker.Auth
 
         public GitConfig()
         {
-            PrivateKey = System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBim.GitTracker\\Study\\private.pem");
+            PrivateKey = System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker.Core\\Study\\private.pem");
         }
 
         public static GitConfig Parse()
         {
-            return JsonSerializer.Deserialize<GitConfig>(System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBim.GitTracker\\Study\\gitconfig.json"));
+            return JsonSerializer.Deserialize<GitConfig>(System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker.Core\\Study\\gitconfig.json"));
         }
     }
 }

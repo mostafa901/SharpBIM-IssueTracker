@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBim.GitTracker", "Shar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIXProject1", "VSIXProject1\VSIXProject1.csproj", "{1A834861-A60C-49A5-8535-01BE63FD0B6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Console", "SharpBIM.GitTracker.Console\SharpBIM.GitTracker.Console.csproj", "{EF2EF93C-63C8-4127-A448-644856427573}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF2EF93C-63C8-4127-A448-644856427573}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF2EF93C-63C8-4127-A448-644856427573}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF2EF93C-63C8-4127-A448-644856427573}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF2EF93C-63C8-4127-A448-644856427573}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
