@@ -44,7 +44,7 @@ namespace SharpBim.GitTracker.Auth
             }
         }
 
-        private bool RequiresToken => token == null || token.expires_in > DateTime.Now.Ticks || token.refresh_token_expires_in > DateTime.Now.Ticks;
+        private bool RequiresToken => token == null || token.ExpireTime.Ticks < DateTime.Now.Ticks || token.RefreshExpireTime.Ticks < DateTime.Now.Ticks;
 
         public async Task<bool> Login()
         {
@@ -57,7 +57,7 @@ namespace SharpBim.GitTracker.Auth
                     var accessCode = await TokenClient.AuthorizeApp();
                     loginResult = await TokenClient.RequestUserToken(accessCode);
                 }
-                else if (token.refresh_token_expires_in < DateTime.Now.Ticks)
+                else if (token.RefreshExpireTime.Ticks < DateTime.Now.Ticks)
                 {
                     loginResult = await TokenClient.RefreshToken();
                 }
@@ -65,13 +65,17 @@ namespace SharpBim.GitTracker.Auth
             if (string.IsNullOrEmpty(user.InstallationId))
             {
                 InstallClient ??= new GitInstallation();
-                var id = await InstallClient.GetInstallationIdAsync();
-                if (id == null)
+                var installationmodel = await InstallClient.GetInstallationIdAsync();
+                if (installationmodel == null)
                 {
                     // user has not installed the app.
                     // do we need to?
                     loginResult = await InstallClient.RequestInstalling();
+                    if (loginResult)
+                        installationmodel = await InstallClient.GetInstallationIdAsync();
                 }
+
+                AppGlobals.user.Installation = installationmodel;
             }
 
             return loginResult;
