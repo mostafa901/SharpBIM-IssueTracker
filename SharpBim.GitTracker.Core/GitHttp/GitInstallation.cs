@@ -62,12 +62,17 @@ namespace SharpBIM.GitTracker.GitHttp
                 request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, jwtToken);
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
 
-                string response = await GET(request);
-                if (response != null)
+                var report = await GET(request);
+                if (!report.IsFailed)
                 {
-                    var installModels = JsonSerializer.Deserialize<IEnumerable<InstallationModel>>(response);
-                    installModel = installModels?.FirstOrDefault();
-                    break;
+                    var response = report.Model;
+
+                    if (response != null)
+                    {
+                        var installModels = JsonSerializer.Deserialize<IEnumerable<InstallationModel>>(response);
+                        installModel = installModels?.FirstOrDefault();
+                        break;
+                    }
                 }
             }
             if (installModel == null)

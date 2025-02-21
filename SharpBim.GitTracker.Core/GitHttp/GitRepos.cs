@@ -32,9 +32,12 @@ namespace SharpBIM.GitTracker.GitHttp
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get, $"{endPoint}?page={page}");
 
-                    response = await GET(request);
-                    if (response != null)
+                    var report = await GET(request);
+                    if (!report.IsFailed)
+                    {
+                        response = report.Model;
                         break;
+                    }
                     trials--;
                 }
                 if (response == null)

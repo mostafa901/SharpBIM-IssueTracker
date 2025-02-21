@@ -27,7 +27,6 @@ namespace SharpBIM.GitTracker.Mvvm.Views
             mk.MarkdownStyle = MdXaml.MarkdownStyle.GithubLike;
         }
 
-       
         public new IssueViewModel ViewModel => DataContext as IssueViewModel;
 
         private void Avtxt_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -38,10 +37,11 @@ namespace SharpBIM.GitTracker.Mvvm.Views
                 {
                     e.Handled = true;
                     var img = Clipboard.GetImage();
-                    string tempPath = System.IO.Path.GetTempFileName();
+                    string tempPath = System.IO.Path.GetTempFileName() + ".jpg";
                     File.WriteAllBytes(tempPath, img.ToBytes(new JpegBitmapEncoder()));
                     string imageReference = $"![Image]({tempPath})";  // Markdown-style
                     avtxt.Text = avtxt.Text.Insert(avtxt.CaretOffset, imageReference);
+                    ViewModel.AddImage(tempPath, string.Empty);
                 }
             }
         }
