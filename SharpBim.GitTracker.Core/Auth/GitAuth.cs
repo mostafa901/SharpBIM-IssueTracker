@@ -7,11 +7,11 @@ using System.Net.Http;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.OpenSsl;
-using SharpBim.GitTracker.Auth.BrowseOptions;
-using SharpBim.GitTracker.GitHttp;
+using SharpBIM.GitTracker.Auth.BrowseOptions;
+using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.Utility.Extensions;
 
-namespace SharpBim.GitTracker.Auth
+namespace SharpBIM.GitTracker.Auth
 {
     public class GitAuth
     {
@@ -22,12 +22,11 @@ namespace SharpBim.GitTracker.Auth
         public User user => AppGlobals.user;
         public UserToken? token => user?.Token;
 
-        public GitAuth(string jsonUser)
+        public GitAuth()
         {
-            LoadUser(jsonUser);
         }
 
-        private void LoadUser(string jsonUser)
+        internal void LoadUser(string jsonUser)
         {
             AppGlobals.user = new User();
 
@@ -52,14 +51,16 @@ namespace SharpBim.GitTracker.Auth
             if (RequiresToken)
             {
                 TokenClient ??= new GitToken();
-                if (token == null)
+
+                if (token != null && token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
+                {
+                    loginResult = await TokenClient.RefreshToken();
+                }
+                else
                 {
                     var accessCode = await TokenClient.AuthorizeApp();
                     loginResult = await TokenClient.RequestUserToken(accessCode);
-                }
-                else if (token.RefreshExpireTime.Ticks < DateTime.Now.Ticks)
-                {
-                    loginResult = await TokenClient.RefreshToken();
+                    // a barand new tokken is required
                 }
             }
             if (string.IsNullOrEmpty(user.InstallationId))

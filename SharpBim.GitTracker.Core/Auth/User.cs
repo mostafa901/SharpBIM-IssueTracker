@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace SharpBim.GitTracker.Auth
+namespace SharpBIM.GitTracker.Auth
 {
     public class User
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SharpBim.GitTracker.Properties {
+namespace SharpBIM.GitTracker.Core.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -26,12 +26,12 @@ namespace SharpBim.GitTracker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastRepoName {
+        public string USERJSON {
             get {
-                return ((string)(this["LastRepoName"]));
+                return ((string)(this["USERJSON"]));
             }
             set {
-                this["LastRepoName"] = value;
+                this["USERJSON"] = value;
             }
         }
     }

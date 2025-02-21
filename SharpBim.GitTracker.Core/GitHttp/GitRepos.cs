@@ -1,16 +1,16 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using SharpBim.GitTracker.Auth;
+using SharpBIM.GitTracker.Auth;
 
-namespace SharpBim.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.GitHttp
 {
     public class GitRepos : GitClient
     {
         //  protected override string endPoint => $"{AppGlobals.user.Installation.account.repos_url}?type=private";
         protected override string endPoint => $"https://api.github.com/user/repos";
 
-        public GitRepos()
+        internal GitRepos()
         {
         }
 
@@ -20,7 +20,7 @@ namespace SharpBim.GitTracker.GitHttp
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
         }
 
-        public async Task<IEnumerable<RepoModel>?> GetRepos()
+        public async Task<IEnumerable<RepoModel>> GetRepos()
         {
             List<RepoModel> repos = new List<RepoModel>();
             int page = 1;
@@ -35,10 +35,13 @@ namespace SharpBim.GitTracker.GitHttp
                     response = await GET(request);
                     if (response != null)
                         break;
+                    trials--;
                 }
                 if (response == null)
                 {
-                    return null;
+                    // refresh token is required.
+                    await AuthService.Login();
+                    return repos;
                 }
                 var importedRepos = JsonSerializer.Deserialize<IEnumerable<RepoModel>>(response);
                 if (importedRepos.Any() == false)

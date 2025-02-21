@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 
-namespace SharpBim.GitTracker.Auth.BrowseOptions
+namespace SharpBIM.GitTracker.Auth.BrowseOptions
 {
     public class GitLoginOptions : GitBrowserOptions
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpBim.GitTracker.Core.Enums
+namespace SharpBIM.GitTracker.Core.Enums
 {
     [Flags]
     public enum IssueState

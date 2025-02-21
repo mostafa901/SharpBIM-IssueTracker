@@ -4,15 +4,16 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.VisualStudio.Text;
+using SharpBIM.GitTracker;
 
-namespace SharpBim.GitTracker
+namespace SharpBIM.GitTracker
 {
     [Command(PackageIds.MyCommand)]
     internal sealed class MyCommand : BaseCommand<MyCommand>
     {
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
-            //    await VS.MessageBox.ShowWarningAsync("GenerateMvvm", "Button clicked");
+            //    await VS.MessageBox.ShowWarningAsync("SharpBIM.GitTracker", "Button clicked");
             var docView = await VS.Documents.GetActiveDocumentViewAsync();
             var selection = docView?.TextView.TextViewLines;
 

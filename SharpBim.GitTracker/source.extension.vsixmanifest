@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="GenerateMvvm.5092b9ba-e35d-4c64-b831-b34fda31135b" Version="1.0" Language="en-US" Publisher="Moustafa Elsayed" />
-        <DisplayName>GenerateMvvm</DisplayName>
+        <Identity Id="SharpBIM.GitTracker.5092b9ba-e35d-4c64-b831-b34fda31135b" Version="1.0" Language="en-US" Publisher="Moustafa Elsayed" />
+        <DisplayName>SharpBIM.GitTracker</DisplayName>
         <Description xml:space="preserve">a trial test to know how to use vsix</Description>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>

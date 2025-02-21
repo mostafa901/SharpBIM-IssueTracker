@@ -3,17 +3,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.VisualStudio.Imaging;
-using SharpBim.GitTracker.Mvvm;
+using SharpBIM.GitTracker.Mvvm;
 
-namespace SharpBim.GitTracker.ToolWindows
+namespace SharpBIM.GitTracker.ToolWindows
 {
-    public class TestToolWindow : BaseToolWindow<TestToolWindow>
+    public class MainPageViewModelToolWindow : BaseToolWindow<MainPageViewModelToolWindow>
     {
         public override Type PaneType => typeof(Pane);
 
         public override Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
         {
-            return Task.FromResult<FrameworkElement>(new TestView());
+            return Task.FromResult<FrameworkElement>(new MainPage());
         }
 
         public override string GetTitle(int toolWindowId) => "SharpBIM Issue Tracker";

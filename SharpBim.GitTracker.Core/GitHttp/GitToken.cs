@@ -1,12 +1,12 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text.Json;
-using SharpBim.GitTracker.Auth;
-using SharpBim.GitTracker.Auth.BrowseOptions;
+using SharpBIM.GitTracker.Auth;
+using SharpBIM.GitTracker.Auth.BrowseOptions;
 
-namespace SharpBim.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.GitHttp
 {
-    public class GitToken : GitClient
+    internal class GitToken : GitClient
     {
         private UserToken token => AppGlobals.user.Token;
 
