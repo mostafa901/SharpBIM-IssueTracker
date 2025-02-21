@@ -1,4 +1,6 @@
-﻿public class IssueModel
+﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
+
+public class IssueModel : IModel
 {
     public string url { get; set; }
     public string repository_url { get; set; }
@@ -6,10 +8,10 @@
     public string comments_url { get; set; }
     public string events_url { get; set; }
     public string html_url { get; set; }
-    public long id { get; set; }
+    public long Id { get; set; }
     public string node_id { get; set; }
     public int number { get; set; }
-    public string title { get; set; }
+    public string Title { get; set; }
     public Account user { get; set; }
     public object[] labels { get; set; }
     public string state { get; set; }
@@ -23,8 +25,11 @@
     public object closed_at { get; set; }
     public string author_association { get; set; }
     public Sub_Issues_Summary sub_issues_summary { get; set; }
+    public object pull_request { get; set; }
     public object active_lock_reason { get; set; }
     public object body { get; set; }
+    public string body_text { get; set; }
+    public string body_html { get; set; }
     public object closed_by { get; set; }
     public Reactions reactions { get; set; }
     public string timeline_url { get; set; }

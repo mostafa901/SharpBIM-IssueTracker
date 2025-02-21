@@ -2,7 +2,7 @@
 using SharpBIM.ServiceContracts.Interfaces;
 using System.Net;
 
-namespace SharpBim.GitTracker.Auth.BrowseOptions
+namespace SharpBIM.GitTracker.Auth.BrowseOptions
 {
     public abstract class GitBrowserOptions : BrowserOptions
     {

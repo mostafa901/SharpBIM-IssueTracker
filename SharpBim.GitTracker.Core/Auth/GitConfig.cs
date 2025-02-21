@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace SharpBim.GitTracker.Auth
+namespace SharpBIM.GitTracker.Auth
 {
     public class GitConfig : IGitConfig
     {
@@ -14,12 +14,12 @@ namespace SharpBim.GitTracker.Auth
 
         public GitConfig()
         {
-            PrivateKey = System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker.Core\\Study\\private.pem");
+            PrivateKey = System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBIM.Git\\SharpBIM.GitTracker.Core\\Study\\private.pem");
         }
 
         public static GitConfig Parse()
         {
-            return JsonSerializer.Deserialize<GitConfig>(System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker.Core\\Study\\gitconfig.json"));
+            return JsonSerializer.Deserialize<GitConfig>(System.IO.File.ReadAllText("D:\\RevitApi\\Shared\\Study\\SharpBIM.Git\\SharpBIM.GitTracker.Core\\Study\\gitconfig.json"));
         }
     }
 }

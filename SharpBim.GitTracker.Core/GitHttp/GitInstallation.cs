@@ -7,12 +7,12 @@ using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
-using SharpBim.GitTracker.Auth;
-using SharpBim.GitTracker.Auth.BrowseOptions;
+using SharpBIM.GitTracker.Auth;
+using SharpBIM.GitTracker.Auth.BrowseOptions;
 
-namespace SharpBim.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.GitHttp
 {
-    public class GitInstallation : GitClient
+    internal class GitInstallation : GitClient
     {
         protected override string endPoint => "https://api.github.com/app/installations";
 

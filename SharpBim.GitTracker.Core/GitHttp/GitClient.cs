@@ -8,12 +8,12 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Web.WebView2.Core;
-using SharpBim.GitTracker.Auth;
+using SharpBIM.GitTracker.Auth;
 using SharpBIM;
 using SharpBIM.Utility.Extensions;
 using static System.Net.WebRequestMethods;
 
-namespace SharpBim.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.GitHttp
 {
     public static class MediaTypes
     {
@@ -22,11 +22,12 @@ namespace SharpBim.GitTracker.GitHttp
         public const string VNDGITHUBJSON = "application/vnd.github+json";
         public const string RAWJSON = "application/vnd.github.raw+json";
         public const string TXTJSON = "application/vnd.github.text+json";
+        public const string FULLJSON = "application/vnd.github.full+json";
     }
 
     public abstract class GitClient
     {
-        protected readonly HttpClient httpClient;
+        protected static HttpClient httpClient;
         protected virtual string endPoint => "";
         protected IGitConfig Config => AppGlobals.Config;
         protected User User => AppGlobals.user;
@@ -37,7 +38,7 @@ namespace SharpBim.GitTracker.GitHttp
 
         protected GitClient()
         {
-            httpClient = new HttpClient();
+            httpClient ??= new HttpClient();
         }
 
         protected virtual void AddHeaders(HttpRequestMessage request)
@@ -46,7 +47,18 @@ namespace SharpBim.GitTracker.GitHttp
 
         protected virtual IEnumerable<T> ParseResponse<T>(string response)
         {
-            return Enumerable.Empty<T>();
+            if (response == null)
+                return null;
+            List<T> result = new List<T>();
+            var jop = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            if (response.StartsWith("["))
+                result.AddRange(JsonSerializer.Deserialize<IEnumerable<T>>(response, jop));
+            else
+                result.Add(JsonSerializer.Deserialize<T>(response, jop));
+
+            if (result.Any() == false)
+                return null;
+            return result;
         }
 
         protected virtual async Task<string> GET(HttpRequestMessage request)

@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using SharpBim.GitTracker;
+using SharpBIM.GitTracker;
+
+using SharpBIM.GitTracker;
 
 [assembly: AssemblyTitle(Vsix.Name)]
 [assembly: AssemblyDescription(Vsix.Description)]

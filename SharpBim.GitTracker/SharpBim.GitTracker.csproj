@@ -13,8 +13,8 @@
     <ProjectGuid>{7C9DC9DE-0899-4E9E-A899-10945B57C48D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GenerateMvvm</RootNamespace>
-    <AssemblyName>GenerateMvvm</AssemblyName>
+    <RootNamespace>SharpBim.GitTracker</RootNamespace>
+    <AssemblyName>SharpBim.GitTracker</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>
@@ -26,6 +26,7 @@
     <StartAction>Program</StartAction>
     <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/rootsuffix Exp</StartArguments>
+    <XamlDebuggingInformation>True</XamlDebuggingInformation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,14 +48,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Mvvm\ViewModels\IssueViewModel.cs" />
+    <Compile Include="Mvvm\Views\Behaviors\AvalonEditBehaviour.cs" />
+    <Compile Include="Mvvm\Views\IssueListView.xaml.cs">
+      <DependentUpon>IssueListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Mvvm\Views\IssueView.xaml.cs">
+      <DependentUpon>IssueView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ToolWindows\TestToolWindow.cs" />
-    <Compile Include="ToolWindows\TestView.xaml.cs">
-      <DependentUpon>TestView.xaml</DependentUpon>
+    <Compile Include="ToolWindows\MainPageViewModel.cs" />
+    <Compile Include="ToolWindows\MainPageViewModelToolWindow.cs" />
+    <Compile Include="ToolWindows\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\MyCommand.cs" />
@@ -102,14 +112,24 @@
     <Reference Include="System" />
     <Reference Include="System.Design" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AvalonEdit">
+      <Version>6.3.0.90</Version>
+    </PackageReference>
     <PackageReference Include="Community.VisualStudio.VSCT" Version="16.0.29.6" PrivateAssets="all" />
     <PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.527" ExcludeAssets="Runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.72</Version>
+    </PackageReference>
+    <PackageReference Include="MdXaml">
+      <Version>1.27.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
       <Version>4.12.0</Version>
@@ -121,21 +141,31 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
+      <Version>1.1.135</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ToolWindows\TestView.xaml">
+    <Page Include="Mvvm\Views\IssueListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Mvvm\Views\IssueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToolWindows\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Mvvm\ViewModels\" />
-    <Folder Include="Mvvm\Views\" />
+    <Folder Include="Mvvm\Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharpBim.GitTracker.Core\SharpBim.GitTracker.Core.csproj">
+    <ProjectReference Include="..\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj">
       <Project>{77c21fb6-a74c-b4a2-4fd2-1931375d32ac}</Project>
-      <Name>SharpBim.GitTracker.Core</Name>
+      <Name>SharpBIM.GitTracker.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\VSIXProject1\VSIXProject1.csproj">
       <Project>{1a834861-a60c-49a5-8535-01be63fd0b6b}</Project>

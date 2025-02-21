@@ -4,57 +4,53 @@ using System.Security.Permissions;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
-using SharpBim.GitTracker.Core.Enums;
+using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.Utility.Extensions;
 
-namespace SharpBim.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.GitHttp
 {
     public class GitIssues : GitClient
     {
-        protected override string endPoint => "https://api.github.com/repos/OWNER/REPO/issues";
+        // References: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
+        protected override string endPoint => $"https://api.github.com/repos/{Account.login}/REPO/issues";
 
-        public GitIssues()
+        private string GetEndPoint(string repoName) => endPoint.Replace("REPO", repoName);
+
+        internal GitIssues()
         {
         }
 
         protected override void AddHeaders(HttpRequestMessage request)
         {
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.TXTJSON));
+            //  request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.TXTJSON)); //textOnly
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.FULLJSON)); //txt, html, markdown
         }
 
         public async Task<IEnumerable<IssueModel>> GetAllIssues(RepoModel repo, IssueState state)
         {
-            var url = repo.issues_url.Replace(NUMBER, "");
-
-            url = $"{url}?state={string.Join(",", state.GetFlags().Select(o => o.ToString()))}";
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            var response = await GET(request);
-            var issues = ParseResponse<IssueModel>(response);
-            return issues;
+            return await GetIssues(repo.name, -1, state);
         }
 
         public async Task<IssueModel> GetIssue(RepoModel repo, int number)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, repo.issues_url.Replace(NUMBER, "/" + number.ToString()));
-            var response = await GET(request);
-            var issue = ParseResponse<IssueModel>(response)?.FirstOrDefault();
+            var issue = (await GetIssues(repo.name, number, IssueState.open))?.FirstOrDefault();
             return issue;
         }
 
-        protected override IEnumerable<T> ParseResponse<T>(string response)
+        public async Task<IEnumerable<IssueModel>> GetIssues(string repoName, int number, IssueState state)
         {
-            if (response == null)
-                return null;
-            List<T> result = new List<T>();
-            if (response.StartsWith("["))
-                result.AddRange(JsonSerializer.Deserialize<IEnumerable<T>>(response));
-            else
-                result.Add(JsonSerializer.Deserialize<T>(response));
-
-            if (result.Any() == false)
-                return null;
-            return result;
+            //  https://api.github.com/repos/OWNER/REPO/issues/ISSUE_NUMBER
+            var url = $"{GetEndPoint(repoName)}";
+            if (number > 0)
+            {
+                url += $"/{number}";
+            }
+            url = $"{url}?state={state}";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var response = await GET(request);
+            var issues = ParseResponse<IssueModel>(response);
+            return issues;
         }
     }
 }

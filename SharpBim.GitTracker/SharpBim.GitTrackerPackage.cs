@@ -6,16 +6,18 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 using Microsoft.VisualStudio.Shell.Interop;
-using SharpBim.GitTracker.ToolWindows;
+using SharpBIM.GitTracker;
+using SharpBIM.GitTracker.ToolWindows;
 
-namespace SharpBim.GitTracker
+namespace SharpBIM.GitTracker
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
-    [ProvideToolWindow(typeof(TestToolWindow.Pane), Style = VsDockStyle.Tabbed, Window = WindowGuids.SolutionExplorer)]
+    [ProvideToolWindow(typeof(MainPageViewModelToolWindow.Pane), Style = VsDockStyle.Tabbed, Window = WindowGuids.SolutionExplorer)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(PackageGuids.GenerateMvvmString)]
-    public sealed class GenerateMvvmPackage : ToolkitPackage
+    [Guid(PackageGuids.SharpBIMGitTrackerString)]
+    public sealed class SharpBIMGitTrackerPackage : ToolkitPackage
+
     {
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {

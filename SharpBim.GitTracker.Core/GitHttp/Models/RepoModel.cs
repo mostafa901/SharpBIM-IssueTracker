@@ -1,6 +1,8 @@
-﻿public class RepoModel
+﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
+
+public class RepoModel : IModel
 {
-    public int id { get; set; }
+    public long Id { get; set; }
     public string node_id { get; set; }
     public string name { get; set; }
     public string full_name { get; set; }
@@ -80,4 +82,5 @@
     public int watchers { get; set; }
     public string default_branch { get; set; }
     public Permissions permissions { get; set; }
+    public string Title { get; set; }
 }

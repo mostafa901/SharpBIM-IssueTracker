@@ -1,4 +1,4 @@
-﻿namespace SharpBim.GitTracker.Auth
+﻿namespace SharpBIM.GitTracker.Auth
 {
     public static class QueryString
     {

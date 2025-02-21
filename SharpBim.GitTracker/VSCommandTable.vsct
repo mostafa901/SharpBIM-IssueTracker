@@ -6,9 +6,9 @@
     <Include href="KnownImageIds.vsct" />
     <Include href="VSGlobals.vsct" />
 
-    <Commands package="GenerateMvvm">
+    <Commands package="SharpBIM.GitTracker">
         <Groups>
-            <Group guid="GenerateMvvm" id="MyMenuGroup" priority="0x0600">
+            <Group guid="SharpBIM.GitTracker" id="MyMenuGroup" priority="0x0600">
                 <Parent guid="VSMainMenu" id="Edit" />
             </Group>
         </Groups>
@@ -16,24 +16,23 @@
         <!--This section defines the elements the user can interact with, like a menu command or a button
         or combo box in a toolbar. -->
         <Buttons>
-            <Button guid="GenerateMvvm" id="MyCommand" priority="0x0100" type="Button">
-                <Parent guid="GenerateMvvm" id="MyMenuGroup" />
+            <Button guid="SharpBIM.GitTracker" id="MyCommand" priority="0x0100" type="Button">
+                <Parent guid="SharpBIM.GitTracker" id="MyMenuGroup" />
                 <Icon guid="ImageCatalogGuid" id="DataGenerator" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <Strings>
                     <ButtonText>Generate Mvvm</ButtonText>
-                    <LocCanonicalName>.Edit.GeneratMvvm</LocCanonicalName>
-                    
+                    <LocCanonicalName>.Edit.SharpGitTracker</LocCanonicalName>
                 </Strings>
             </Button>
         </Buttons>
     </Commands>
-                <KeyBindings>
-                    <KeyBinding guid="GenerateMvvm" id="MyCommand" editor="guidVSStd97" key1="j" key2="x"  mod1="Alt"/>
-                </KeyBindings>
+    <KeyBindings>
+        <KeyBinding guid="SharpBIM.GitTracker" id="MyCommand" editor="guidVSStd97" key1="j" key2="x"  mod1="Alt" />
+    </KeyBindings>
 
     <Symbols>
-        <GuidSymbol name="GenerateMvvm" value="{3f0acd17-c5e8-42a1-babb-9e81f813533c}">
+        <GuidSymbol name="SharpBIM.GitTracker" value="{3f0acd17-c5e8-42a1-babb-9e81f813533c}">
             <IDSymbol name="MyMenuGroup" value="0x0001" />
             <IDSymbol name="MyCommand" value="0x0100" />
         </GuidSymbol>
