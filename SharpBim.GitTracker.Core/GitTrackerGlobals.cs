@@ -19,6 +19,7 @@ namespace SharpBIM.GitTracker
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; set; }
+        public static GitContents ContentService { get; set; }
 
         static GitTrackerGlobals()
         {
@@ -33,6 +34,7 @@ namespace SharpBIM.GitTracker
             AuthService = new();
             ReposSerivce = new();
             IssuesService = new();
+            ContentService = new();
         }
     }
 }

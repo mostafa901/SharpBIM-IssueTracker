@@ -12,6 +12,10 @@ using SharpBIM.Utility.Extensions;
 using System.Windows.Controls;
 using SharpBIM.GitTracker.Mvvm.Views;
 using System.Windows;
+using SharpBim.GitTracker.ToolWindows;
+using Microsoft;
+using SharpBIM.ServiceContracts.QAQC;
+using System.Text;
 
 namespace SharpBIM.GitTracker.Mvvm.ViewModels
 {
@@ -19,28 +23,68 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
     {
         public override void Init(IssueModel dataModel)
         {
+            srvrToLocal.Clear();
             base.Init(dataModel);
             Title = dataModel.Title;
             Id = dataModel.number;
-            Task.Run(async () => MarkDown = await ProcessImagesInMarkdown());
             Description = dataModel.body_text;
             CloseIssueCommand = new SharpBIMCommand(CloseIssue, "Close Issue", Glyphs.kpi_status_open, (x) => true);
             ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show On Web", Glyphs.hyperlink_open, (x) => true);
             EditIssueCommand = new SharpBIMCommand(EditIssue, "Edit", Glyphs.edit_tools, (x) => true);
-            PushIssueCommand = new SharpBIMCommand(PushIssue, "Push", Glyphs.upload, (x) => true);
+            PushIssueCommand = new SharpBIMCommand(async (x) => await PushIssueAsync(x), "Push", Glyphs.upload, (x) => true);
             IsClosed = dataModel.closed_by != null;
             UpdateState();
- 
         }
 
-        private void PushIssue(object obj)
+        private async Task PushIssueAsync(object obj)
         {
-             
+            ContextData.body = await PrepareForPushAsync();
+            await IssuesService.PushIssue(ContextData);
+            var updatedIssue = await IssuesService.GetIssue(this.GetParentViewModel<MainPageViewModel>().SelectedRepo, ContextData.number);
+            Init(updatedIssue);
+        }
+
+        // returns body of the issue
+        private async Task<string> PrepareForPushAsync()
+        {
+            string markDown = MarkDown;
+            foreach (var key in srvrToLocal.Keys)
+            {
+                if (markDown.Contains(key))
+                {
+                    if (srvrToLocal[key].Length > 0)
+                    {
+                        // keep image it is needed
+                        markDown = markDown.Replace(key, srvrToLocal[key]);
+                    }
+                    else
+                    {
+                        // this is a new image that needs uploading
+                        var repo = this.GetParentViewModel<MainPageViewModel>().SelectedRepo;
+                        var report = await IssuesService.UploadImageAsync(repo, key);
+                        if (report.IsFailed)
+                        {
+                            AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Error", report.ErrorMessage);
+                        }
+                        else
+                        {
+                            markDown = markDown.Replace(key, $"{report.Model}?raw=true");
+                        }
+                    }
+                }
+                else
+                {
+                    // img is deleted and to be removed from server, is it even possible... needs investigation?///
+                }
+            }
+            return markDown;
         }
 
         private void EditIssue(object obj)
         {
+            srvrToLocal.Clear();
             MainPage.Navigator.Navigate(new Page() { Content = new IssueView() { DataContext = this } });
+            Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
         }
 
         private void ShowOnWeb(object obj)
@@ -62,53 +106,76 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
 
         private Dictionary<string, string> srvrToLocal = new();
 
-        private async Task<string> ProcessImagesInMarkdown()
+        private async Task<string> ProcessImagesInMarkdownAsync()
         {
             string issueBody = ContextData.body?.ToString() ?? "";
             if (issueBody.Length > 0)
             {
                 string markdownText = issueBody.Split('\\').LastOrDefault();
-                string html = ContextData.body_html;
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-                markdownText = await ExtractImages(markdownText, doc);
+                markdownText = await ExtractImagesAsync(markdownText);
 
                 return markdownText;
             }
             return issueBody;
         }
 
-        private async Task<string> ExtractImages(string markdownText, HtmlDocument doc)
+        private async Task<string> ExtractImagesAsync(string markdownText)
         {
-            var imgs = doc.DocumentNode.DescendantNodes().Where(n => n.Name == "img").ToList();
-
-            var imageUrls = Regex.Matches(markdownText, @"!\[.*?\]\((.*?)\)");
+            string pattern = @"!\[.*?\]\((.*?)\)";
+            var imageUrls = Regex.Matches(markdownText, pattern);
             foreach (Match match in imageUrls)
             {
                 string imageUrl = match.Groups[1].Value;
-                string imgId = imageUrl.Split('/').Last();
+                string imgId = imageUrl.Split('/').Last().Replace("?raw=true", "");
 
-                foreach (var img in imgs)
+                var contentModel = (await ContentService.GetFile(GetParentViewModel<MainPageViewModel>().SelectedRepo, $"images/{imgId}"))?.Model;
+                string localImagePath = null;
+                if (contentModel != null)
                 {
-                    var src = img.Attributes["src"].Value;
-                    if (src.Contains(imgId))
+                    if (contentModel.type == "file" && contentModel.encoding == "base64")
                     {
-                        var localImagePath = await FetchImageAndSaveLocally(src);
-                        if (!string.IsNullOrEmpty(localImagePath))
-                        {
-                            // Replace the image URL with the local path
-                            srvrToLocal.Add(imageUrl, localImagePath);
-                            markdownText = markdownText.Replace(imageUrl, localImagePath);
-                        }
-                        // Find all image links in the Markdown text using a regular expression
+                        localImagePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), DateTime.Now.Ticks.ToString() + "image.png");
+                        System.IO.File.WriteAllBytes(localImagePath, Convert.FromBase64String(contentModel.content));
+                    }
+                    else
+                    {
+                        CQC.Debug("another types not yet considered");
                     }
                 }
-            }
+                else
+                {
+                    var html = ContextData.body_html;
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(html);
+                    var imgNodes = doc.DocumentNode.SelectNodes("//img");
+                    foreach (HtmlNode imgNode in imgNodes)
+                    {
+                        {
+                            var imgUrl = imgNode.GetAttributeValue("src", "");
+                            if (imgUrl.Contains(imgId))
+                            {
+                                localImagePath = await FetchImageAndSaveLocallyAsync(imgUrl);
+                                break;
+                            }
+                        }
+                    }
+                }
 
+                if (localImagePath != null)
+                {
+                    markdownText = markdownText.Replace(imageUrl, localImagePath);
+                    AddImage(localImagePath, imageUrl);
+                }
+            }
             return markdownText;
         }
 
-        private async Task<string> FetchImageAndSaveLocally(string imageUrl)
+        public void AddImage(string localUrl, string sithubUrl)
+        {
+            srvrToLocal.Add(localUrl, sithubUrl);
+        }
+
+        private async Task<string> FetchImageAndSaveLocallyAsync(string imageUrl)
         {
             using (var client = new HttpClient())
             {

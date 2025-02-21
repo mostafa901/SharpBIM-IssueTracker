@@ -10,6 +10,8 @@ using Org.BouncyCastle.OpenSsl;
 using SharpBIM.GitTracker.Auth.BrowseOptions;
 using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.Utility.Extensions;
+using SharpBIM.ServiceContracts.Interfaces;
+using SharpBIM.ServiceContracts;
 
 namespace SharpBIM.GitTracker.Auth
 {
@@ -24,6 +26,8 @@ namespace SharpBIM.GitTracker.Auth
 
         public GitAuth()
         {
+            TokenClient = new GitToken();
+            InstallClient = new GitInstallation();
         }
 
         internal void LoadUser(string jsonUser)
@@ -45,41 +49,67 @@ namespace SharpBIM.GitTracker.Auth
 
         private bool RequiresToken => token == null || token.ExpireTime.Ticks < DateTime.Now.Ticks || token.RefreshExpireTime.Ticks < DateTime.Now.Ticks;
 
-        public async Task<bool> Login()
+        public async Task<IServiceReport<bool>> Login()
         {
-            bool loginResult = true;
-            if (RequiresToken)
+            var report = new ServiceReport<bool>();
+            try
             {
-                TokenClient ??= new GitToken();
+                bool loginResult = true;
+                if (RequiresToken)
+                {
+                    if (token != null && token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
+                    {
+                        loginResult = await TokenClient.RefreshToken();
+                    }
+                    else
+                    {
+                        var accessCode = await TokenClient.AuthorizeApp();
+                        if (string.IsNullOrEmpty(accessCode))
+                        {
+                            // user did not authorize the app
+                            report.Failed("User did not authorize the app");
+                        }
+                        else
+                        {
+                            loginResult = await TokenClient.RequestUserToken(accessCode);
 
-                if (token != null && token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
-                {
-                    loginResult = await TokenClient.RefreshToken();
+                            if (loginResult == false)
+                            {
+                                // user did not authorize the app
+                                report.Failed("User did not authorize the app");
+                            }
+                            else
+                            {
+                                // user has authorized the app
+                                // we have a new token
+                            }
+
+                            // a barand new tokken is required
+                        }
+                    }
                 }
-                else
+
+                if (string.IsNullOrEmpty(user.InstallationId))
                 {
-                    var accessCode = await TokenClient.AuthorizeApp();
-                    loginResult = await TokenClient.RequestUserToken(accessCode);
-                    // a barand new tokken is required
+                    var installationmodel = await InstallClient.GetInstallationIdAsync();
+                    if (installationmodel == null)
+                    {
+                        // user has not installed the app.
+                        // do we need to?
+                        loginResult = await InstallClient.RequestInstalling();
+                        if (loginResult)
+                            installationmodel = await InstallClient.GetInstallationIdAsync();
+                    }
+
+                    AppGlobals.user.Installation = installationmodel;
                 }
             }
-            if (string.IsNullOrEmpty(user.InstallationId))
+            catch (Exception ex)
             {
-                InstallClient ??= new GitInstallation();
-                var installationmodel = await InstallClient.GetInstallationIdAsync();
-                if (installationmodel == null)
-                {
-                    // user has not installed the app.
-                    // do we need to?
-                    loginResult = await InstallClient.RequestInstalling();
-                    if (loginResult)
-                        installationmodel = await InstallClient.GetInstallationIdAsync();
-                }
-
-                AppGlobals.user.Installation = installationmodel;
+                report.Failed(ex);
             }
 
-            return loginResult;
+            return report;
         }
     }
 }

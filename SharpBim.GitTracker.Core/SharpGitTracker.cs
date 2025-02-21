@@ -19,7 +19,8 @@ namespace SharpBIM.GitTracker
             var userjson = Settings.Default.USERJSON;
             AuthService ??= new GitAuth();
             AuthService.LoadUser(userjson);
-            if (await AuthService.Login())
+            var authReport = await AuthService.Login();
+            if (!authReport.IsFailed)
             {
                 Settings.Default.USERJSON = AppGlobals.user.JSerialize();
                 Settings.Default.Save();

@@ -17,7 +17,6 @@ namespace SharpBIM.GitTracker
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.SharpBIMGitTrackerString)]
     public sealed class SharpBIMGitTrackerPackage : ToolkitPackage
-
     {
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {

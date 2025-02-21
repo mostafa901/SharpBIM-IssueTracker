@@ -53,9 +53,11 @@ namespace SharpBIM.GitTracker.GitHttp
 
         private async Task<bool> RequestToken(string url, object requestBody)
         {
-            var responseJson = await POST(url, requestBody);
-            if (responseJson == null)
+            var report = await POST(url, requestBody);
+            if (report.IsFailed)
                 return false;
+            var responseJson = report.Model;
+
             using var doc = JsonDocument.Parse(responseJson);
             User.Token = JsonSerializer.Deserialize<UserToken>(responseJson);
             User.Token.ExpireTime = DateTime.Now.AddSeconds(AppGlobals.user.Token.expires_in);
