@@ -6,6 +6,7 @@ using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.GitTracker.Core.JsonConverters;
+using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.Utility.Extensions;
 
@@ -49,8 +50,8 @@ namespace SharpBIM.GitTracker.GitHttp
                 url += $"/{number}";
             }
             url = $"{url}?state={state}";
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            var report = await GET(request);
+
+            var report = await GET(url);
             if (!report.IsFailed)
             {
                 var response = report.Model;
@@ -70,7 +71,7 @@ namespace SharpBIM.GitTracker.GitHttp
 
         //https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#update-an-issue
         // You cannot pass both `assignee` and `assignees`. Only one may be provided.
-        public async Task<bool> PushIssue(IssueModel issue)
+        public async Task<IServiceReport<IssueModel>> PushIssue(IssueModel issue)
         {
             var url = $"{issue.url}";
 
@@ -82,8 +83,12 @@ namespace SharpBIM.GitTracker.GitHttp
                 issue.Title
             };
             var response = await PATCH(url, paybody);
-
-            return true;
+            if(!response.IsFailed)
+            {
+                var patchedIssue = ParseResponse<IssueModel>(response.Model)?.FirstOrDefault();
+                return new ServiceReport<IssueModel>(patchedIssue);
+            }
+            return new ServiceReport<IssueModel>().Failed(response.ErrorMessage);
         }
 
         // this requires contentsPErmisison Read and write

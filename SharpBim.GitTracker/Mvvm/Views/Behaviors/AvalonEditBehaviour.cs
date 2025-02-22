@@ -56,8 +56,8 @@ namespace SharpBIM.GitTracker.Mvvm.Views.Behaviors
                 if (editor.Document != null)
                 {
                     var caretOffset = editor.CaretOffset;
-                    editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
-                    editor.CaretOffset = caretOffset;
+                    editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue?.ToString()??"";
+                    editor.CaretOffset = Math.Min(editor.Document.Text.Length, caretOffset);
                 }
             }
         }

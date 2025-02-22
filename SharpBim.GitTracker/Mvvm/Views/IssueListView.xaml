@@ -5,133 +5,192 @@
                         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                         xmlns:local="clr-namespace:SharpBim.GitTracker.Mvvm.Views"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:mv="clr-namespace:SharpBim.GitTracker.Mvvm.ViewModels"
                         xmlns:st="clr-namespace:SharpBIM.GitTracker.Core.Enums;assembly=SharpBIM.GitTracker.Core"
                         xmlns:uc="clr-namespace:SharpBIM.WPF.Controls.UserControls;assembly=SharpBIM"
                         xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM"
+                        d:DataContext="{d:DesignInstance Type={x:Type mv:IssueListViewModel}}"
                         d:DesignHeight="450"
                         d:DesignWidth="800"
                         mc:Ignorable="d">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <StackPanel MinWidth="30">
-            <ui:UIButton Command="{Binding LoadOpenIssuesCommand}"
-                         Glyph="kpi_status_open"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel VerticalAlignment="Top"
+                    Orientation="Horizontal">
+            <ui:UIButton Margin="5"
+                         Command="{Binding ReloadCommand}"
                          ShowText="False" />
-            <ui:UIButton Command="{Binding LoadClosedIssuesCommand}"
-                         Glyph="kpi_status_hold"
+            <ui:UiComboBox MinWidth="150"
+                           DisplayMemberPath="name"
+                           IsEnabled="{Binding LoggedIn}"
+                           ItemsSource="{Binding RepoModels}"
+                           SelectedItem="{Binding SelectedRepo}" />
+            <ui:UIButton Margin="5"
+                         Command="{Binding AutoFilterCommand}"
+                         IsEnabled="{Binding LoggedIn}"
+                         ShowText="False">
+                <ui:UIButton.Style>
+                    <Style BasedOn="{StaticResource {x:Type ui:UIButton}}"
+                           TargetType="{x:Type ui:UIButton}">
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding DataContext.AutoFilterState, RelativeSource={RelativeSource AncestorType=local:IssueListView}}" Value="true" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="GlyphColor" Value="LawnGreen" />
+                            </MultiDataTrigger>
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding DataContext.AutoFilterState, RelativeSource={RelativeSource AncestorType=local:IssueListView}}" Value="false" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="GlyphColor" Value="{DynamicResource ControlDisabledBrush}" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ui:UIButton.Style>
+            </ui:UIButton>
+
+            <ui:UIButton Margin="5"
+                         Command="{Binding LoadCurrentProjectCommand}"
+                         IsEnabled="{Binding LoggedIn}"
                          ShowText="False" />
         </StackPanel>
-        <ListBox Grid.Column="1"
-                 HorizontalContentAlignment="Stretch"
-                 Background="{DynamicResource ControlBackgroundBrush}"
-                 Foreground="{DynamicResource ControlForegroundBrush}"
-                 ItemsSource="{Binding IssueModels}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Width="{Binding ActualWidth,
-                                            RelativeSource={RelativeSource AncestorType=ListBox}}"
-                            MinHeight="80"
-                            Background="{DynamicResource ControlBackground}"
-                            BorderBrush="{DynamicResource ControlBorderBrush}"
-                            BorderThickness="0,0,0,1">
-                        <Border.InputBindings>
-                            <MouseBinding Command="{Binding EditIssueCommand}"
-                                          Gesture="LeftDoubleClick" />
-                        </Border.InputBindings>
-                        <Grid>
-                            <Grid.Style>
-                                <Style TargetType="{x:Type Grid}">
-                                    <Style.Triggers>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Collapsed" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Margin" Value="0,0,15,0" />
-                                        </MultiDataTrigger>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel MinWidth="30">
+                <ui:UIButton Command="{Binding LoadOpenIssuesCommand}"
+                             Glyph="kpi_status_open"
+                             ShowText="False" />
+                <ui:UIButton Command="{Binding LoadClosedIssuesCommand}"
+                             Glyph="kpi_status_hold"
+                             ShowText="False" />
+            </StackPanel>
+            <ListView Grid.Column="1"
+                      HorizontalContentAlignment="Stretch"
+                      Background="{DynamicResource ControlBackgroundBrush}"
+                      Foreground="{DynamicResource ControlForegroundBrush}"
+                      IsSynchronizedWithCurrentItem="True"
+                      ItemsSource="{Binding Children}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.IsDeferredScrollingEnabled="True"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.VirtualizationMode="Recycling">
 
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Visible" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Margin" Value="0,0,30,0" />
-                                        </MultiDataTrigger>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding EditIssueCommand}"
+                                               CommandParameter="{Binding SelectedItem,
+                                                                          RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsClosed}" Value="True" />
-                                                <Condition Binding="{Binding DataContext.CurrentState, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="{x:Static st:IssueState.open}" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Background">
-                                                <Setter.Value>
-                                                    <SolidColorBrush Opacity=".3"
-                                                                     Color="DarkGreen" />
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Opacity" Value=".2" />
-                                        </MultiDataTrigger>
-
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsClosed}" Value="false" />
-                                                <Condition Binding="{Binding DataContext.CurrentState, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="{x:Static st:IssueState.open}" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Background">
-                                                <Setter.Value>
-                                                    <SolidColorBrush Opacity="1"
-                                                                     Color="Transparent" />
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Opacity" Value="1" />
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Grid.Style>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="{Binding ActualWidth,
+                                                RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                MinHeight="80"
+                                Background="Transparent"
+                                BorderBrush="{DynamicResource ControlBorderBrush}"
+                                BorderThickness="0,0,0,1">
 
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock FontSize="14"
-                                           FontWeight="Bold"
-                                           TextWrapping="Wrap">
-                                    <Run Text="#" />
-                                    <Run Text="{Binding Id}" />
-                                    <Run Text="-" />
-                                    <Run Text="{Binding Title}" />
-                                </TextBlock>
+                                <Grid.Style>
+                                    <Style TargetType="{x:Type Grid}">
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Collapsed" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Margin" Value="0,0,15,0" />
+                                            </MultiDataTrigger>
 
-                                <TextBlock Grid.Row="1"
-                                           Margin="0,0,5,0"
-                                           FontSize="11"
-                                           Foreground="{DynamicResource ControlBorderMidBrush}"
-                                           Text="{Binding Description}"
-                                           TextWrapping="Wrap" />
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Visible" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Margin" Value="0,0,30,0" />
+                                            </MultiDataTrigger>
+
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsClosed}" Value="True" />
+                                                    <Condition Binding="{Binding DataContext.CurrentState, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="{x:Static st:IssueState.open}" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Background">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Opacity=".3"
+                                                                         Color="DarkGreen" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Opacity" Value=".2" />
+                                            </MultiDataTrigger>
+
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsClosed}" Value="false" />
+                                                    <Condition Binding="{Binding DataContext.CurrentState, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="{x:Static st:IssueState.open}" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Background">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Opacity="1"
+                                                                         Color="Transparent" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Opacity" Value="1" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock FontSize="14"
+                                               FontWeight="Bold"
+                                               TextWrapping="Wrap">
+                                        <Run Text="#" />
+                                        <Run Text="{Binding Id}" />
+                                        <Run Text="-" />
+                                        <Run Text="{Binding Title}" />
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="1"
+                                               Margin="0,0,5,0"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource ControlBorderMidBrush}"
+                                               Text="{Binding Description}"
+                                               TextWrapping="Wrap" />
+                                </Grid>
+                                <StackPanel Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                    <ui:UIButton Command="{Binding ShowOnWebCommand}"
+                                                 ShowText="False" />
+                                    <ui:UIButton Command="{Binding CloseIssueCommand}"
+                                                 ShowText="False" />
+                                    <ui:UIButton Command="{Binding EditIssueCommand}"
+                                                 ShowText="False" />
+                                </StackPanel>
                             </Grid>
-                            <StackPanel Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top">
-                                <ui:UIButton Command="{Binding ShowOnWebCommand}"
-                                             ShowText="False" />
-                                <ui:UIButton Command="{Binding CloseIssueCommand}"
-                                             ShowText="False" />
-                                <ui:UIButton Command="{Binding EditIssueCommand}"
-                                             ShowText="False" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </Grid>
 </uc:SharpBIMUserControl>

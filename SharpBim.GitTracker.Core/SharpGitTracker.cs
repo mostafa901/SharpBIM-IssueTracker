@@ -14,20 +14,5 @@ namespace SharpBIM.GitTracker
         /// </summary>
         /// <param name="userjson">can be null</param>
         /// <returns></returns>
-        public static async Task<bool> Login()
-        {
-            var userjson = Settings.Default.USERJSON;
-            AuthService ??= new GitAuth();
-            AuthService.LoadUser(userjson);
-            var authReport = await AuthService.Login();
-            if (!authReport.IsFailed)
-            {
-                Settings.Default.USERJSON = AppGlobals.user.JSerialize();
-                Settings.Default.Save();
-                return true;
-            }
-
-            return false;
-        }
     }
 }

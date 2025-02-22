@@ -48,13 +48,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helpers\GitHelper.cs" />
+    <Compile Include="Mvvm\ViewModels\IssueListViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\IssueViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\LoginViewModel.cs" />
     <Compile Include="Mvvm\Views\Behaviors\AvalonEditBehaviour.cs" />
     <Compile Include="Mvvm\Views\IssueListView.xaml.cs">
       <DependentUpon>IssueListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mvvm\Views\IssueView.xaml.cs">
       <DependentUpon>IssueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Mvvm\Views\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -74,6 +80,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <Compile Include="ToolWindows\TrackerGlobals.cs" />
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -81,6 +88,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ticket.png" />
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -152,6 +160,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Mvvm\Views\IssueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Mvvm\Views\LoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

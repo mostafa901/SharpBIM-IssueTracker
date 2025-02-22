@@ -12,7 +12,7 @@ using SharpBIM.GitTracker.Auth.BrowseOptions;
 
 namespace SharpBIM.GitTracker.GitHttp
 {
-    internal class GitInstallation : GitClient
+    public class GitInstallation : GitClient
     {
         protected override string endPoint => "https://api.github.com/app/installations";
 
@@ -50,31 +50,35 @@ namespace SharpBIM.GitTracker.GitHttp
         {
         }
 
+        private const string ResponseMissingPermission = "You do not have permission to perform this action. You need to reinstall the application.";
+        private const string MissingGitPermission = "Resource not accessible by integration";
+
+        protected override void AddHeaders(HttpRequestMessage request)
+        {
+            base.AddHeaders(request);
+            string jwtToken = GenerateJwtToken();
+            request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, jwtToken);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
+        }
+
         public async Task<InstallationModel> GetInstallationIdAsync()
         {
-            string jwtToken = GenerateJwtToken();
             int trial = 5;
             InstallationModel installModel = null;
             while (trial > 0)
             {
                 trial--;
-                var request = new HttpRequestMessage(HttpMethod.Get, endPoint);
-                request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, jwtToken);
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
 
-                var report = await GET(request);
+                var report = await GET(endPoint);
+
                 if (!report.IsFailed)
                 {
-                    var response = report.Model;
-
-                    if (response != null)
-                    {
-                        var installModels = JsonSerializer.Deserialize<IEnumerable<InstallationModel>>(response);
-                        installModel = installModels?.FirstOrDefault();
-                        break;
-                    }
+                    var installModels = ParseResponse<InstallationModel>(report.Model);
+                    installModel = installModels?.FirstOrDefault();
+                    break;
                 }
             }
+
             if (installModel == null)
                 return null;
 
@@ -85,11 +89,7 @@ namespace SharpBIM.GitTracker.GitHttp
 
         public async Task GetLimits()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, LimitURL);
-            request.Headers.UserAgent.ParseAdd(Config.UriAppName);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", GenerateJwtToken());
-
-            var response = await GET(request);
+            var response = await GET(LimitURL);
         }
 
         public async Task<bool> RequestInstalling()
