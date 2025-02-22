@@ -1,5 +1,6 @@
 ﻿global using static SharpBIM.GitTracker.GitTrackerGlobals;
 using SharpBIM.GitTracker.Auth;
+using SharpBIM.GitTracker.Core.GitHttp;
 using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.Services;
 
@@ -7,7 +8,7 @@ namespace SharpBIM.GitTracker
 {
     public class GitTrackerGlobals : Config
     {
-        public static GitTrackerGlobals AppGlobals;
+        internal static GitTrackerGlobals AppGlobals;
         public string AppId { get; set; }
         public string ClientSecret { get; set; }
         public string PrivateKey { get; set; }
@@ -18,8 +19,10 @@ namespace SharpBIM.GitTracker
         public User? user { get; set; }
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
-        public static GitIssues IssuesService { get; set; }
-        public static GitContents ContentService { get; set; }
+        public static GitIssues IssuesService { get; internal set; }
+        public static GitContents ContentService { get; internal set; }
+        public static GitToken TokenService { get; internal set; }
+        public static GitInstallation InstallService { get; internal set; }
 
         static GitTrackerGlobals()
         {
@@ -35,6 +38,8 @@ namespace SharpBIM.GitTracker
             ReposSerivce = new();
             IssuesService = new();
             ContentService = new();
+            TokenService = new();
+            InstallService = new();
         }
     }
 }

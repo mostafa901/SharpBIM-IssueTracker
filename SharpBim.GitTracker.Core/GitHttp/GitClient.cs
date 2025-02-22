@@ -14,6 +14,7 @@ using SharpBIM.Utility.Extensions;
 using static System.Net.WebRequestMethods;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
+using Org.BouncyCastle.Asn1.Crmf;
 
 namespace SharpBIM.GitTracker.GitHttp
 {
@@ -31,8 +32,11 @@ namespace SharpBIM.GitTracker.GitHttp
     {
         protected static HttpClient httpClient;
         protected virtual string endPoint => "";
+
+        protected virtual string GetEndPoint(RepoModel repo) => endPoint.Replace("REPO", repo.name);
+
         protected IGitConfig Config => AppGlobals.Config;
-        protected User User => AppGlobals.user;
+        public User User => AppGlobals.user;
         protected InstallationModel Installation => User.Installation;
         protected Account Account => Installation?.account;
 
@@ -45,6 +49,7 @@ namespace SharpBIM.GitTracker.GitHttp
 
         protected virtual void AddHeaders(HttpRequestMessage request)
         {
+            //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.APPLICATIONJSON));
         }
 
         protected virtual IEnumerable<T> ParseResponse<T>(string response)
@@ -63,15 +68,20 @@ namespace SharpBIM.GitTracker.GitHttp
             return result;
         }
 
-        protected virtual async Task<IServiceReport<string>> GET(HttpRequestMessage request)
+        private async Task<IServiceReport<string>> SEND(HttpMethod method, string url, object requestBody)
         {
+            if (!await AreWeAuthorized())
+                return new ServiceReport<string>().Failed("Not Authorized");
             var report = new ServiceReport<string>();
             try
             {
-                LoadHeaders(request);
-                //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.APPLICATIONJSON));
-                var response = await httpClient.SendAsync(request);
+                var request = new HttpRequestMessage(method, url)
+                {
+                    Content = GetStringContent(requestBody)
+                };
+                AddDefaultHeaders(request);
 
+                var response = await httpClient.SendAsync(request);
                 report = await EvaluateResponse(response);
             }
             catch (Exception ex)
@@ -81,10 +91,24 @@ namespace SharpBIM.GitTracker.GitHttp
             return report;
         }
 
-        private void LoadHeaders(HttpRequestMessage request)
+        protected virtual async Task<IServiceReport<string>> GET(string url, object requestBody = null)
         {
-            if (request.Headers.Authorization == null)
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", User.Token.access_token);
+            var report = await SEND(HttpMethod.Get, url, requestBody);
+
+            return report;
+        }
+
+        protected virtual AuthenticationHeaderValue RequestAuth { get; set; }
+
+        protected virtual AuthenticationHeaderValue GetAuthentication()
+        {
+            var auth = RequestAuth ?? new AuthenticationHeaderValue("Bearer", User.Token.access_token);
+            return auth;
+        }
+
+        private void AddDefaultHeaders(HttpRequestMessage request)
+        {
+            request.Headers.Authorization = GetAuthentication();
             request.Headers.UserAgent.ParseAdd(Config.AppName);
             AddHeaders(request);
         }
@@ -94,29 +118,31 @@ namespace SharpBIM.GitTracker.GitHttp
             return new JsonSerializerOptions();
         }
 
+        protected virtual StringContent GetStringContent(object requestBody)
+        {
+            if (requestBody != null)
+            {
+                var content = new StringContent(JsonSerializer.Serialize(requestBody, GetPostOptions()), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
+                return content;
+            }
+            return null;
+        }
+
         protected virtual async Task<IServiceReport<string>> POST(string url, object requestBody)
         {
-            var report = new ServiceReport<string>();
-            try
-            {
-                var request = new HttpRequestMessage(HttpMethod.Post, url)
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(requestBody, GetPostOptions()), Encoding.UTF8, MediaTypes.VNDGITHUBJSON)
-                };
-                LoadHeaders(request);
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.APPLICATIONJSON));
+            var report = await SEND(HttpMethod.Post, url, requestBody);
 
-                var response = await httpClient.SendAsync(request);
-                report = await EvaluateResponse(response);
-            }
-            catch (Exception ex)
-            {
-                report.Failed(ex.Message);
-            }
             return report;
         }
 
-        protected async Task<bool> AreWeAuthorized()
+        protected virtual async Task<IServiceReport<string>> DELETE(string url, object requestBody)
+        {
+            var report = await SEND(HttpMethod.Delete, url, requestBody);
+
+            return report;
+        }
+
+        protected virtual async Task<bool> AreWeAuthorized()
         {
             var report = await AuthService.Login();
             return !report.IsFailed;
@@ -124,38 +150,21 @@ namespace SharpBIM.GitTracker.GitHttp
 
         protected virtual async Task<IServiceReport<string>> PUT(string url, object requestBody)
         {
-            if (!await AreWeAuthorized())
-                return new ServiceReport<string>().Failed("Not Authorized");
-            var report = new ServiceReport<string>();
-            try
-            {
-                var request = new HttpRequestMessage(HttpMethod.Put, url)
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(requestBody, GetPostOptions()), Encoding.UTF8, MediaTypes.VNDGITHUBJSON)
-                };
-                LoadHeaders(request);
-                var response = await httpClient.SendAsync(request);
-                report = await EvaluateResponse(response);
-            }
-            catch (Exception ex)
-            {
-                report.Failed(ex.Message);
-            }
+            var report = await SEND(HttpMethod.Put, url, requestBody);
 
             return report;
         }
 
         protected virtual async Task<IServiceReport<string>> PATCH(string url, object requestBody)
         {
-            if (!await AreWeAuthorized())
-                return new ServiceReport<string>().Failed("Not Authorized");
-            var report = new ServiceReport<string>();
+            var report = await SEND(new HttpMethod("PATCH"), url, requestBody);
+#if false
             try
             {
-                var request = new HttpRequestMessage(new HttpMethod("PATCH"), url)
                 {
                     Content = new StringContent(JsonSerializer.Serialize(requestBody, GetPostOptions()), Encoding.UTF8, MediaTypes.FULLJSON)
-                };
+                }
+                ;
                 LoadHeaders(request);
                 var response = await httpClient.SendAsync(request);
                 report = await EvaluateResponse(response);
@@ -164,16 +173,17 @@ namespace SharpBIM.GitTracker.GitHttp
             {
                 report.Failed(ex.Message);
             }
+#endif
 
             return report;
         }
 
-        private static async Task<ServiceReport<string>> EvaluateResponse(HttpResponseMessage response)
+        protected virtual async Task<ServiceReport<string>> EvaluateResponse(HttpResponseMessage response)
         {
             var report = new ServiceReport<string>();
 
             var responseJson = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode == false)
+            if (response.IsSuccessStatusCode == false || responseJson.Contains("error_description"))
             {
                 report.Failed(ResponseMessages.GetMessageToUser(responseJson));
             }
@@ -187,18 +197,31 @@ namespace SharpBIM.GitTracker.GitHttp
 
 public static class ResponseMessages
 {
-    private const string ResponseDefault = "Unknown Error.";
-    private const string ResponseMissingPermission = "You do not have permission to perform this action. You need to reinstall the application.";
-    private const string MissingGitPermission = "Resource not accessible by integration";
-
     public static string GetMessageToUser(string responseJson)
     {
-        using var doc = JsonDocument.Parse(responseJson);
-        var msg = doc.RootElement.GetProperty("message").GetString();
+        try
+        {
+            using var doc = JsonDocument.Parse(responseJson);
+            string msg = responseJson;
+            if (doc.RootElement.TryGetProperty("message", out JsonElement jse))
+            {
+                msg = jse.GetString();
+            }
+            else if(doc.RootElement.TryGetProperty("error_description", out jse))
+            {
+                msg = jse.GetString();
 
-        if (MissingGitPermission.Contains(msg))
-            return ResponseMissingPermission;
-        else
-            return $"{ResponseDefault}{Environment.NewLine}{msg}";
+            }
+                return $"{msg}";
+        }
+        catch (Exception)
+        {
+            // the reponse is not a json response
+            return responseJson;
+        }
+    }
+
+    public static class Token
+    {
     }
 }

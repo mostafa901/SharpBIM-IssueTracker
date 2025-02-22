@@ -12,58 +12,62 @@ using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
+using SharpBIM.GitTracker.Auth;
+using SharpBIM.GitTracker.Core.Properties;
 
-namespace SharpBIM.GitTracker.Auth
+namespace SharpBIM.GitTracker.Core.GitHttp
 {
-    public class GitAuth
+    public class GitAuth : GitClient
     {
-        private IGitConfig Config => AppGlobals.Config;
-        private GitToken TokenClient;
-        private GitInstallation InstallClient;
-
-        public User user => AppGlobals.user;
-        public UserToken? token => user?.Token;
-
         public GitAuth()
         {
-            TokenClient = new GitToken();
-            InstallClient = new GitInstallation();
         }
 
-        internal void LoadUser(string jsonUser)
+        public void SaveUser()
         {
-            AppGlobals.user = new User();
+            Settings.Default.USERJSON = User.JSerialize();
+            Settings.Default.Save();
+        }
 
-            if (!string.IsNullOrEmpty(jsonUser))
+        public void LoadUser()
+        {
+            if (User == null)
             {
-                AppGlobals.user = User.Parse(jsonUser);
-                if (token != null)
+                string jsonUser = Settings.Default.USERJSON;
+                AppGlobals.user = new User();
+
+                if (!string.IsNullOrEmpty(jsonUser))
                 {
-                    if (token.expires_in >= DateTime.Now.Ticks)
+                    AppGlobals.user = User.Parse(jsonUser);
+                    if (User.Token != null)
                     {
-                        AppGlobals.user = new User();
+                        if (User.Token.expires_in >= DateTime.Now.Ticks)
+                        {
+                            AppGlobals.user = new User();
+                        }
                     }
                 }
             }
         }
 
-        private bool RequiresToken => token == null || token.ExpireTime.Ticks < DateTime.Now.Ticks || token.RefreshExpireTime.Ticks < DateTime.Now.Ticks;
+        private bool RequiresToken => User.Token == null || User.Token.access_token == null || User.Token.ExpireTime.Ticks < DateTime.Now.Ticks || User.Token.RefreshExpireTime.Ticks < DateTime.Now.Ticks;
 
         public async Task<IServiceReport<bool>> Login()
         {
+            LoadUser();
             var report = new ServiceReport<bool>();
             try
             {
                 bool loginResult = true;
                 if (RequiresToken)
                 {
-                    if (token != null && token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
+                    if (User.Token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
                     {
-                        loginResult = await TokenClient.RefreshToken();
+                        loginResult = await TokenService.RefreshToken();
                     }
-                    else
+                    if (!loginResult)
                     {
-                        var accessCode = await TokenClient.AuthorizeApp();
+                        var accessCode = await TokenService.AuthorizeApp();
                         if (string.IsNullOrEmpty(accessCode))
                         {
                             // user did not authorize the app
@@ -71,7 +75,7 @@ namespace SharpBIM.GitTracker.Auth
                         }
                         else
                         {
-                            loginResult = await TokenClient.RequestUserToken(accessCode);
+                            loginResult = await TokenService.RequestUserToken(accessCode);
 
                             if (loginResult == false)
                             {
@@ -89,19 +93,19 @@ namespace SharpBIM.GitTracker.Auth
                     }
                 }
 
-                if (string.IsNullOrEmpty(user.InstallationId))
+                if (string.IsNullOrEmpty(User.InstallationId))
                 {
-                    var installationmodel = await InstallClient.GetInstallationIdAsync();
+                    var installationmodel = await InstallService.GetInstallationIdAsync();
                     if (installationmodel == null)
                     {
                         // user has not installed the app.
                         // do we need to?
-                        loginResult = await InstallClient.RequestInstalling();
+                        loginResult = await InstallService.RequestInstalling();
                         if (loginResult)
-                            installationmodel = await InstallClient.GetInstallationIdAsync();
+                            installationmodel = await InstallService.GetInstallationIdAsync();
                     }
 
-                    AppGlobals.user.Installation = installationmodel;
+                    User.Installation = installationmodel;
                 }
             }
             catch (Exception ex)

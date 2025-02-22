@@ -22,7 +22,7 @@ namespace SharpBIM.GitTracker.Mvvm.Views
         public IssueView()
         {
             InitializeComponent();
-            DataContext = new IssueViewModel();
+       
             avtxt.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("MarkDownWithFontSize");
             mk.MarkdownStyle = MdXaml.MarkdownStyle.GithubLike;
         }
@@ -31,6 +31,8 @@ namespace SharpBIM.GitTracker.Mvvm.Views
 
         private void Avtxt_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (ViewModel == null)
+                return;
             if (e.Key == Key.V && Keyboard.Modifiers == ModifierKeys.Control)
             {
                 if (Clipboard.ContainsImage())
@@ -41,7 +43,7 @@ namespace SharpBIM.GitTracker.Mvvm.Views
                     File.WriteAllBytes(tempPath, img.ToBytes(new JpegBitmapEncoder()));
                     string imageReference = $"![Image]({tempPath})";  // Markdown-style
                     avtxt.Text = avtxt.Text.Insert(avtxt.CaretOffset, imageReference);
-                    ViewModel.AddImage(tempPath, string.Empty);
+                    ViewModel.AddImage(tempPath, null);
                 }
             }
         }

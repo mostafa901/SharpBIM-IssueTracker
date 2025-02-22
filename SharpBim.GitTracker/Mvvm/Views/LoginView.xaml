@@ -1,0 +1,74 @@
+﻿<uc:SharpBIMUserControl x:Class="SharpBim.GitTracker.Mvvm.Views.LoginView"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:local="clr-namespace:SharpBim.GitTracker.Mvvm.Views"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:mv="clr-namespace:SharpBim.GitTracker.Mvvm.ViewModels"
+                        xmlns:uc="clr-namespace:SharpBIM.WPF.Controls.UserControls;assembly=SharpBIM"
+                        xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM"
+                        d:DataContext="{d:DesignInstance Type={x:Type mv:LoginViewModel}}"
+                        d:DesignHeight="450"
+                        d:DesignWidth="200"
+                        mc:Ignorable="d">
+    <Grid Margin="50"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Image HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               Source="/SharpBim.GitTracker;component/Resources/ticket.png" />
+        <Grid Grid.Row="1"
+              VerticalAlignment="Center">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <ui:TaggedTextBox Margin="0,0,0,10"
+                                  HorizontalAlignment="Center"
+                                  AcceptsReturn="True"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  FontSize="14"
+                                  Foreground="{DynamicResource ControlFontBrush}"
+                                  IsReadOnly="True"
+                                  IsReadOnlyCaretVisible="False"
+                                  Text="Type your personal token, or Authorize Git Tracker"
+                                  TextWrapping="Wrap" />
+                <Border Grid.Row="1"
+                        Margin="0,0,0,10"
+                        Padding="10"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        CornerRadius="10">
+                    <PasswordBox x:Name="pasBox"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Background="{DynamicResource ControlBackground}"
+                                 BorderThickness="0"
+                                 FontSize="18"
+                                 FontStretch="UltraExpanded"
+                                 Foreground="{DynamicResource ControlFontBrush}"
+                                 PasswordChanged="PasswordBox_PasswordChanged"
+                                 PasswordChar="x" />
+                </Border>
+            </Grid>
+
+            <ui:UIButton Grid.Row="2"
+                         Width="auto"
+                         HorizontalAlignment="Stretch"
+                         Command="{Binding AuthorizeCommand}" />
+        </Grid>
+    </Grid>
+</uc:SharpBIMUserControl>

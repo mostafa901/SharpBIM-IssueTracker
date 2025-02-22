@@ -18,22 +18,22 @@ using SharpBIM.WPF.Controls.UserControls;
 namespace SharpBim.GitTracker.Mvvm.Views
 {
     /// <summary>
-    /// Interaction logic for IssueListView.xaml
+    /// Interaction logic for LoginView.xaml
     /// </summary>
-    public partial class IssueListView : SharpBIMUserControl
+    public partial class LoginView : SharpBIMUserControl
     {
-        public IssueListView()
+        public LoginView()
         {
             InitializeComponent();
+            DataContext = new LoginViewModel();
+            pasBox.Password = AuthService.User?.Token?.access_token;
         }
 
-        protected override async Task<bool> OnLoadedAsync()
+        internal LoginViewModel ViewModel => DataContext as LoginViewModel;
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (!ViewModel.Children.Any())
-                await Task.FromResult(ViewModel.Reload(null));
-            return true;
+            ViewModel.StoredToken = pasBox.Password;
         }
-
-        private IssueListViewModel ViewModel => DataContext as IssueListViewModel;
     }
 }
