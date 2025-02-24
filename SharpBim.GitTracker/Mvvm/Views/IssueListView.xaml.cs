@@ -27,13 +27,6 @@ namespace SharpBim.GitTracker.Mvvm.Views
             InitializeComponent();
         }
 
-        protected override async Task<bool> OnLoadedAsync()
-        {
-            if (!ViewModel.Children.Any())
-                await Task.FromResult(ViewModel.Reload(null));
-            return true;
-        }
-
         private IssueListViewModel ViewModel => DataContext as IssueListViewModel;
     }
 }

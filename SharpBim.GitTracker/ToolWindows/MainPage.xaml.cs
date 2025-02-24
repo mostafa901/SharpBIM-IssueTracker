@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Microsoft.VisualStudio.OLE.Interop;
 using SharpBim.GitTracker.Mvvm.ViewModels;
 using SharpBim.GitTracker.Mvvm.Views;
 using SharpBim.GitTracker.ToolWindows;
@@ -13,6 +14,8 @@ using SharpBIM.ServiceContracts.QAQC;
 using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Controls.UserControls;
+using SharpBIM.WPF.Helpers.Commons;
+using SharpBIM.WPF.Helpers.Extension;
 
 namespace SharpBIM.GitTracker.Mvvm
 {
@@ -38,51 +41,39 @@ namespace SharpBIM.GitTracker.Mvvm
             InitializeComponent();
             DataContext = new MainPageViewModel();
             Navigator = SharpBIMViewer.NavigationService;
+            Loaded += MainPage_Loaded;
         }
 
-        private void ViewModel_LoggedIn(object sender, EventArgs e)
-        {
-            AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), new IssueListViewModel() { ParentModelView = ViewModel });
-        }
+        private new MainPageViewModel ViewModel => DataContext as MainPageViewModel;
 
-        protected override async Task<bool> OnLoadedAsync()
+        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if ((await AuthService.Login()).IsFailed)
-            {
-                var loginView = new LoginView();
-                loginView.ViewModel.LoggedIn += ViewModel_LoggedIn;
-                SharpBIMViewer.Navigate(loginView);
-                if (SharpBIMViewer.CanGoBack)
-                {
-                    SharpBIMViewer.RemoveBackEntry();
-                }
-            }
-            else
-            {
-                ViewModel_LoggedIn(null, null);
-            }
+            Loaded -= MainPage_Loaded;
+
             ViewModel.WindowHandle = this.GetWindow().Handle();
-            return true;
+            await ViewModel.Login(null);
         }
 
-        public void UpdateProgress(double value, double max, string message, bool isIndeterminate)
+        public async void UpdateProgress(double value, double max, string message, bool isIndeterminate)
         {
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                prgBar.Visibility = string.IsNullOrEmpty(message) ? Visibility.Collapsed : Visibility.Visible;
-                prgBarTxt.Text = message;
-                if (isIndeterminate)
-                {
-                    prgBar.IsIndeterminate = true;
-                }
-                else
-                {
-                    prgBar.IsIndeterminate = false;
-                    prgBar.Minimum = value;
-                    prgBar.Maximum = max;
-                }
-                    System.Windows.Forms.Application.DoEvents();
-            }));
+            await this.Dispatcher.InvokeAsync(new Action(() =>
+                  {
+                      ViewModel.ShowProgressBar = !string.IsNullOrEmpty(message);
+                      ViewModel.IsBusy = prgBar.Visibility == Visibility.Visible;
+                      ViewModel.ProgressMessage = message;
+                      System.Windows.Forms.Application.DoEvents();
+                      if (isIndeterminate)
+                      {
+                          prgBar.IsIndeterminate = true;
+                      }
+                      else
+                      {
+                          prgBar.IsIndeterminate = false;
+                          prgBar.Minimum = value;
+                          prgBar.Maximum = max;
+                      }
+                      System.Windows.Forms.Application.DoEvents();
+                  }));
         }
 
         public void RemoveUpdater(Guid id)
@@ -100,21 +91,17 @@ namespace SharpBIM.GitTracker.Mvvm
             throw new NotImplementedException();
         }
 
-        private static Dictionary<Type, Page> ViewDic = [];
         public Action<Page> AppNavigate { get; set; }
+        private Stack<object> ContextHistory = [];
 
         public Action<Type, object> AppNavigateTo { get; set; } = (s, e) =>
             {
-                ViewDic.TryGetValue(s, out Page page);
-                if (page == null)
-                {
-                    var uc = Activator.CreateInstance(s) as FrameworkElement;
-                    page = new Page() { Content = uc };
-                    ViewDic.Add(s, page);
-                }
+                var uc = Activator.CreateInstance(s) as FrameworkElement;
+                var page = new Page() { Content = uc };
 
-                if (((FrameworkElement)page.Content).DataContext != e)
-                    ((FrameworkElement)page.Content).DataContext = e;
+                ((FrameworkElement)page.Content).DataContext = e;
+
+                ((ModelViewBase)(e)).GetParentViewModel<MainPageViewModel>().Title = ((ModelViewBase)e).Title;
                 Navigator.Navigate(page);
             };
 

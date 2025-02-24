@@ -15,6 +15,7 @@ using static System.Net.WebRequestMethods;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
 using Org.BouncyCastle.Asn1.Crmf;
+using System.Web;
 
 namespace SharpBIM.GitTracker.GitHttp
 {
@@ -63,8 +64,6 @@ namespace SharpBIM.GitTracker.GitHttp
             else
                 result.Add(JsonSerializer.Deserialize<T>(response, jop));
 
-            if (result.Any() == false)
-                return null;
             return result;
         }
 
@@ -77,7 +76,7 @@ namespace SharpBIM.GitTracker.GitHttp
             {
                 var request = new HttpRequestMessage(method, url)
                 {
-                    Content = GetStringContent(requestBody)
+                    Content = GetStringContent(requestBody),
                 };
                 AddDefaultHeaders(request);
 
@@ -192,6 +191,27 @@ namespace SharpBIM.GitTracker.GitHttp
 
             return report;
         }
+
+        public string EmbedParams(string url, object body)
+        {
+            var builder = new UriBuilder(url);
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            var js = body.JSerialize();
+            string x;
+            var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(js);
+
+            foreach (var kvp in dictionary)
+            {
+                if (kvp.Value != null)
+                {
+                    query[kvp.Key] = kvp.Value.ToString();
+                }
+            }
+
+            builder.Query = query.ToString();
+            var requestUri = builder.ToString();
+            return requestUri;
+        }
     }
 }
 
@@ -207,12 +227,11 @@ public static class ResponseMessages
             {
                 msg = jse.GetString();
             }
-            else if(doc.RootElement.TryGetProperty("error_description", out jse))
+            else if (doc.RootElement.TryGetProperty("error_description", out jse))
             {
                 msg = jse.GetString();
-
             }
-                return $"{msg}";
+            return $"{msg}";
         }
         catch (Exception)
         {

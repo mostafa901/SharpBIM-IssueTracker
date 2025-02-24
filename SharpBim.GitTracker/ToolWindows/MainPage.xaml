@@ -15,15 +15,70 @@
                         mc:Ignorable="d">
 
     <Grid>
-        <Frame x:Name="SharpBIMViewer"
-               Grid.Column="1"
-               Content="{Binding CurrentView}"
-               NavigationUIVisibility="Visible" />
 
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:UIButton Width="25"
+                             Command="{Binding ShowLoginScreenCommand}"
+                             GlyphSize="25"
+                             ShowText="False"
+                             Visibility="{Binding IsLoginScreen,
+                                                  Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+
+                    <ui:UIButton Width="25"
+                                 Command="{Binding NavigateBackCommand}"
+                                 CommandParameter="{Binding ElementName=SharpBIMViewer}"
+                                 Glyph="arrow_60_left"
+                                 GlyphSize="25"
+                                 IsEnabled="{Binding CanGoBack,
+                                                     ElementName=SharpBIMViewer}"
+                                 ShowText="False" />
+                    <TextBlock MinWidth="150"
+                               Text="{Binding Content.Content.DataContext.Title,
+                                              ElementName=SharpBIMViewer}"
+                               TextAlignment="Center" />
+                    <ui:UIButton Width="25"
+                                 Command="{Binding NavigateForwardCommand}"
+                                 CommandParameter="{Binding ElementName=SharpBIMViewer}"
+                                 Glyph="arrow_60_right"
+                                 GlyphSize="25"
+                                 IsEnabled="{Binding CanGoForward,
+                                                     ElementName=SharpBIMViewer}"
+                                 ShowText="False" />
+                </StackPanel>
+            </Grid>
+            <Frame x:Name="SharpBIMViewer"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   IsEnabled="{Binding IsBusy,
+                                       Converter={Conv:ConvBoolToInverse}}"
+                   JournalOwnership="OwnsJournal"
+                   NavigationUIVisibility="Hidden" />
+        </Grid>
+        <Grid>
+            <ContentControl HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Content="{Binding CurrentView}"
+                            Visibility="{Binding CurrentView,
+                                                 Converter={Conv:ConvNullVisibility}}" />
+        </Grid>
         <Grid MinWidth="100"
               MinHeight="100"
               HorizontalAlignment="Center"
-              VerticalAlignment="Center">
+              VerticalAlignment="Center"
+              Visibility="{Binding ShowProgressBar,
+                                   Converter={Conv:ConvBoolToVisibility}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -31,7 +86,8 @@
             <TextBlock x:Name="prgBarTxt"
                        Margin="0,5"
                        HorizontalAlignment="Center"
-                       Text="Loading"
+                       Text="{Binding ProgressMessage,
+                                      UpdateSourceTrigger=PropertyChanged}"
                        TextWrapping="Wrap" />
             <ProgressBar x:Name="prgBar"
                          Grid.Row="1"

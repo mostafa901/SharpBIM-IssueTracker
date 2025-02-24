@@ -25,15 +25,21 @@ namespace SharpBim.GitTracker.Mvvm.Views
         public LoginView()
         {
             InitializeComponent();
-            DataContext = new LoginViewModel();
             pasBox.Password = AuthService.User?.Token?.access_token;
+        }
+
+        protected override Task<bool> OnLoadedAsync()
+        {
+            ViewModel.StoredToken = pasBox.Password;
+            return base.OnLoadedAsync();
         }
 
         internal LoginViewModel ViewModel => DataContext as LoginViewModel;
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            ViewModel.StoredToken = pasBox.Password;
+            if (ViewModel != null)
+                ViewModel.StoredToken = pasBox.Password;
         }
     }
 }

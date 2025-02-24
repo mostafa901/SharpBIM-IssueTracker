@@ -39,18 +39,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 if (!string.IsNullOrEmpty(jsonUser))
                 {
                     AppGlobals.user = User.Parse(jsonUser);
-                    if (User.Token != null)
-                    {
-                        if (User.Token.expires_in >= DateTime.Now.Ticks)
-                        {
-                            AppGlobals.user = new User();
-                        }
-                    }
+                     
                 }
             }
         }
 
-        private bool RequiresToken => User.Token == null || User.Token.access_token == null || User.Token.ExpireTime.Ticks < DateTime.Now.Ticks || User.Token.RefreshExpireTime.Ticks < DateTime.Now.Ticks;
+        private bool RequiresToken => User.Token == null || User.Token.access_token == null || User.Token.ExpireTime.Ticks < DateTime.Now.Ticks ;
 
         public async Task<IServiceReport<bool>> Login()
         {
@@ -107,12 +101,13 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
                     User.Installation = installationmodel;
                 }
+            if (!report.IsFailed)
+                SaveUser();
             }
             catch (Exception ex)
             {
                 report.Failed(ex);
             }
-
             return report;
         }
     }

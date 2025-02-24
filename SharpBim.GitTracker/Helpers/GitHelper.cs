@@ -65,6 +65,8 @@ namespace SharpBim.GitTracker.Helpers
         public static string? GetRepoName(string repoPath)
         {
             string repoLink = null;
+            if (repoPath == null)
+                return string.Empty;
             string headFile = Path.Combine(repoPath, ".git", "config");
             if (File.Exists(headFile))
             {

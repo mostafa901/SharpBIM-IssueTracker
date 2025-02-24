@@ -46,7 +46,7 @@ namespace SharpBIM.GitTracker.GitHttp
 
         public async Task<bool> RefreshToken()
         {
-            var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&grant_type={QueryString.REFRESHTOKEN}";
+            var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&grant_type={QueryString.REFRESHTOKEN}&refresh_token={User.Token.refresh_token}";
             return await RequestToken(url, null);
         }
 
