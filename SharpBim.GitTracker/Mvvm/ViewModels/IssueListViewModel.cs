@@ -1,12 +1,16 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using SharpBim.GitTracker.Helpers;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.GitTracker.Mvvm.ViewModels;
 using SharpBIM.GitTracker.Mvvm.Views;
+using SharpBIM.Services.Statics;
 using SharpBIM.UIContexts;
 using SharpBIM.UIContexts.Abstracts.Interfaces;
+using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers;
 using SharpBIM.WPF.Helpers.Commons;
@@ -25,35 +29,58 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
 
         public IssueListViewModel()
         {
-            ReloadCommand = new SharpBIMCommand(async (x) => await Reload(x), "Refresh", Glyphs.reload, (x) => true);
-            EditIssueCommand = new SharpBIMCommand(EditIssue, "Edit", Glyphs.edit, (x) => true);
-            LoadCurrentProjectCommand = new SharpBIMCommand(LoadCurrentProject, "Load Current Project", Glyphs.arrows_swap, (x) => true);
-            AutoFilterCommand = new SharpBIMCommand(AutoFilter, "Disallow AutoFilter", Glyphs.filter, (x) => true, ButtonType.Success);
+            Title = "List of all issues";
+            LoadCommands();
+            ColView.Filter = FilterIssues;
+            ColView.SortDescriptions.Clear(); // Clear previous sorting
+            ColView.SortDescriptions.Add(new SortDescription("Id", ListSortDirection.Descending));
+
+            FetchIssueCounts = 200;
+            PageNumber = 1;
             AutoFilterState = true;
         }
 
-        #endregion Public Constructors
-
-        public SharpBIMCommand AutoFilterCommand { get; set; }
-
-        public void AutoFilter(object x)
+        public string TextToFilter
         {
-            try
+            get { return GetValue<string>(nameof(TextToFilter)); }
+            set
             {
-                AutoFilterCommand.Hint = "Disallow AutoFilter";
-                AutoFilterCommand.Appearance = ButtonType.Success;
-                if (AutoFilterState)
-                {
-                    AutoFilterCommand.Hint = "Allow AutoFilter";
-                    AutoFilterCommand.Appearance = ButtonType.Secondary;
-                }
-
-                AutoFilterState = !AutoFilterState;
-            }
-            catch (Exception ex)
-            {
+                SetValue(value, nameof(TextToFilter));
+                ColView.Filter = FilterIssues;
             }
         }
+
+        private bool FilterIssues(object obj)
+        {
+            if (string.IsNullOrWhiteSpace(TextToFilter))
+                return true;
+
+            var issuemv = obj as IssueViewModel;
+            if (issuemv == null)
+                return false;
+
+            if ((issuemv.ContextData.number + issuemv.ContextData.body?.ToString() + issuemv.ContextData.Title).Contains(TextToFilter))
+                return true;
+            if (issuemv.ContextData.labels.Any(o => o.name.Contains(TextToFilter)))
+                return true;
+
+            return false;
+        }
+
+        private void LoadCommands()
+        {
+            CreateNewIssueCommand = new SharpBIMCommand(CreateNewIssue, "Create New Issue", Glyphs.plus_circle, (x) => true);
+            ReloadCommand = new SharpBIMCommand(async (x) => await Reload(x), "Refresh", Glyphs.reload, (x) => true);
+            EditIssueCommand = new SharpBIMCommand(EditIssue, "Edit", Glyphs.edit, (x) => true);
+            LoadCurrentProjectCommand = new SharpBIMCommand(LoadCurrentProject, "Load Current Project", Glyphs.arrows_swap, (x) => true);
+            LessPageCommand = new SharpBIMCommand(LessPage, "Less Page", Glyphs.arrow_60_left, (x) => true);
+            MorePageCommand = new SharpBIMCommand(MorePage, "More Page", Glyphs.arrow_60_right, (x) => true);
+            ReloadReposCommand = new SharpBIMCommand(async (x) => await ReloadRepos(x), "Reload Repos", Glyphs.reload_sm, (x) => true);
+            LoadClosedIssuesCommand = new SharpBIMCommand(async (x) => await LoadClosedIssuesAsync(x), "Get Closed Issues", null, (x) => true);
+            LoadOpenIssuesCommand = new SharpBIMCommand(async (x) => await LoadOpenIssuesAsync(x), "Get Open Issues", Glyphs.folder_open, (x) => true);
+        }
+
+        #endregion Public Constructors
 
         public bool AutoFilterState
         {
@@ -67,9 +94,9 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
 
         public SharpBIMCommand EditIssueCommand { get; set; }
 
-        public SharpBIMCommand LoadClosedIssuesCommand => new SharpBIMCommand(LoadClosedIssues, "Get Closed Issues", null, (x) => true);
+        public SharpBIMCommand LoadClosedIssuesCommand { get; set; }
 
-        public SharpBIMCommand LoadOpenIssuesCommand => new SharpBIMCommand(LoadOpenIssues, "Get Open Issues", Glyphs.folder_open, (x) => true);
+        public SharpBIMCommand LoadOpenIssuesCommand { get; set; }
 
         public bool LoggedIn
         {
@@ -77,19 +104,13 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             set
             {
                 SetValue(value, nameof(LoggedIn));
-                if (LoggedIn)
-                {
-                    ReloadCommand.Appearance = SharpBIM.WPF.Helpers.ButtonType.Success;
-                }
-                else
-                    ReloadCommand.Appearance = SharpBIM.WPF.Helpers.ButtonType.Secondary;
             }
         }
 
         public SharpBIMCommand ReloadCommand { get; set; }
         public ObservableCollection<RepoModel> RepoModels { get; set; } = [];
 
-        public RepoModel SelectedRepo
+        public virtual RepoModel SelectedRepo
         {
             get { return GetValue<RepoModel>(nameof(SelectedRepo)); }
             set
@@ -100,8 +121,14 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                     Properties.Settings.Default.LastRepoName = value.name;
                     Properties.Settings.Default.Save();
                 }
-                LoadOpenIssues(null);
+                LoadIssuesAsync(null);
             }
+        }
+
+        public IssueViewModel SelectedIssueModel
+        {
+            get { return GetValue<IssueViewModel>(nameof(SelectedIssueModel)); }
+            set { SetValue(value, nameof(SelectedIssueModel)); }
         }
 
         #endregion Public Properties
@@ -121,25 +148,116 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             }
         }
 
-        public void LoadClosedIssues(object x)
+        public async Task LoadClosedIssuesAsync(object x)
         {
             try
             {
                 if (CurrentState == IssueState.closed && Children.Any())
                     return;
                 CurrentState = IssueState.closed;
-                LoadIssues(null);
+                await LoadIssuesAsync(null);
             }
             catch (Exception ex)
             {
             }
         }
 
-        public async Task LoadIssues(object x)
+        public async Task MakeSubIssue(IssueViewModel parent, IssueViewModel subIssue, bool force = false)
+        {
+            if (parent.Children.Any(o => o == subIssue))
+                return;
+
+            var report = await IssuesService.AddSubIssue(SelectedRepo, parent.ContextData, subIssue.ContextData, force);
+            if (force == false && report.IsFailed)
+            {
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+                if (ans.Model == Statics.REPLACE)
+                {
+                    await MakeSubIssue(parent, subIssue, true);
+                }
+            }
+
+            if (force && report.IsFailed)
+            {
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+            }
+        }
+
+        public int PageNumber
+        {
+            get { return GetValue<int>(nameof(PageNumber)); }
+            set { SetValue(value, nameof(PageNumber)); }
+        }
+
+        public SharpBIMCommand MorePageCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public void MorePage(object x)
+        {
+            try
+            {
+                PageNumber = Math.Min(FetchIssueCounts / 100, PageNumber++);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public SharpBIMCommand LessPageCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public bool CanChangeRepo => typeof(IssueListViewModel) == (this.GetType());
+
+        public void LessPage(object x)
+        {
+            try
+            {
+                PageNumber = Math.Max(1, --PageNumber);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        // multiples of 100
+        public int FetchIssueCounts
+        {
+            get { return GetValue<int>(nameof(FetchIssueCounts)); }
+            set
+            {
+                value = (int)((Math.Ceiling((double)value / 100) * 100));
+                SetValue(value, nameof(FetchIssueCounts));
+            }
+        }
+
+
+        public SharpBIMCommand CreateNewIssueCommand { get; set; }
+
+        // Add this line to the constructor
+
+
+        public void CreateNewIssue(object x)
+        {
+            try
+            {
+                var issuemodel = new IssueModel();
+                issuemodel.Title = "Undefined";
+                issuemodel.Id = -1;
+                var issuemv = issuemodel.ToModelView<IssueViewModel>(this);
+                EditIssue(issuemv);
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        public virtual async Task LoadIssuesAsync(object x)
         {
             Children.Clear();
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Fetching issues", true);
-            Task.Run(async () =>
+            //    await Task.Run(async () =>
             {
                 try
                 {
@@ -147,10 +265,36 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                     {
                         if (SelectedRepo.has_issues)
                         {
-                            var issues = await IssuesService.GetIssues(SelectedRepo.name, -1, CurrentState);
-                            if (issues != null)
+                            int pCount = FetchIssueCounts / 100;
+                            for (int i = 0; i < pCount; i++)
                             {
-                                await AddItemsAsync(issues.Select(o => o.ToModelView<IssueViewModel>(this)), Token);
+                                var issuesReport = await IssuesService.GetIssues(SelectedRepo.name, -1, CurrentState, i + ((PageNumber - 1) * pCount));
+
+                                if (issuesReport.IsFailed)
+                                {
+                                    AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to Load", issuesReport.ErrorMessage);
+                                }
+                                else
+                                {
+                                    var issues = issuesReport.Model;
+                                    List<IssueViewModel> issmvs = new();
+                                    List<long> addedIds = [];
+                                    foreach (var issue in issues)
+                                    {
+                                        if (issue.labels.Any(o => o.name == "sub-issue"))
+                                            continue;
+                                        if (addedIds.Any(o => o == issue.number))
+                                            continue;
+                                        var issueModel = issue.ToModelView<IssueViewModel>(this);
+
+                                        issmvs.Add(issueModel);
+                                    }
+                                    await AddItemsAsync(issmvs, Token);
+                                    if (!issues.Any() || issues.Count()<FetchIssueCounts)
+                                    {
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -162,10 +306,11 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                 {
                     AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
                 }
-            });
+            }
+            //);
         }
 
-        public async void LoadOpenIssues(object x)
+        public async Task LoadOpenIssuesAsync(object x)
         {
             try
             {
@@ -173,7 +318,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                     return;
                 CurrentState = IssueState.open;
 
-                LoadIssues(null);
+                await LoadIssuesAsync(null);
             }
             catch (Exception ex)
             {
@@ -224,26 +369,46 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             }
         }
 
-        public async Task Reload(object x)
+        public SharpBIMCommand ReloadReposCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public async Task ReloadRepos(object x)
         {
-            AppGlobals.AppViewContext.UpdateProgress(0, 0, "Logging In", true);
-            await Login();
-            if (LoggedIn)
+            try
             {
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, "Loading Repos", true);
                 RepoModels.Clear();
-                Children.Clear();
                 var repos = await ReposSerivce.GetRepos();
                 string storedName = Properties.Settings.Default.LastRepoName;
                 SelectedRepo = string.IsNullOrEmpty(storedName) ? repos.FirstOrDefault() : repos.FirstOrDefault(o => o.name == storedName);
+
                 foreach (var repo in repos)
                 {
                     RepoModels.Add(repo);
                 }
             }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+            }
+        }
+
+        public virtual async Task Reload(object x)
+        {
+            AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
+            await Login();
+            if (LoggedIn)
+            {
+                Children.Clear();
+                await LoadOpenIssuesAsync(null);
+            }
             else
             {
                 AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
-
             }
         }
 

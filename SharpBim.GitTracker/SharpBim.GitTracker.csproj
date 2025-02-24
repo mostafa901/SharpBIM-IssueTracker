@@ -49,9 +49,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\GitHelper.cs" />
+    <Compile Include="Mvvm\Models\LabelModelView.cs" />
     <Compile Include="Mvvm\ViewModels\IssueListViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\IssueViewModel.cs" />
     <Compile Include="Mvvm\ViewModels\LoginViewModel.cs" />
+    <Compile Include="Mvvm\ViewModels\SubIssueList.cs" />
     <Compile Include="Mvvm\Views\Behaviors\AvalonEditBehaviour.cs" />
     <Compile Include="Mvvm\Views\IssueListView.xaml.cs">
       <DependentUpon>IssueListView.xaml</DependentUpon>
@@ -172,9 +174,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mvvm\Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj">
       <Project>{77c21fb6-a74c-b4a2-4fd2-1931375d32ac}</Project>

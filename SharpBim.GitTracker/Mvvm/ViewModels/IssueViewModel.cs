@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 using HtmlAgilityPack;
+using SharpBim.GitTracker.Mvvm.Models;
 using SharpBim.GitTracker.Mvvm.ViewModels;
+using SharpBim.GitTracker.Mvvm.Views;
 using SharpBim.GitTracker.ToolWindows;
+using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Enums;
 using SharpBIM.ServiceContracts.Interfaces;
@@ -19,10 +24,11 @@ using SharpBIM.WPF.Helpers.Commons;
 
 namespace SharpBIM.GitTracker.Mvvm.ViewModels
 {
-    public class IssueViewModel : ModelViewBase<IssueModel>
+    public class IssueViewModel : ModelViewBase<IssueModel, IssueViewModel>
     {
         #region Private Fields
 
+        private bool detailsLoaded;
         private Dictionary<string, ContentModel> srvrToLocal = new();
 
         #endregion Private Fields
@@ -30,6 +36,12 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
         #region Public Properties
 
         public SharpBIMCommand CloseIssueCommand { get; set; }
+
+        public int Completed
+        {
+            get { return GetValue<int>(nameof(Completed)); }
+            set { SetValue(value, nameof(Completed)); }
+        }
 
         public string Description
         {
@@ -45,6 +57,8 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
             set { SetValue(value, nameof(IsClosed)); }
         }
 
+        public bool IsSubIssue => GetParentViewModel<IssueViewModel>() != null;
+
         public string MarkDown
         {
             get { return GetValue<string>(nameof(MarkDown)); }
@@ -53,11 +67,60 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
 
         public SharpBIMCommand PushIssueCommand { get; set; }
 
+        public SharpBIMCommand ReloadIssueCommand { get; set; }
+
         public RepoModel SelectedRepo => GetParentViewModel<IssueListViewModel>().SelectedRepo;
 
         public SharpBIMCommand ShowOnWebCommand { get; set; }
 
+        public int TotalSubIssues
+        {
+            get { return GetValue<int>(nameof(TotalSubIssues)); }
+            set { SetValue(value, nameof(TotalSubIssues)); }
+        }
+
         #endregion Public Properties
+
+        public SharpBIMCommand AddNewLableCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public void AddNewLable(object x)
+        {
+            try
+            {
+                //todo
+                AppGlobals.MsgService.AlertUser(WindowHandle, "New Feature", "Feature not yet implemented");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public IssueViewModel()
+        {
+            OpenSubIssueListCommand = new SharpBIMCommand(async (x) => await OpenSubIssueListAsync(x), "Load Sub Issues", Glyphs.empty, (x) => true);
+            CloseIssueCommand = new SharpBIMCommand(async (x) => await CloseIssueAsync(x), "Close Issue", Glyphs.kpi_status_open, (x) => true);
+            ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show On Web", Glyphs.hyperlink_globe, (x) => true);
+            PushIssueCommand = new SharpBIMCommand(async (x) => await PushIssueAsync(x), "Push", Glyphs.upload, (x) => true);
+            ReloadIssueCommand = new SharpBIMCommand(async (x) => await ReloadIssue(x), "Reload", Glyphs.reload_sm, (x) => true);
+            AddNewLableCommand = new SharpBIMCommand(AddNewLable, "Add New Label", Glyphs.plus_circle, (x) => true);
+        }
+
+        public SharpBIMCommand OpenSubIssueListCommand { get; set; }
+
+        public async Task OpenSubIssueListAsync(object x)
+        {
+            try
+            {
+                var sublist = new SubIssueListViewModel() { ParentModelView = this };
+                await sublist.LoadIssuesAsync(x);
+                AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), sublist);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
         #region Public Methods
 
@@ -66,11 +129,12 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
             srvrToLocal.Add(localUrl, sithubUrl);
         }
 
-        public void CloseIssue(object x)
+        public async Task CloseIssueAsync(object x)
         {
             try
             {
                 IsClosed = !IsClosed;
+                await PushIssueAsync(null);
             }
             catch (Exception ex)
             {
@@ -84,10 +148,52 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
             Title = dataModel.Title;
             Id = dataModel.number;
             Description = dataModel.body_text;
-            CloseIssueCommand = new SharpBIMCommand(CloseIssue, "Close Issue", Glyphs.kpi_status_open, (x) => true);
-            ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show On Web", Glyphs.hyperlink_open, (x) => true);
-            PushIssueCommand = new SharpBIMCommand(async (x) => await PushIssueAsync(x), "Push", Glyphs.upload, (x) => true);
-            IsClosed = dataModel.closed_by != null;
+
+            IsClosed = dataModel.closed_at != null;
+            if (dataModel.Id != -1)
+            {
+                Completed = dataModel.sub_issues_summary?.completed ?? 0;
+                TotalSubIssues = dataModel.sub_issues_summary?.total ?? 0;
+
+                foreach (var label in dataModel.labels)
+                {
+                    IssueLables.Add(label.ToModelView<LabelModelView>(this));
+                }
+            }
+        }
+
+        public void LoadDetails()
+        {
+            if (detailsLoaded)
+                return;
+            detailsLoaded = true;
+            srvrToLocal.Clear();
+            Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
+        }
+
+        public async Task ReloadIssue(object x)
+        {
+            try
+            {
+                Children.Clear();
+                IssueLables.Clear();
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, "Reloading issue", true);
+                var reloadedReport = await IssuesService.GetIssue(SelectedRepo, ContextData.number);
+                if (!reloadedReport.IsFailed)
+                {
+                    Init(reloadedReport.Model);
+                }
+                else
+                    throw new Exception(reloadedReport.ErrorMessage);
+            }
+            catch (Exception ex)
+            {
+                AppGlobals.MsgService.AlertUser(WindowHandle, "Failed To Reload", ex.Message);
+            }
+            finally
+            {
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
+            }
         }
 
         #endregion Public Methods
@@ -155,6 +261,8 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
             return markdownText;
         }
 
+        public ObservableCollection<LabelModelView> IssueLables { get; set; } = [];
+
         private async Task<string> FetchImageAndSaveLocallyAsync(string imageUrl)
         {
             string tempImagePath = null;
@@ -187,6 +295,7 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
         private async Task<IServiceReport<string>> PrepareForPushAsync()
         {
             var markdownreport = new ServiceReport<string>();
+            ContextData.Title = Title;
 
             string markDown = MarkDown;
             foreach (var key in srvrToLocal.Keys)
@@ -248,40 +357,66 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
 
         private async Task PushIssueAsync(object obj)
         {
-            var markdownReport = await PrepareForPushAsync();
-            ;
-            if (markdownReport.IsFailed)
+            if (string.IsNullOrEmpty(Title))
             {
-                AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Error", markdownReport.ErrorMessage);
+                AppGlobals.MsgService.AlertUser(WindowHandle, "Missing something", "Issue must have a title");
                 return;
             }
-            ContextData.body = markdownReport.Model;
-            var patchedReport = await IssuesService.PushIssue(ContextData);
-            if (patchedReport.IsFailed)
+
+            AppGlobals.AppViewContext.UpdateProgress(0, 0, "Pushing", true);
+
+            await Task.Run(async () =>
             {
-                AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Patch Failed", patchedReport.ErrorMessage);
-            }
-            else
-            {
-                var updatedIssue = await IssuesService.GetIssue(SelectedRepo, ContextData.number);
-                Init(updatedIssue);
-            }
+                try
+                {
+                    var markdownReport = await PrepareForPushAsync();
+                    ;
+                    if (markdownReport.IsFailed)
+                    {
+                        AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Error", markdownReport.ErrorMessage);
+                        return;
+                    }
+                    ContextData.Title = Title;
+                    ContextData.body = markdownReport.Model;
+                    var orig = ContextData.state;
+                    ContextData.state = IsClosed ? IssueState.closed.ToString() : IssueState.open.ToString();
+                    ContextData.labels = IssueLables.Where(o => o.IsAvailable).Select(o => o.ContextData).ToArray();
+
+                    var patchedReport = await IssuesService.PushIssue(SelectedRepo, ContextData);
+                    if (patchedReport.IsFailed)
+                    {
+                        AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Patch Failed", patchedReport.ErrorMessage);
+                    }
+                    else
+                    {
+                        if (ContextData.Id == -1)
+                        {
+                            await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
+                        }
+                        Init(patchedReport.Model);
+                        if (IsSubIssue)
+                        {
+                            if (orig != ContextData.state)
+                            {
+                                var val = ContextData.state == IssueState.closed.ToString() ? 1 : -1;
+                                GetParentViewModel<IssueViewModel>().Completed += val;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+                finally
+                {
+                    AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+                }
+            });
         }
 
         private void ShowOnWeb(object obj)
         {
             IOEx.OpenUrl(ContextData.html_url);
-        }
-
-        private bool detailsLoaded;
-
-        public void LoadDetails()
-        {
-            if (detailsLoaded)
-                return;
-            detailsLoaded = true;
-            srvrToLocal.Clear();
-            Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
         }
 
         #endregion Private Methods

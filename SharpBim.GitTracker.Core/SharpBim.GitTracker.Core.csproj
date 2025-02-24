@@ -18,6 +18,7 @@
     <Reference Include="SharpBIM">
       <HintPath>..\..\..\SharpBIM\Publish\DWin\$(TargetFramework)\SharpBIM.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
   </ItemGroup>
 
   <ItemGroup>

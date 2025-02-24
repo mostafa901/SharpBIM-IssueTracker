@@ -16,7 +16,7 @@ namespace SharpBIM.GitTracker.ToolWindows
             return Task.FromResult<FrameworkElement>(new MainPage());
         }
 
-        public override string GetTitle(int toolWindowId) => "SharpBIM Issue Tracker";
+        public override string GetTitle(int toolWindowId) => "SharpBIM";
 
         [Guid("51b4cd6b-a823-40a9-ab54-db0e7c5ed22b")]
         internal class Pane : ToolkitToolWindowPane

@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using SharpBim.GitTracker.Mvvm.Views;
+using SharpBim.GitTracker.ToolWindows;
 using SharpBIM.GitTracker.Auth;
 using SharpBIM.UIContexts;
 using SharpBIM.WPF.Assets.Fonts;
@@ -18,6 +19,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
         {
             AuthService.LoadUser();
             AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), "Authorize", Glyphs.empty, (x) => true);
+            CancelCommand = new SharpBIMCommand(Cancel, "Cancel", Glyphs.empty, (x) => true);
         }
 
         public event EventHandler LoggedIn;
@@ -25,7 +27,27 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
         public SharpBIMCommand AuthorizeCommand { get; set; }
         public string StoredToken { get; internal set; }
 
+        public SharpBIMCommand CancelCommand { get; set; }
+
         // Add this line to the constructor
+
+        public void Cancel(object x)
+        {
+            try
+            {
+                var vm = ParentModelView as MainPageViewModel;
+                vm.CurrentView = null;
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public bool AlreadyLoggedIn
+        {
+            get { return GetValue<bool>(nameof(AlreadyLoggedIn)); }
+            set { SetValue(value, nameof(AlreadyLoggedIn)); }
+        }
 
         public async Task Authorize(object x)
         {
