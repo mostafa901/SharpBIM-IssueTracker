@@ -1,9 +1,9 @@
-﻿global using static SharpBIM.GitTracker.TrackerGlobals;
-using SharpBIM.GitTracker.Auth;
+﻿global using static SharpBim.GitTracker.ToolWindows.TrackerGlobals;
+global using static SharpBIM.GitTracker.Core.GitTrackerGlobals;
 using SharpBIM.Services;
 using SharpBIM.WPF.Utilities;
 
-namespace SharpBIM.GitTracker
+namespace SharpBim.GitTracker.ToolWindows
 {
     public class TrackerGlobals : Config
     {
@@ -15,10 +15,11 @@ namespace SharpBIM.GitTracker
             ResourceEx.ChangeTheme(true);
         }
 
-        public User User => SharpBIM.GitTracker.GitTrackerGlobals.AuthService.User;
+        internal User User { get; set; }
 
         public TrackerGlobals()
         {
+            User = User.Parse(Properties.Settings.Default.USERJSON);
         }
     }
 }

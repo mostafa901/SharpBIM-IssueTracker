@@ -6,17 +6,16 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Markup;
 using HtmlAgilityPack;
 using SharpBim.GitTracker.Mvvm.Models;
 using SharpBim.GitTracker.Mvvm.ViewModels;
 using SharpBim.GitTracker.Mvvm.Views;
-using SharpBim.GitTracker.ToolWindows;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Enums;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts.QAQC;
+using SharpBIM.Services.Statics;
 using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
@@ -178,7 +177,7 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
                 Children.Clear();
                 IssueLables.Clear();
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Reloading issue", true);
-                var reloadedReport = await IssuesService.GetIssue(SelectedRepo, ContextData.number);
+                var reloadedReport = await IssuesService.GetIssue(SelectedRepo.name, ContextData.number);
                 if (!reloadedReport.IsFailed)
                 {
                     Init(reloadedReport.Model);
@@ -209,7 +208,7 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
                 string imageUrl = match.Groups[1].Value;
                 string imgId = imageUrl.Split('/').Last().Replace("?raw=true", "");
 
-                var contentModel = (await ContentService.GetFile(GetParentViewModel<IssueListViewModel>().SelectedRepo, $"images/{imgId}"))?.Model;
+                var contentModel = (await ContentService.GetFile(GetParentViewModel<IssueListViewModel>().SelectedRepo.name, $"images/{imgId}"))?.Model;
                 string localImagePath = null;
                 if (contentModel != null)
                 {
@@ -311,7 +310,7 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
                     {
                         // this is a new image that needs uploading
 
-                        var report = await IssuesService.UploadImageAsync(SelectedRepo, key);
+                        var report = await IssuesService.UploadImageAsync(SelectedRepo.name, key);
                         if (report.IsFailed)
                         {
                             markdownreport.Failed(report.ErrorMessage);
@@ -329,7 +328,7 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
                     {
                         // img is deleted and to be removed from server, is it even possible... needs investigation?
 
-                        var report = await ContentService.DeleteFile(SelectedRepo, srvrToLocal[key]);
+                        var report = await ContentService.DeleteFile(SelectedRepo.name, srvrToLocal[key]);
                         if (report.IsFailed)
                         {
                             markdownreport.Failed(report.ErrorMessage);
@@ -355,63 +354,132 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
             return issueBody;
         }
 
-        private async Task PushIssueAsync(object obj)
+        public async Task<IServiceReport<IssueModel>> MakeSubIssue(bool force = false)
+        {
+            IssueModel parent = GetParentViewModel<IssueViewModel>().ContextData;
+            IssueModel subIssue = this.ContextData;
+
+            if (Id == -1)
+            {
+                var createReport = await CreateIssueAsync();
+                if (createReport.IsFailed)
+                {
+                    AppGlobals.MsgService.AlertUser(WindowHandle, "Can't create sub issue", createReport.ErrorMessage);
+                    return createReport;
+                }
+
+                subIssue = createReport.Model;
+            }
+
+            var report = await IssuesService.AddSubIssue(SelectedRepo.name, parent, subIssue, force);
+            if (force == false && report.IsFailed)
+            {
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+                if (ans.Model == Statics.REPLACE)
+                {
+                    return await MakeSubIssue(true);
+                }
+            }
+
+            if (force && report.IsFailed)
+            {
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+            }
+            return report;
+        }
+
+        private async Task<IServiceReport<IssueModel>> PatchIssueAsync()
+        {
+            IServiceReport<IssueModel> patchedReport = await IssuesService.PatchIssue(SelectedRepo.name, ContextData);
+
+            return patchedReport;
+        }
+
+        private async Task<IServiceReport<IssueModel>> CreateIssueAsync()
+        {
+            IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo.name, ContextData);
+            if (!patchedReport.IsFailed)
+            {
+                if (!IsSubIssue)
+                    await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
+                else
+                {
+                    ContextData = patchedReport.Model;
+                    patchedReport = await MakeSubIssue();
+                }
+            }
+            return patchedReport;
+        }
+
+        private bool VerifyIssueBoreISsue()
         {
             if (string.IsNullOrEmpty(Title))
             {
                 AppGlobals.MsgService.AlertUser(WindowHandle, "Missing something", "Issue must have a title");
-                return;
+                return false;
             }
 
+            return true;
+        }
+
+        private async Task PushIssueAsync(object obj)
+        {
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Pushing", true);
 
-            await Task.Run(async () =>
+            try
             {
-                try
+                if (!VerifyIssueBoreISsue())
                 {
-                    var markdownReport = await PrepareForPushAsync();
-                    ;
-                    if (markdownReport.IsFailed)
-                    {
-                        AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Error", markdownReport.ErrorMessage);
-                        return;
-                    }
-                    ContextData.Title = Title;
-                    ContextData.body = markdownReport.Model;
-                    var orig = ContextData.state;
-                    ContextData.state = IsClosed ? IssueState.closed.ToString() : IssueState.open.ToString();
-                    ContextData.labels = IssueLables.Where(o => o.IsAvailable).Select(o => o.ContextData).ToArray();
+                    return;
+                }
 
-                    var patchedReport = await IssuesService.PushIssue(SelectedRepo, ContextData);
-                    if (patchedReport.IsFailed)
-                    {
-                        AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Patch Failed", patchedReport.ErrorMessage);
-                    }
-                    else
-                    {
-                        if (ContextData.Id == -1)
-                        {
-                            await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
-                        }
-                        Init(patchedReport.Model);
-                        if (IsSubIssue)
-                        {
-                            if (orig != ContextData.state)
-                            {
-                                var val = ContextData.state == IssueState.closed.ToString() ? 1 : -1;
-                                GetParentViewModel<IssueViewModel>().Completed += val;
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
+                var markdownReport = await PrepareForPushAsync();
+                ;
+                if (markdownReport.IsFailed)
                 {
+                    AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Error", markdownReport.ErrorMessage);
+                    return;
                 }
-                finally
+                ContextData.Title = Title;
+                ContextData.body = markdownReport.Model;
+                var orig = ContextData.state;
+                ContextData.state = IsClosed ? IssueState.closed.ToString() : IssueState.open.ToString();
+                ContextData.labels = IssueLables.Where(o => o.IsAvailable).Select(o => o.ContextData).ToArray();
+
+                IServiceReport<IssueModel> patchedReport = null;
+                if (Id == -1)
                 {
-                    AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+                    patchedReport = await CreateIssueAsync();
                 }
-            });
+                else
+                    patchedReport = await PatchIssueAsync();
+
+                if (patchedReport.IsFailed)
+                {
+                    AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Patch Failed", patchedReport.ErrorMessage);
+                    if (ParentModelView is IssueViewModel parentismv)
+                    {
+                        parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
+                    }
+                }
+                else
+                {
+                    Init(patchedReport.Model);
+
+                    if (orig != ContextData.state)
+                    {
+                        var val = ContextData.state == IssueState.closed.ToString() ? 1 : -1;
+                        GetParentViewModel<IssueViewModel>().Completed += val;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+            }
         }
 
         private void ShowOnWeb(object obj)

@@ -4,10 +4,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient.Browser;
-using SharpBIM.GitTracker.Auth.BrowseOptions;
+using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 using SharpBIM.ServiceContracts.QAQC;
 
-namespace SharpBIM.GitTracker.Auth
+namespace SharpBIM.GitTracker.Core.Auth
 {
     internal class SystemBrowser : IBrowser
     {

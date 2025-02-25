@@ -19,8 +19,8 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
         public SubIssueListViewModel()
         {
             Title = "List of all SUB - issues";
-
         }
+
         public override async Task LoadIssuesAsync(object x)
         {
             var parentISsue = ParentModelView as IssueViewModel;
@@ -36,7 +36,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                 if (parentISsue.ContextData.sub_issues_summary.total > 0)
                 {
                     // this will get the only 100 sub issues
-                    var subIssues = await IssuesService.GetSubIssues(SelectedRepo, parentISsue.ContextData.number, 1);
+                    var subIssues = await IssuesService.GetSubIssues(SelectedRepo.name, parentISsue.ContextData.number, 1);
                     if (subIssues.IsFailed)
                     {
                     }

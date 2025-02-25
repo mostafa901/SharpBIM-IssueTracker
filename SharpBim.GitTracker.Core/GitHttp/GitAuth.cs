@@ -7,102 +7,106 @@ using System.Net.Http;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.OpenSsl;
-using SharpBIM.GitTracker.Auth.BrowseOptions;
 using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
-using SharpBIM.GitTracker.Auth;
-using SharpBIM.GitTracker.Core.Properties;
+using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
+using static System.Net.WebRequestMethods;
+using System.Threading.Tasks;
+
+//using SharpBIM.GitTracker.Core.Properties;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitAuth : GitClient
     {
+        #region Public Constructors
+
         public GitAuth()
         {
         }
 
-        public void SaveUser()
-        {
-            Settings.Default.USERJSON = User.JSerialize();
-            Settings.Default.Save();
-        }
+        #endregion Public Constructors
 
-        public void LoadUser()
+        #region Private Properties
+
+        private bool RequiresToken => User.Token == null || User.Token.access_token == null || User.Token.ExpireTime.Ticks < DateTime.Now.Ticks;
+
+        #endregion Private Properties
+
+        #region Public Methods
+
+        protected override bool NeedAuthentication => false;
+
+        public async Task<IServiceReport<Account>> GetUserAccount()
         {
-            if (User == null)
+            var accountReport = new ServiceReport<Account>();
+            var url = "https://api.github.com/user";
+            var res = await GET(url);
+            if (res.IsFailed)
             {
-                string jsonUser = Settings.Default.USERJSON;
-                AppGlobals.user = new User();
-
-                if (!string.IsNullOrEmpty(jsonUser))
-                {
-                    AppGlobals.user = User.Parse(jsonUser);
-                     
-                }
+                accountReport.Merge(res);
+                return accountReport;
             }
+            var account = ParseResponse<Account>(res.Model).FirstOrDefault();
+
+            accountReport.Model = account;
+            return accountReport;
         }
 
-        private bool RequiresToken => User.Token == null || User.Token.access_token == null || User.Token.ExpireTime.Ticks < DateTime.Now.Ticks ;
-
-        public async Task<IServiceReport<bool>> Login()
+        public async Task<IServiceReport<string>> Login(IUser user)
         {
-            LoadUser();
-            var report = new ServiceReport<bool>();
+            var report = new ServiceReport<string>();
+            if (user == null)
+            {
+                return report.Failed("User must not be null");
+            }
             try
             {
-                bool loginResult = true;
-                if (RequiresToken)
-                {
-                    if (User.Token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
-                    {
-                        loginResult = await TokenService.RefreshToken();
-                    }
-                    if (!loginResult)
-                    {
-                        var accessCode = await TokenService.AuthorizeApp();
-                        if (string.IsNullOrEmpty(accessCode))
-                        {
-                            // user did not authorize the app
-                            report.Failed("User did not authorize the app");
-                        }
-                        else
-                        {
-                            loginResult = await TokenService.RequestUserToken(accessCode);
+                AppGlobals.user = user;
 
+                if (!User.IsPersonalToken)
+                {
+                    var isInstalledRep = await IsGitTrackerInstalled();
+                    if (isInstalledRep.IsFailed)
+                    {
+                        return report.Merge(isInstalledRep);
+                    }
+
+                    if (RequiresToken)
+
+                    {
+                        var loginResult = false;
+
+                        if (User.Token != null && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
+                        {
+                            var refreshReport = await TokenService.RefreshToken();
+                            loginResult = !refreshReport.IsFailed;
+                        }
+                        if (!loginResult)
+                        {
+                            var accessCodeReport = await TokenService.AuthorizeApp();
+                            if (accessCodeReport.IsFailed)
+                            {
+                                // user did not authorize the app
+                                report.Merge(accessCodeReport);
+                                return report;
+                            }
+
+                            var accesCode = accessCodeReport.Model;
+                            var userTokenReport = await TokenService.RequestUserToken(accesCode);
+
+                            loginResult = !userTokenReport.IsFailed;
                             if (loginResult == false)
                             {
                                 // user did not authorize the app
-                                report.Failed("User did not authorize the app");
+                                report.Merge(userTokenReport);
                             }
-                            else
-                            {
-                                // user has authorized the app
-                                // we have a new token
-                            }
-
-                            // a barand new tokken is required
                         }
                     }
                 }
-
-                if (string.IsNullOrEmpty(User.InstallationId))
-                {
-                    var installationmodel = await InstallService.GetInstallationIdAsync();
-                    if (installationmodel == null)
-                    {
-                        // user has not installed the app.
-                        // do we need to?
-                        loginResult = await InstallService.RequestInstalling();
-                        if (loginResult)
-                            installationmodel = await InstallService.GetInstallationIdAsync();
-                    }
-
-                    User.Installation = installationmodel;
-                }
-            if (!report.IsFailed)
-                SaveUser();
             }
             catch (Exception ex)
             {
@@ -110,5 +114,56 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             }
             return report;
         }
+
+        public async Task LoginByPersonalToken(string userAccesToken)
+        {
+            AppGlobals.user ??= new User();
+            if (AppGlobals.user.UserAccount == null)
+            {
+                User.Token.access_token = userAccesToken;
+                User.IsPersonalToken = true;
+                var accountReport = await GetUserAccount();
+
+                AppGlobals.user.UserAccount = accountReport.Model;
+            }
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private async Task<IServiceReport<string>> IsGitTrackerInstalled()
+        {
+            var isInstallReport = new ServiceReport<string>();
+            if (User.Installation == null)
+            {
+                var getAppRep = await InstallService.GetApp();
+                if (getAppRep.IsFailed)
+                {
+                    return isInstallReport.Merge(getAppRep);
+                }
+                else if (getAppRep.Model.installations_count == 0)
+                {
+                    // user has not installed the app.
+                    if (!await InstallService.RequestInstalling())
+                    {
+                        isInstallReport.Failed("Failed to install the application");
+                        return isInstallReport;
+                    }
+                }
+
+                var getInsModelReport = await InstallService.GetInstallationAsync();
+                if (getInsModelReport.IsFailed)
+                {
+                    return isInstallReport.Merge(getInsModelReport);
+                }
+
+                User.Installation = getInsModelReport.Model;
+            }
+            User.UserAccount = User.Installation.account;
+            return isInstallReport;
+        }
+
+        #endregion Private Methods
     }
 }

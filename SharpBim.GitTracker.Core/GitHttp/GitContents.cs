@@ -11,11 +11,11 @@ namespace SharpBIM.GitTracker.GitHttp
 
         //either delete,or create or update, no concurrent actions
 
-        public async Task<IServiceReport<string>> DeleteFile(RepoModel repo, ContentModel contentModel)
+        public async Task<IServiceReport<string>> DeleteFile(string repoName, ContentModel contentModel)
         {
             IServiceReport<string> report = new ServiceReport<string>();
 
-            var url = $"{GetEndPoint(repo)}";
+            var url = $"{GetEndPoint(repoName)}";
             var body = new
             {
                 message = "Delete file",
@@ -33,9 +33,9 @@ namespace SharpBIM.GitTracker.GitHttp
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
         }
 
-        public async Task<IServiceReport<ContentModel>> GetFile(RepoModel repo, string filePath)
+        public async Task<IServiceReport<ContentModel>> GetFile(string repoName, string filePath)
         {
-            var url = $"{GetEndPoint(repo)}/{filePath}";
+            var url = $"{GetEndPoint(repoName)}/{filePath}";
 
             var report = await base.GET(url);
             if (!report.IsFailed)

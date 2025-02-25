@@ -1,39 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworks>net48;net8.0-windows;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+      <Configurations>DWin;RWin;DNoWin;RNoWin</Configurations>
       <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
+    <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
+        <TargetFrameworks>net47;net472;net48;net8.0-windows</TargetFrameworks>
+        <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Configuration)' == 'DNoWin' Or '$(Configuration)' == 'RNoWin')">
+        <TargetFrameworks>net47;net472;net48;net8.0</TargetFrameworks>
+        <DefineConstants>$(DefineConstants);WEB</DefineConstants>
+    </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
-    <PackageReference Include="BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="SharpBIM">
-      <HintPath>..\..\..\SharpBIM\Publish\DWin\$(TargetFramework)\SharpBIM.dll</HintPath>
+      <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
     </Reference>
+   
     <Reference Include="System.Web" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

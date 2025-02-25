@@ -2,7 +2,6 @@
 using System.Net.Http.Headers;
 using System.Security.Policy;
 using System.Text.Json;
-using SharpBIM.GitTracker.Auth;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using static System.Net.WebRequestMethods;
@@ -24,22 +23,24 @@ namespace SharpBIM.GitTracker.GitHttp
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
         }
 
-        public async Task<IEnumerable<RepoModel>> GetRepos()
+        public async Task<IServiceReport<IEnumerable<RepoModel>>> GetRepos()
         {
+            var repoReport = new ServiceReport<IEnumerable<RepoModel>>();
             List<RepoModel> repos = new List<RepoModel>();
             int page = 1;
             int trials = 5;
             while (true)
             {
                 string response = null;
+                IServiceReport<string> getReport = new ServiceReport<string>();
                 while (trials > 0)
                 {
                     var url = $"{endPoint}?page={page}";
 
-                    var report = await GET(url);
-                    if (!report.IsFailed)
+                    getReport = await GET(url);
+                    if (!getReport.IsFailed)
                     {
-                        response = report.Model;
+                        response = getReport.Model;
                         break;
                     }
                     trials--;
@@ -47,8 +48,7 @@ namespace SharpBIM.GitTracker.GitHttp
                 if (response == null)
                 {
                     // refresh token is required.
-                    await AuthService.Login();
-                    return repos;
+                    return repoReport.Merge(getReport);
                 }
                 var importedRepos = JsonSerializer.Deserialize<IEnumerable<RepoModel>>(response);
                 if (importedRepos.Any() == false)
@@ -56,8 +56,16 @@ namespace SharpBIM.GitTracker.GitHttp
                 repos.AddRange(importedRepos);
                 page++;
             }
-
-            return repos;
+            if (repos.Any())
+                if (AppGlobals.user.IsPersonalToken)
+                {
+                    if (AppGlobals.user.UserAccount == null)
+                    {
+                        AppGlobals.user.UserAccount = repos.First().owner;
+                    }
+                }
+            repoReport.Model = repos;
+            return repoReport;
         }
     }
 }

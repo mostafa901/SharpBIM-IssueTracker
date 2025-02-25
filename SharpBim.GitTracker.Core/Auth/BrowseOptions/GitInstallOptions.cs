@@ -1,7 +1,9 @@
 ﻿using SharpBIM.Utility.Extensions;
 using System.Net;
+using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 
-namespace SharpBIM.GitTracker.Auth.BrowseOptions
+namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
 {
     public class GitInstallOptions : GitBrowserOptions
     {

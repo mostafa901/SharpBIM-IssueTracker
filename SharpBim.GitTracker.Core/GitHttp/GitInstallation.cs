@@ -7,8 +7,11 @@ using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
-using SharpBIM.GitTracker.Auth;
-using SharpBIM.GitTracker.Auth.BrowseOptions;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
+using SharpBIM.ServiceContracts;
+using SharpBIM.ServiceContracts.Interfaces;
+using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 
 namespace SharpBIM.GitTracker.GitHttp
 {
@@ -46,6 +49,8 @@ namespace SharpBIM.GitTracker.GitHttp
             return privateKey != null ? DotNetUtilities.ToRSA(privateKey) : throw new Exception("Failed to load RSA key.");
         }
 
+        protected override bool NeedAuthentication => false;
+
         public GitInstallation()
         {
         }
@@ -61,8 +66,9 @@ namespace SharpBIM.GitTracker.GitHttp
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
         }
 
-        public async Task<InstallationModel> GetInstallationIdAsync()
+        public async Task<IServiceReport<InstallationModel>> GetInstallationAsync()
         {
+            var instReport = new ServiceReport<InstallationModel>();
             int trial = 5;
             InstallationModel installModel = null;
             while (trial > 0)
@@ -75,14 +81,16 @@ namespace SharpBIM.GitTracker.GitHttp
                 {
                     var installModels = ParseResponse<InstallationModel>(report.Model);
                     installModel = installModels?.FirstOrDefault();
+                    instReport.Model = installModel;
                     break;
+                }
+                else
+                {
+                    instReport.Merge(report);
                 }
             }
 
-            if (installModel == null)
-                return null;
-
-            return installModel;
+            return instReport;
         }
 
         private string LimitURL = "https://api.github.com/rate_limit";
@@ -92,13 +100,33 @@ namespace SharpBIM.GitTracker.GitHttp
             var response = await GET(LimitURL);
         }
 
+        public async Task<IServiceReport<AppModel>> GetApp()
+        {
+            string url = "https://api.github.com/app";
+            IServiceReport<AppModel> repModel = new ServiceReport<AppModel>();
+            var rep = await GET(url);
+            if (rep.IsFailed)
+            {
+                // something with my private key or JWT token is wrong.. app will not work
+                return repModel.Merge(rep);
+            }
+            var appModel = ParseResponse<AppModel>(rep.Model).FirstOrDefault(o => o.client_id == Config.ClientId);
+            repModel.Model = appModel;
+            return repModel;
+        }
+
         public async Task<bool> RequestInstalling()
         {
             // check if the app already authorized
             var brw = new SystemBrowser();
             var gitOps = new GitInstallOptions();
             var res = await brw.InvokeAsync(gitOps);
-            return !string.IsNullOrEmpty(User.InstallationId);
+            if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
+            {
+                // User.InstallationId = gitOps.InstallationId;
+                return !string.IsNullOrEmpty(gitOps.InstallationId);
+            }
+            return false;
         }
     }
 }

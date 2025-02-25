@@ -1,10 +1,12 @@
-﻿global using static SharpBIM.GitTracker.GitTrackerGlobals;
-using SharpBIM.GitTracker.Auth;
+﻿global using static SharpBIM.GitTracker.Core.GitTrackerGlobals;
 using SharpBIM.GitTracker.Core.GitHttp;
 using SharpBIM.GitTracker.GitHttp;
+using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.GitTracker.Core;
+using SharpBIM.GitTracker;
 using SharpBIM.Services;
 
-namespace SharpBIM.GitTracker
+namespace SharpBIM.GitTracker.Core
 {
     public class GitTrackerGlobals : Config
     {
@@ -16,7 +18,7 @@ namespace SharpBIM.GitTracker
 
         public string UriAppName = "SharpBIM-IssueTracker";
         public IGitConfig Config { get; set; }
-        public User? user { get; set; }
+        internal IUser? user { get; set; }
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
+using SharpBIM.GitTracker.Core.Auth;
 
-namespace SharpBIM.GitTracker.Auth
+namespace SharpBIM.GitTracker.Core.Auth
 {
     public class GitConfig : IGitConfig
     {

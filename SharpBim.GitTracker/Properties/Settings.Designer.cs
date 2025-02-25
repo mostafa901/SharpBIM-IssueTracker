@@ -34,5 +34,17 @@ namespace SharpBim.GitTracker.Properties {
                 this["LastRepoName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string USERJSON {
+            get {
+                return ((string)(this["USERJSON"]));
+            }
+            set {
+                this["USERJSON"] = value;
+            }
+        }
     }
 }
