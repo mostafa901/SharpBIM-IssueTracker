@@ -1,13 +1,8 @@
-﻿global using static SharpBIM.GitTracker.GitTrackerGlobals;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using Microsoft.VisualStudio.OLE.Interop;
-using SharpBim.GitTracker.Mvvm.ViewModels;
-using SharpBim.GitTracker.Mvvm.Views;
 using SharpBim.GitTracker.ToolWindows;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts.QAQC;
@@ -15,7 +10,6 @@ using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Controls.UserControls;
 using SharpBIM.WPF.Helpers.Commons;
-using SharpBIM.WPF.Helpers.Extension;
 
 namespace SharpBIM.GitTracker.Mvvm
 {
@@ -51,7 +45,7 @@ namespace SharpBIM.GitTracker.Mvvm
             Loaded -= MainPage_Loaded;
 
             ViewModel.WindowHandle = this.GetWindow().Handle();
-            await ViewModel.Login(null);
+            await ViewModel.Login(AppGlobals.User);
         }
 
         public async void UpdateProgress(double value, double max, string message, bool isIndeterminate)

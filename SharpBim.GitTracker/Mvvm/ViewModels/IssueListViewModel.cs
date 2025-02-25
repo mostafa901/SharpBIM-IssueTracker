@@ -7,6 +7,8 @@ using SharpBim.GitTracker.Helpers;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.GitTracker.Mvvm.ViewModels;
 using SharpBIM.GitTracker.Mvvm.Views;
+using SharpBIM.ServiceContracts;
+using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.Services.Statics;
 using SharpBIM.UIContexts;
 using SharpBIM.UIContexts.Abstracts.Interfaces;
@@ -69,7 +71,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
 
         private void LoadCommands()
         {
-            CreateNewIssueCommand = new SharpBIMCommand(CreateNewIssue, "Create New Issue", Glyphs.plus_circle, (x) => true);
+            CreateNewIssueCommand = new SharpBIMCommand(async (x) => await CreateNewIssue(x), "Create New Issue", Glyphs.plus_circle, (x) => true);
             ReloadCommand = new SharpBIMCommand(async (x) => await Reload(x), "Refresh", Glyphs.reload, (x) => true);
             EditIssueCommand = new SharpBIMCommand(EditIssue, "Edit", Glyphs.edit, (x) => true);
             LoadCurrentProjectCommand = new SharpBIMCommand(LoadCurrentProject, "Load Current Project", Glyphs.arrows_swap, (x) => true);
@@ -162,27 +164,6 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             }
         }
 
-        public async Task MakeSubIssue(IssueViewModel parent, IssueViewModel subIssue, bool force = false)
-        {
-            if (parent.Children.Any(o => o == subIssue))
-                return;
-
-            var report = await IssuesService.AddSubIssue(SelectedRepo, parent.ContextData, subIssue.ContextData, force);
-            if (force == false && report.IsFailed)
-            {
-                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
-                if (ans.Model == Statics.REPLACE)
-                {
-                    await MakeSubIssue(parent, subIssue, true);
-                }
-            }
-
-            if (force && report.IsFailed)
-            {
-                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
-            }
-        }
-
         public int PageNumber
         {
             get { return GetValue<int>(nameof(PageNumber)); }
@@ -232,27 +213,43 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             }
         }
 
-
         public SharpBIMCommand CreateNewIssueCommand { get; set; }
 
         // Add this line to the constructor
 
-
-        public void CreateNewIssue(object x)
+        public async Task CreateNewIssue(object x)
         {
             try
             {
+                string subissue = "Sub-Issue";
+                string newissue = "New Issue";
+                IServiceReport<string> ans = new ServiceReport<string>(newissue);
+                if (SelectedIssueModel != null)
+                {
+                    ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Create New issue", $"Do you want to create a new Issue", [newissue, subissue, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+
+                    if (ans.Model == Statics.CANCEL)
+                    {
+                        return;
+                    }
+                }
                 var issuemodel = new IssueModel();
                 issuemodel.Title = "Undefined";
                 issuemodel.Id = -1;
-                var issuemv = issuemodel.ToModelView<IssueViewModel>(this);
-                EditIssue(issuemv);
 
+                var issuemv = issuemodel.ToModelView<IssueViewModel>(this);
+                if (ans.Model == subissue)
+                {
+                    issuemv.ParentModelView = SelectedIssueModel;
+                    await SelectedIssueModel.AddItemsAsync([issuemv], Token);
+                }
+                EditIssue(issuemv);
             }
             catch (Exception ex)
             {
             }
         }
+
         public virtual async Task LoadIssuesAsync(object x)
         {
             Children.Clear();
@@ -290,7 +287,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                                         issmvs.Add(issueModel);
                                     }
                                     await AddItemsAsync(issmvs, Token);
-                                    if (!issues.Any() || issues.Count()<FetchIssueCounts)
+                                    if (!issues.Any() || issues.Count() < FetchIssueCounts)
                                     {
                                         break;
                                     }
@@ -330,7 +327,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             try
             {
                 LoggedIn = false;
-                var loginReport = await AuthService.Login();
+                var loginReport = await AuthService.Login(AppGlobals.User);
                 if (loginReport.IsFailed)
                 {
                     throw new Exception(loginReport.ErrorMessage);
@@ -379,7 +376,14 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Loading Repos", true);
                 RepoModels.Clear();
-                var repos = await ReposSerivce.GetRepos();
+                var getRepoReport = await ReposSerivce.GetRepos();
+                if (getRepoReport.IsFailed)
+                {
+                    AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't Get Repositories", getRepoReport.ErrorMessage);
+                    return;
+                }
+
+                var repos = getRepoReport.Model;
                 string storedName = Properties.Settings.Default.LastRepoName;
                 SelectedRepo = string.IsNullOrEmpty(storedName) ? repos.FirstOrDefault() : repos.FirstOrDefault(o => o.name == storedName);
 

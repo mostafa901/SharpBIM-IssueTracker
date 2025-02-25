@@ -20,23 +20,23 @@ namespace SharpBIM.GitTracker.GitHttp
     {
         protected override string endPoint => @$"https://api.github.com/repos/{Account.login}/REPO/labels";
 
-        public async Task<IServiceReport<IEnumerable<Label>>> GetLables(RepoModel repo)
+        public async Task<IServiceReport<IEnumerable<GitLabel>>> GetLables(string repoName)
         {
-            var url = GetEndPoint(repo);
+            var url = GetEndPoint(repoName);
             var getReport = await GET(url);
-            var labelReport = new ServiceReport<IEnumerable<Label>>(getReport);
+            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
 
             if (!getReport.IsFailed)
             {
-                labelReport.Model = ParseResponse<Label>(getReport.Model);
+                labelReport.Model = ParseResponse<GitLabel>(getReport.Model);
             }
 
             return labelReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<Label>>> CreateLable(RepoModel repo, Label newLable)
+        public async Task<IServiceReport<IEnumerable<GitLabel>>> CreateLable(string repoName, GitLabel newLable)
         {
-            var url = GetEndPoint(repo);
+            var url = GetEndPoint(repoName);
             var body = new
             {
                 newLable.name,
@@ -44,11 +44,11 @@ namespace SharpBIM.GitTracker.GitHttp
                 newLable.color,
             };
             var getReport = await POST(url, body);
-            var labelReport = new ServiceReport<IEnumerable<Label>>(getReport);
+            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
 
             if (!getReport.IsFailed)
             {
-                labelReport.Model = ParseResponse<Label>(getReport.Model);
+                labelReport.Model = ParseResponse<GitLabel>(getReport.Model);
             }
 
             return labelReport;
@@ -73,13 +73,13 @@ namespace SharpBIM.GitTracker.GitHttp
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.FULLJSON)); //txt, html, markdown
         }
 
-        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetAllIssues(RepoModel repo, IssueState state)
+        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetAllIssues(string repoName, IssueState state)
         {
             int pages = 1;
             var report = new ServiceReport<IEnumerable<IssueModel>>();
             while (true)
             {
-                var issueReport = await GetIssues(repo.name, -1, state, pages++);
+                var issueReport = await GetIssues(repoName, -1, state, pages++);
                 if (issueReport.IsFailed)
                 {
                     report.Merge(issueReport);
@@ -97,21 +97,21 @@ namespace SharpBIM.GitTracker.GitHttp
             return report;
         }
 
-        public async Task<IServiceReport<IssueModel>> GetIssue(RepoModel repo, int number)
+        public async Task<IServiceReport<IssueModel>> GetIssue(string repoName, int number)
         {
-            var getissueReport = await GetIssues(repo.name, number, IssueState.open);
+            var getissueReport = await GetIssues(repoName, number, IssueState.open);
             var issueReport = new ServiceReport<IssueModel>(getissueReport);
             if (!issueReport.IsFailed)
             {
-                var issue = (await GetIssues(repo.name, number, IssueState.open)).Model.FirstOrDefault();
+                var issue = (await GetIssues(repoName, number, IssueState.open)).Model.FirstOrDefault();
                 issueReport.Model = issue;
             }
             return issueReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetSubIssues(RepoModel repo, int number, int page = 1)
+        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetSubIssues(string repoName, int number, int page = 1)
         {
-            var url = $"{GetEndPoint(repo)}/{number}/sub_issues";
+            var url = $"{GetEndPoint(repoName)}/{number}/sub_issues";
 
             var bodyParams = new
             {
@@ -177,12 +177,9 @@ namespace SharpBIM.GitTracker.GitHttp
 
         //https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#update-an-issue
         // You cannot pass both `assignee` and `assignees`. Only one may be provided.
-        public async Task<IServiceReport<IssueModel>> PushIssue(RepoModel repo, IssueModel issue)
+        public async Task<IServiceReport<IssueModel>> CreateIssue(string repoName, IssueModel issue)
         {
-            var url = $"{GetEndPoint(repo)}";
-            // check if it is anew issue
-            if (issue.Id != -1)
-                url += $"/{issue.number}";
+            var url = $"{GetEndPoint(repoName)}";
 
             // Set the content type to JSON
             //  var content = new StringContent(issue.JSerialize(), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
@@ -193,27 +190,56 @@ namespace SharpBIM.GitTracker.GitHttp
                 //assignee, // or Assignees or null
                 issue.state,
                 //milestone ,
-                labels = issue.labels.Select(o => o.name).ToArray(),
+                labels = issue.labels?.Select(o => o.name).ToArray() ?? [],
                 //state_reason , // Can be one of: completed, not_planned, reopened, null
             };
             IServiceReport<string> response = null;
-            if (issue.Id != -1)
-                response = await PATCH(url, paybody);
-            else
-                response = await POST(url, paybody);
+
+            response = await POST(url, paybody);
             if (!response.IsFailed)
             {
-                var patchedIssue = ParseResponse<IssueModel>(response.Model)?.FirstOrDefault();
-                return new ServiceReport<IssueModel>(patchedIssue);
+                var createIssueReport = ParseResponse<IssueModel>(response.Model)?.FirstOrDefault();
+                return new ServiceReport<IssueModel>(createIssueReport);
+            }
+            return new ServiceReport<IssueModel>().Failed(response.ErrorMessage);
+        }
+
+        //https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#update-an-issue
+        // You cannot pass both `assignee` and `assignees`. Only one may be provided.
+        public async Task<IServiceReport<IssueModel>> PatchIssue(string repoName, IssueModel issue)
+        {
+            var url = $"{GetEndPoint(repoName)}";
+            url += $"/{issue.number}";
+
+            // Set the content type to JSON
+            //  var content = new StringContent(issue.JSerialize(), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
+            var paybody = new
+            {
+                issue.body,
+                title = issue.Title,
+                //assignee, // or Assignees or null
+                issue.state,
+                //milestone ,
+                labels = issue.labels?.Select(o => o.name).ToArray() ?? [],
+                //state_reason , // Can be one of: completed, not_planned, reopened, null
+            };
+            IServiceReport<string> response = null;
+
+            response = await PATCH(url, paybody);
+
+            if (!response.IsFailed)
+            {
+                var patchedIssueReport = ParseResponse<IssueModel>(response.Model)?.FirstOrDefault();
+                return new ServiceReport<IssueModel>(patchedIssueReport);
             }
             return new ServiceReport<IssueModel>().Failed(response.ErrorMessage);
         }
 
         // this requires contentsPErmisison Read and write
-        public async Task<IServiceReport<string>> UploadImageAsync(RepoModel repo, string filePath, string branch = "master")
+        public async Task<IServiceReport<string>> UploadImageAsync(string repoName, string filePath, string branch = "master")
         {
             string imageName = Path.GetFileName(filePath);
-            string url = $"https://api.github.com/repos/{repo.owner.login}/{repo.name}/contents/images/{imageName}";
+            string url = $"https://api.github.com/repos/{Account.login}/{repoName}/contents/images/{imageName}";
 
             // Convert image to Base64
             byte[] imageBytes = File.ReadAllBytes(filePath);
@@ -238,9 +264,9 @@ namespace SharpBIM.GitTracker.GitHttp
             return report;
         }
 
-        public async Task<IServiceReport<IssueModel>> AddSubIssue(RepoModel repo, IssueModel parent, IssueModel subIssue, bool forceChange)
+        public async Task<IServiceReport<IssueModel>> AddSubIssue(string repoName, IssueModel parent, IssueModel subIssue, bool forceChange)
         {
-            var url = $"{GetEndPoint(repo)}/{parent.number}/sub_issues";
+            var url = $"{GetEndPoint(repoName)}/{parent.number}/sub_issues";
 
             var body = new
             {

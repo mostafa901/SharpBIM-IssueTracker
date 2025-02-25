@@ -1,13 +1,19 @@
 ﻿using System.Text.Json;
+using SharpBIM.GitTracker.Core.Auth;
 
-namespace SharpBIM.GitTracker.Auth
+namespace SharpBIM.GitTracker.Core.GitHttp.Models
 {
-    public class User
+    internal class User : IUser
     {
         public bool IsPersonalToken { get; set; }
         public UserToken Token { get; set; }
         public InstallationModel Installation { get; set; }
-        public string InstallationId => Installation?.id.ToString() ?? string.Empty;
+        public Account UserAccount { get; set; }
+
+        public User()
+        {
+            Token = new UserToken();
+        }
 
         public static User? Parse(string jsonstring)
         {
@@ -19,6 +25,11 @@ namespace SharpBIM.GitTracker.Auth
             {
                 return new User();
             }
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -194,6 +194,7 @@
         <ui:SearchTextBox Grid.Row="1"
                           Width="auto"
                           HorizontalAlignment="Stretch"
+                          PlaceHolder="Search within the current page"
                           Text="{Binding TextToFilter,
                                          Delay=600,
                                          UpdateSourceTrigger=PropertyChanged}"

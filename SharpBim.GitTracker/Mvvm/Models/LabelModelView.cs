@@ -12,7 +12,7 @@ using SharpBIM.WPF.Helpers.Commons;
 
 namespace SharpBim.GitTracker.Mvvm.Models
 {
-    public class LabelModelView : ModelViewBase<Label>
+    public class LabelModelView : ModelViewBase<GitLabel>
     {
         public SolidColorBrush BackgroundBrush
         {
@@ -31,7 +31,7 @@ namespace SharpBim.GitTracker.Mvvm.Models
             AddRemoveCommand = new SharpBIMCommand(AddRemove, "Add Remove Label", Glyphs.empty, (x) => true);
         }
 
-        public override void Init(Label dataModel)
+        public override void Init(GitLabel dataModel)
         {
             base.Init(dataModel);
             Title = dataModel.name;

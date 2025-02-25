@@ -1,15 +1,15 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http;
-using System.Text.Json;
-using SharpBIM.GitTracker.Auth;
-using SharpBIM.GitTracker.Auth.BrowseOptions;
-using System.Text;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
-using static IdentityModel.OidcConstants;
+using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 
 namespace SharpBIM.GitTracker.GitHttp
 {
+    /// <summary>
+    /// Reference https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
+    /// </summary>
     public class GitToken : GitClient
     {
         #region Public Constructors
@@ -34,23 +34,43 @@ namespace SharpBIM.GitTracker.GitHttp
 
         #region Public Methods
 
-        public async Task<string> AuthorizeApp()
+        protected override bool NeedAuthentication => false;
+
+        public async Task<IServiceReport<string>> AuthorizeApp()
         {
             // check if the app already authorized
             var brw = new SystemBrowser();
             var gitOps = new GitLoginOptions();
 
             var res = await brw.InvokeAsync(gitOps);
-            return gitOps.Code;
+            var report = new ServiceReport<string>();
+            if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
+            {
+                report.Model = gitOps.Code;
+            }
+            else
+            {
+                report.Failed(res.Error);
+            }
+            return report;
         }
 
-        public async Task<bool> RefreshToken()
+        public async Task<IServiceReport<string>> GetAppAccessCode()
+        {
+            string url = $"https://github.com/login/oauth/authorize?client_id={AppGlobals.Config.ClientId}&state=xxx";
+
+            var accessCodeReport = await GET(url);
+            return accessCodeReport;
+        }
+
+        public async Task<IServiceReport<string>> RefreshToken()
         {
             var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&grant_type={QueryString.REFRESHTOKEN}&refresh_token={User.Token.refresh_token}";
-            return await RequestToken(url, null);
+            var tokenReport = await RequestToken(url, null);
+            return tokenReport;
         }
 
-        public async Task<bool> RequestUserToken(string accessCode)
+        public async Task<IServiceReport<string>> RequestUserToken(string accessCode)
         {
             var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&code={accessCode}";
             return await RequestToken(url, null);
@@ -58,28 +78,19 @@ namespace SharpBIM.GitTracker.GitHttp
 
         #endregion Public Methods
 
-        #region Protected Methods
-
-        protected override AuthenticationHeaderValue GetAuthentication()
-        {
-            return null;
-        }
-
-        #endregion Protected Methods
-
         #region Private Methods
 
-        private async Task<bool> RequestToken(string url, object requestBody)
+        private async Task<IServiceReport<string>> RequestToken(string url, object requestBody)
         {
             var report = await POST(url, requestBody);
             if (report.IsFailed)
-                return false;
+                return report;
             var responseJson = report.Model;
 
             User.Token = ParseResponse<UserToken>(responseJson).FirstOrDefault();
             User.Token.ExpireTime = DateTime.Now.AddSeconds(AppGlobals.user.Token.expires_in);
             User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(AppGlobals.user.Token.refresh_token_expires_in);
-            return true;
+            return report;
         }
 
         #endregion Private Methods

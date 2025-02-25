@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading.Tasks;
-using SharpBim.GitTracker.Mvvm.Views;
-using SharpBim.GitTracker.ToolWindows;
-using SharpBIM.GitTracker.Auth;
+﻿using SharpBim.GitTracker.ToolWindows;
+using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.UIContexts;
+using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers.Commons;
 
 namespace SharpBim.GitTracker.Mvvm.ViewModels
 {
-    public class LoginViewModel : ModelViewBase<User>
+    public class LoginViewModel : ModelViewBase<IUser>
     {
         public LoginViewModel()
         {
-            AuthService.LoadUser();
+            AuthService.Login(AppGlobals.User);
             AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), "Authorize", Glyphs.empty, (x) => true);
             CancelCommand = new SharpBIMCommand(Cancel, "Cancel", Glyphs.empty, (x) => true);
         }
@@ -54,9 +48,11 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             try
             {
                 bool auth = false;
-                if (StoredToken == null)
+                if (string.IsNullOrEmpty( StoredToken ))
                 {
-                    var login = await AuthService.Login();
+                    // this is to rest the authentication and reautherize if needed
+                    AppGlobals.User = new User();
+                    var login = await AuthService.Login(AppGlobals.User);
                     if (login.IsFailed)
                     {
                         AppGlobals.MsgService.AlertUser(WindowHandle, "Login failed", login.ErrorMessage);
@@ -81,7 +77,7 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                     }
                     else
                     {
-                        var rep = await AuthService.Login();
+                        var rep = await AuthService.Login(AppGlobals.User);
                         if (rep.IsFailed)
                         {
                             AppGlobals.MsgService.AlertUser(WindowHandle, "Invalid Token", rep.ErrorMessage);
@@ -102,13 +98,18 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                     {
                         AppGlobals.User.IsPersonalToken = false;
                     }
-                    AuthService.SaveUser();
+                    SaveUser();
                     LoggedIn?.Invoke(this, null);
                 }
             }
             catch (Exception ex)
             {
             }
+        }
+
+        private void SaveUser()
+        {
+            Properties.Settings.Default.USERJSON = AppGlobals.User.JSerialize();
         }
     }
 }

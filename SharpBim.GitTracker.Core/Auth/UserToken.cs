@@ -1,4 +1,4 @@
-﻿namespace SharpBIM.GitTracker.Auth
+﻿namespace SharpBIM.GitTracker.Core.Auth
 {
     public class UserToken
     {

@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft;
-using SharpBim.GitTracker.Helpers;
 using SharpBim.GitTracker.Mvvm.ViewModels;
 using SharpBim.GitTracker.Mvvm.Views;
-using SharpBIM.GitTracker;
-using SharpBIM.GitTracker.Core.Enums;
-using SharpBIM.GitTracker.Mvvm.ViewModels;
-using SharpBIM.GitTracker.Mvvm.Views;
+using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.UIContexts;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers;
@@ -54,7 +43,11 @@ namespace SharpBim.GitTracker.ToolWindows
         {
             try
             {
-                var grantted = !((await AuthService.Login()).IsFailed);
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
+                var accessReport = await AuthService.Login(AppGlobals.User);
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
+
+                var grantted = !(accessReport.IsFailed);
                 if (!grantted)
                 {
                     ShowLoginScreenCommand.Hint = "Login";
@@ -70,6 +63,10 @@ namespace SharpBim.GitTracker.ToolWindows
             catch (Exception ex)
             {
             }
+            finally
+            {
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
+            }
         }
 
         public async Task ShowLoginScreen(object x)
@@ -77,7 +74,7 @@ namespace SharpBim.GitTracker.ToolWindows
             try
             {
                 var vm = new LoginViewModel() { ParentModelView = this };
-                vm.AlreadyLoggedIn = x == null ? true : ((await AuthService.Login()).IsFailed);
+                vm.AlreadyLoggedIn = x == null ? true : ((await AuthService.Login(AppGlobals.User)).IsFailed);
 
                 vm.LoggedIn += ViewModel_LoggedIn;
                 CurrentView = new LoginView();
@@ -102,6 +99,7 @@ namespace SharpBim.GitTracker.ToolWindows
 
         public async void ViewModel_LoggedIn(object sender, EventArgs e)
         {
+            AppGlobals.User.Save();
             IsLoginScreen = false;
             CurrentView = null;
             ShowLoginScreenCommand.Icon = Glyphs.logout;

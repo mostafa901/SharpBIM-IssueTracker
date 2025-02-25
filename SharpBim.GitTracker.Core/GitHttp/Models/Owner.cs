@@ -19,4 +19,20 @@
     public string type { get; set; }
     public string user_view_type { get; set; }
     public bool site_admin { get; set; }
+
+    public string name { get; set; }
+    public string company { get; set; }
+    public string blog { get; set; }
+    public string location { get; set; }
+    public string email { get; set; }
+    public bool hireable { get; set; }
+    public string bio { get; set; }
+    public object twitter_username { get; set; }
+    public string notification_email { get; set; }
+    public int public_repos { get; set; }
+    public int public_gists { get; set; }
+    public int followers { get; set; }
+    public int following { get; set; }
+    public DateTime created_at { get; set; }
+    public DateTime updated_at { get; set; }
 }
