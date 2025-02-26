@@ -1,22 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
-using System.Net.Http;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.OpenSsl;
-using SharpBIM.GitTracker.GitHttp;
-using SharpBIM.Utility.Extensions;
+﻿using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
-using static System.Net.WebRequestMethods;
-using System.Threading.Tasks;
-
-//using SharpBIM.GitTracker.Core.Properties;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -56,12 +42,37 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return accountReport;
         }
 
+        public async Task<IServiceReport<string>> LoadGitConfig()
+        {
+            var configReport = new ServiceReport<string>();
+            if (Config == null)
+            {
+                var confReport = await AppGlobals.HttpService.GetGitConfigAsync();
+                if (confReport.IsFailed)
+                {
+                    AppGlobals.Config = null;
+                    configReport.Merge(confReport);
+                }
+                else
+                {
+                    AppGlobals.Config = confReport.Model;
+
+                    InstallService = new();
+                }
+            }
+            return configReport;
+        }
+
         public async Task<IServiceReport<string>> Login(IUser user)
         {
             var report = new ServiceReport<string>();
             if (user == null)
             {
                 return report.Failed("User must not be null");
+            }
+            if ((await LoadGitConfig()).IsFailed)
+            {
+                return report.Failed("Application missing credentials");
             }
             try
             {
@@ -115,17 +126,19 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        public async Task LoginByPersonalToken(string userAccesToken)
+        public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken)
         {
+            var report = new ServiceReport<string>();
             AppGlobals.user ??= new User();
             if (AppGlobals.user.UserAccount == null)
             {
                 User.Token.access_token = userAccesToken;
                 User.IsPersonalToken = true;
                 var accountReport = await GetUserAccount();
-
+                report.Merge(accountReport);
                 AppGlobals.user.UserAccount = accountReport.Model;
             }
+            return report;
         }
 
         #endregion Public Methods

@@ -48,7 +48,8 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             try
             {
                 bool auth = false;
-                if (string.IsNullOrEmpty( StoredToken ))
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, "Authorizing...", true);
+                if (string.IsNullOrEmpty(StoredToken))
                 {
                     // this is to rest the authentication and reautherize if needed
                     AppGlobals.User = new User();
@@ -64,26 +65,14 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
                 }
                 else
                 {
-                    // StoredToken = AppGlobals.User.Token.access_token;
-                    if (!string.IsNullOrEmpty(StoredToken))
+                    var userAccountReport = await AuthService.LoginByPersonalToken(StoredToken);
+                    if (userAccountReport.IsFailed)
                     {
-                        var checkReport = await TokenService.CheckToken(StoredToken);
-                        if (checkReport.IsFailed)
-                        {
-                            AppGlobals.MsgService.AlertUser(WindowHandle, "Invalid Token", checkReport.ErrorMessage);
-                        }
-                        else
-                            auth = true;
+                        AppGlobals.MsgService.AlertUser(WindowHandle, "Invalid Token", userAccountReport.ErrorMessage);
                     }
                     else
                     {
-                        var rep = await AuthService.Login(AppGlobals.User);
-                        if (rep.IsFailed)
-                        {
-                            AppGlobals.MsgService.AlertUser(WindowHandle, "Invalid Token", rep.ErrorMessage);
-                        }
-                        else
-                            auth = true;
+                        auth = true;
                     }
                 }
                 if (auth)
@@ -104,6 +93,10 @@ namespace SharpBim.GitTracker.Mvvm.ViewModels
             }
             catch (Exception ex)
             {
+            }
+            finally
+            {
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
             }
         }
 

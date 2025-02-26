@@ -359,18 +359,6 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
             IssueModel parent = GetParentViewModel<IssueViewModel>().ContextData;
             IssueModel subIssue = this.ContextData;
 
-            if (Id == -1)
-            {
-                var createReport = await CreateIssueAsync();
-                if (createReport.IsFailed)
-                {
-                    AppGlobals.MsgService.AlertUser(WindowHandle, "Can't create sub issue", createReport.ErrorMessage);
-                    return createReport;
-                }
-
-                subIssue = createReport.Model;
-            }
-
             var report = await IssuesService.AddSubIssue(SelectedRepo.name, parent, subIssue, force);
             if (force == false && report.IsFailed)
             {
@@ -447,7 +435,7 @@ namespace SharpBIM.GitTracker.Mvvm.ViewModels
                 ContextData.labels = IssueLables.Where(o => o.IsAvailable).Select(o => o.ContextData).ToArray();
 
                 IServiceReport<IssueModel> patchedReport = null;
-                if (Id == -1)
+                if (Id <= 0)
                 {
                     patchedReport = await CreateIssueAsync();
                 }

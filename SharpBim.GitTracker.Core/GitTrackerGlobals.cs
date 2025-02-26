@@ -5,6 +5,10 @@ using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core;
 using SharpBIM.GitTracker;
 using SharpBIM.Services;
+using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
+using System.Threading.Tasks;
+using SharpBIM.ServiceContracts.Interfaces;
+using SharpBIM.ServiceContracts;
 
 namespace SharpBIM.GitTracker.Core
 {
@@ -17,7 +21,7 @@ namespace SharpBIM.GitTracker.Core
         public string ClientId { get; set; }
 
         public string UriAppName = "SharpBIM-IssueTracker";
-        public IGitConfig Config { get; set; }
+        internal IGitConfig Config { get; set; }
         internal IUser? user { get; set; }
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
@@ -35,13 +39,11 @@ namespace SharpBIM.GitTracker.Core
         {
             ApplicationName = "SharpBIM.IssueTracker";
             ApplicationDisplayName = "SharpBIM IssueTracker";
-            Config = GitConfig.Parse();
             AuthService = new();
             ReposSerivce = new();
             IssuesService = new();
             ContentService = new();
             TokenService = new();
-            InstallService = new();
         }
     }
 }

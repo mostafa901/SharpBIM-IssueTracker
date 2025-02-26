@@ -23,9 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="SharpBIM">
+    
+      
+      <Reference Include="SharpBIM"  >
       <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
     </Reference>
+      
+      
    
     <Reference Include="System.Web" />
   </ItemGroup>

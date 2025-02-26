@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft;
+using Org.BouncyCastle.Tls;
 using SharpBim.GitTracker.Mvvm.ViewModels;
 using SharpBim.GitTracker.Mvvm.Views;
 using SharpBIM.GitTracker.GitHttp;
@@ -21,7 +23,7 @@ namespace SharpBim.GitTracker.ToolWindows
         {
             NavigateBackCommand = new SharpBIMCommand(NavigateBack, "NavigateBack", Glyphs.empty, (x) => true);
             NavigateForwardCommand = new SharpBIMCommand(NavigateForward, "Navigate Forward", Glyphs.empty, (x) => true);
-            ShowLoginScreenCommand = new SharpBIMCommand(async (x) => await ShowLoginScreen(x), "Login", Glyphs.login, (x) => true);
+            ShowLoginScreenCommand = new SharpBIMCommand(async (x) => await ShowLoginScreen(null), "Login", Glyphs.login, (x) => true);
             IsLoginScreen = true;
         }
 
@@ -44,10 +46,20 @@ namespace SharpBim.GitTracker.ToolWindows
             try
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
-                var accessReport = await AuthService.Login(AppGlobals.User);
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
 
-                var grantted = !(accessReport.IsFailed);
+                var gitconfReport = await AuthService.LoadGitConfig();
+                if (gitconfReport.IsFailed)
+                {
+                    AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't login", gitconfReport.ErrorMessage);
+                }
+
+                bool grantted = !gitconfReport.IsFailed;
+                if (grantted)
+                {
+                    var accessReport = await AuthService.Login(AppGlobals.User);
+                    grantted = !(accessReport.IsFailed);
+                }
+
                 if (!grantted)
                 {
                     ShowLoginScreenCommand.Hint = "Login";
@@ -74,7 +86,7 @@ namespace SharpBim.GitTracker.ToolWindows
             try
             {
                 var vm = new LoginViewModel() { ParentModelView = this };
-                vm.AlreadyLoggedIn = x == null ? true : ((await AuthService.Login(AppGlobals.User)).IsFailed);
+                vm.AlreadyLoggedIn = x == null ? true : (!((bool)x) || ((await AuthService.Login(AppGlobals.User)).IsFailed));
 
                 vm.LoggedIn += ViewModel_LoggedIn;
                 CurrentView = new LoginView();

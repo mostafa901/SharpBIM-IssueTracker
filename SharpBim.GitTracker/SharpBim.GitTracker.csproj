@@ -187,9 +187,9 @@
       <Project>{77c21fb6-a74c-b4a2-4fd2-1931375d32ac}</Project>
       <Name>SharpBIM.GitTracker.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VSIXProject1\VSIXProject1.csproj">
+    <ProjectReference Include="..\VSIXProject1\VSIXSharpBIM.GitTracker.csproj">
       <Project>{1a834861-a60c-49a5-8535-01be63fd0b6b}</Project>
-      <Name>VSIXProject1</Name>
+      <Name>VSIXSharpBIM.GitTracker</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
