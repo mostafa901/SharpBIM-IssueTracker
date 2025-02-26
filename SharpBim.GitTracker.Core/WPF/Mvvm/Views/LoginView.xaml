@@ -1,11 +1,10 @@
-﻿<uc:SharpBIMUserControl x:Class="SharpBim.GitTracker.Mvvm.Views.LoginView"
+<uc:SharpBIMUserControl x:Class="SharpBIM.GitTracker.Core.WPF.Mvvm.Views.LoginView"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:Conv="clr-namespace:SharpBIM.WPF.Helpers.Converters;assembly=SharpBIM"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                        xmlns:local="clr-namespace:SharpBim.GitTracker.Mvvm.Views"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:mv="clr-namespace:SharpBim.GitTracker.Mvvm.ViewModels"
+                        xmlns:mv="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels"
                         xmlns:uc="clr-namespace:SharpBIM.WPF.Controls.UserControls;assembly=SharpBIM"
                         xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM"
                         d:DataContext="{d:DesignInstance Type={x:Type mv:LoginViewModel}}"
@@ -22,7 +21,7 @@
         </Grid.RowDefinitions>
         <Image HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
-               Source="/SharpBim.GitTracker;component/Resources/ticket.png" />
+               Source="/SharpBIM.GitTracker.Core;component/Resources/ticket.png" />
         <Grid Grid.Row="1"
               VerticalAlignment="Center">
 

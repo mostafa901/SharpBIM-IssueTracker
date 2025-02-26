@@ -1,23 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using SharpBim.GitTracker.Helpers;
 using SharpBIM.GitTracker.Core.Enums;
-using SharpBIM.GitTracker.Mvvm.ViewModels;
-using SharpBIM.GitTracker.Mvvm.Views;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.Services.Statics;
 using SharpBIM.UIContexts;
 using SharpBIM.UIContexts.Abstracts.Interfaces;
-using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
-using SharpBIM.WPF.Helpers;
 using SharpBIM.WPF.Helpers.Commons;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
+using SharpBIM.GitTracker.Core.WPF.Helpers;
 
-namespace SharpBim.GitTracker.Mvvm.ViewModels
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
     public class DummyListContext : IModel
     {

@@ -1,17 +1,13 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using Microsoft;
-using Org.BouncyCastle.Tls;
-using SharpBim.GitTracker.Mvvm.ViewModels;
-using SharpBim.GitTracker.Mvvm.Views;
-using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.UIContexts;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers;
 using SharpBIM.WPF.Helpers.Commons;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 
-namespace SharpBim.GitTracker.ToolWindows
+namespace SharpBIM.GitTracker.Core.WPF.Views
 {
     public class MainPageViewModel : ModelViewBase
     {

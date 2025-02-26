@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.GitHttp.Models
 {
@@ -29,7 +30,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
 
         public void Save()
         {
-            throw new NotImplementedException();
+            Properties.Settings.Default.USERJSON = this.JSerialize();
+            Properties.Settings.Default.Save();
         }
     }
 }

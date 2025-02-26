@@ -10,7 +10,7 @@ namespace SharpBIM.GitTracker.GitHttp
 {
     public class GitRepos : GitClient
     {
-        //  protected override string endPoint => $"{AppGlobals.user.Installation.account.repos_url}?type=private";
+        //  protected override string endPoint => $"{AppGlobals.User.Installation.account.repos_url}?type=private";
         protected override string endPoint => $"https://api.github.com/user/repos";
 
         internal GitRepos()
@@ -57,11 +57,11 @@ namespace SharpBIM.GitTracker.GitHttp
                 page++;
             }
             if (repos.Any())
-                if (AppGlobals.user.IsPersonalToken)
+                if (AppGlobals.User.IsPersonalToken)
                 {
-                    if (AppGlobals.user.UserAccount == null)
+                    if (AppGlobals.User.UserAccount == null)
                     {
-                        AppGlobals.user.UserAccount = repos.First().owner;
+                        AppGlobals.User.UserAccount = repos.First().owner;
                     }
                 }
             repoReport.Model = repos;

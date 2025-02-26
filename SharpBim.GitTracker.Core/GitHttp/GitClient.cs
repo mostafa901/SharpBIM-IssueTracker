@@ -42,7 +42,7 @@ namespace SharpBIM.GitTracker.GitHttp
         protected virtual string GetEndPoint(string repoName) => endPoint.Replace("REPO", repoName);
 
         protected IGitConfig Config => AppGlobals.Config;
-        public IUser User => AppGlobals.user;
+        public IUser User => AppGlobals.User;
         protected Account Account => User.UserAccount;
 
         public static int RemaingCalls { get; set; } = int.MaxValue;
@@ -172,7 +172,7 @@ namespace SharpBIM.GitTracker.GitHttp
         {
             if (NeedAuthentication)
             {
-                var report = await AuthService.Login(AppGlobals.user);
+                var report = await AuthService.Login(AppGlobals.User);
                 return !report.IsFailed;
             }
             return true;

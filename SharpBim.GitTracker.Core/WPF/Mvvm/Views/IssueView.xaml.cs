@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using SharpBIM.GitTracker.Mvvm.ViewModels;
 using SharpBIM.Utility;
 using SharpBIM.WPF.Controls.UserControls;
 using System.Windows.Ink;
 using System.Windows.Media;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 
-namespace SharpBIM.GitTracker.Mvvm.Views
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
 {
     /// <summary>
     /// Interaction logic for IssueView.xaml

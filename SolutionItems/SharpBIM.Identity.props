@@ -1,0 +1,29 @@
+﻿<Project>
+    <PropertyGroup>
+        <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
+        <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+        <AssemblyVersion>1.0.*</AssemblyVersion>
+        <Authors>Moustafa K. Elsayed</Authors>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <Company>https://github.com/mostafa901</Company>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Copyright>(c) SharpBIM</Copyright>
+        <DebugSymbols>true</DebugSymbols>
+        <Deterministic>false</Deterministic>
+        <EnableTargetFrameworkAlias>true</EnableTargetFrameworkAlias>
+        <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>latest</LangVersion>
+        <NeutralLanguage>en</NeutralLanguage>
+        <OutputType>Library</OutputType>
+        <Product>SharpBIM</Product>
+        <PublishSingleFile>false</PublishSingleFile>
+        <RestorePackages>false</RestorePackages>
+        <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+        <XamlDebuggingInformation>True</XamlDebuggingInformation>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="$(MSBuildProjectDirectory)\obj\*.*" />
+    </ItemGroup>
+</Project>

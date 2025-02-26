@@ -12,6 +12,7 @@ using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
+using System.IO;
 
 namespace SharpBIM.GitTracker.GitHttp
 {

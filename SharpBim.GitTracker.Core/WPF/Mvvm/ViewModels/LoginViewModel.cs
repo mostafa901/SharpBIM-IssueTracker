@@ -1,11 +1,12 @@
-﻿using SharpBim.GitTracker.ToolWindows;
-using SharpBIM.GitTracker.Core.Auth;
+﻿using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers.Commons;
+using SharpBIM.GitTracker.Core.WPF.Views;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
-namespace SharpBim.GitTracker.Mvvm.ViewModels
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
     public class LoginViewModel : ModelViewBase<IUser>
     {

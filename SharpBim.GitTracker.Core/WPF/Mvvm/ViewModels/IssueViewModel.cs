@@ -7,9 +7,6 @@ using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using SharpBim.GitTracker.Mvvm.Models;
-using SharpBim.GitTracker.Mvvm.ViewModels;
-using SharpBim.GitTracker.Mvvm.Views;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Enums;
@@ -20,8 +17,11 @@ using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers.Commons;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.Models;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 
-namespace SharpBIM.GitTracker.Mvvm.ViewModels
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
     public class IssueViewModel : ModelViewBase<IssueModel, IssueViewModel>
     {
