@@ -1,17 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using SharpBim.GitTracker.ToolWindows;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts.QAQC;
 using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Controls.UserControls;
 using SharpBIM.WPF.Helpers.Commons;
+using SharpBIM.WPF.Utilities;
 
-namespace SharpBIM.GitTracker.Mvvm
+namespace SharpBIM.GitTracker.Core.WPF.Views
 {
     /// <summary>
     /// Interaction logic for MainPage.xaml
@@ -29,8 +28,9 @@ namespace SharpBIM.GitTracker.Mvvm
 
         public MainPage()
         {
-            CQC.BreakOnUnObserved = false;
             AppGlobals.AppViewContext = this;
+            ResourceEx.ChangeTheme(true);
+            CQC.BreakOnUnObserved = false;
 
             InitializeComponent();
             DataContext = new MainPageViewModel();

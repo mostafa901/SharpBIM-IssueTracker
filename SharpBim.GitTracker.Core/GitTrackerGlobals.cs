@@ -22,7 +22,7 @@ namespace SharpBIM.GitTracker.Core
 
         public string UriAppName = "SharpBIM-IssueTracker";
         internal IGitConfig Config { get; set; }
-        internal IUser? user { get; set; }
+        internal IUser? User { get; set; }
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }

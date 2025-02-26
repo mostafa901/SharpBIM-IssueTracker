@@ -12,10 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using SharpBim.GitTracker.Mvvm.ViewModels;
 using SharpBIM.WPF.Controls.UserControls;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 
-namespace SharpBim.GitTracker.Mvvm.Views
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
 {
     /// <summary>
     /// Interaction logic for LoginView.xaml

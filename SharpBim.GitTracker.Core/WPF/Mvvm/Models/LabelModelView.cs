@@ -10,7 +10,7 @@ using SharpBIM.WPF.Assets;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers.Commons;
 
-namespace SharpBim.GitTracker.Mvvm.Models
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
 {
     public class LabelModelView : ModelViewBase<GitLabel>
     {

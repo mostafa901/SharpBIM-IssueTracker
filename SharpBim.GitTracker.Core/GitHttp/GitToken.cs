@@ -28,7 +28,7 @@ namespace SharpBIM.GitTracker.GitHttp
 
         #region Private Properties
 
-        private UserToken token => AppGlobals.user.Token;
+        private UserToken token => AppGlobals.User.Token;
 
         #endregion Private Properties
 
@@ -88,8 +88,8 @@ namespace SharpBIM.GitTracker.GitHttp
             var responseJson = report.Model;
 
             User.Token = ParseResponse<UserToken>(responseJson).FirstOrDefault();
-            User.Token.ExpireTime = DateTime.Now.AddSeconds(AppGlobals.user.Token.expires_in);
-            User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(AppGlobals.user.Token.refresh_token_expires_in);
+            User.Token.ExpireTime = DateTime.Now.AddSeconds(AppGlobals.User.Token.expires_in);
+            User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(AppGlobals.User.Token.refresh_token_expires_in);
             return report;
         }
 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpBIM.GitTracker.Mvvm.ViewModels;
 using SharpBIM.UIContexts;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 
-namespace SharpBim.GitTracker.Mvvm.ViewModels
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
     public class SubIssueListViewModel : IssueListViewModel
     {

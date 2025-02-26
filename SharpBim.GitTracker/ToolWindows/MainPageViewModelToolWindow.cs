@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.VisualStudio.Imaging;
-using SharpBIM.GitTracker.Mvvm;
+using SharpBIM.GitTracker.Core.WPF.Views;
 
 namespace SharpBIM.GitTracker.ToolWindows
 {
@@ -13,7 +13,9 @@ namespace SharpBIM.GitTracker.ToolWindows
 
         public override Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
         {
-            return Task.FromResult<FrameworkElement>(new MainPage());
+            return Task.FromResult<FrameworkElement>(
+                new MainPage()
+                );
         }
 
         public override string GetTitle(int toolWindowId) => "SharpBIM";

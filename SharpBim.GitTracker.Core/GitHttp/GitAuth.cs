@@ -76,7 +76,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             }
             try
             {
-                AppGlobals.user = user;
+                AppGlobals.User = user;
 
                 if (!User.IsPersonalToken)
                 {
@@ -129,14 +129,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken)
         {
             var report = new ServiceReport<string>();
-            AppGlobals.user ??= new User();
-            if (AppGlobals.user.UserAccount == null)
+            AppGlobals.User ??= new User();
+            if (AppGlobals.User.UserAccount == null)
             {
                 User.Token.access_token = userAccesToken;
                 User.IsPersonalToken = true;
                 var accountReport = await GetUserAccount();
                 report.Merge(accountReport);
-                AppGlobals.user.UserAccount = accountReport.Model;
+                AppGlobals.User.UserAccount = accountReport.Model;
             }
             return report;
         }
@@ -175,6 +175,11 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             }
             User.UserAccount = User.Installation.account;
             return isInstallReport;
+        }
+
+        internal async Task Login(object user)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Private Methods

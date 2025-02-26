@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if WINDOWS
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 
-namespace SharpBim.GitTracker.Helpers
+namespace SharpBIM.GitTracker.Core.WPF.Helpers
 {
     public static class GitHelper
     {
@@ -84,3 +87,5 @@ namespace SharpBim.GitTracker.Helpers
         }
     }
 }
+
+#endif

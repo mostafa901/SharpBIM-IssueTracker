@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using ICSharpCode.AvalonEdit;
 using Microsoft.Xaml.Behaviors;
+using SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Behaviors;
 
-namespace SharpBIM.GitTracker.Mvvm.Views.Behaviors
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Behaviors
 {
     public sealed class AvalonEditBehaviour : Behavior<TextEditor>
     {
