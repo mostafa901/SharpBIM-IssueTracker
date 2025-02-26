@@ -2,6 +2,7 @@
 using SharpBIM.ServiceContracts.Interfaces;
 using System.Net;
 using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
 
 namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
 {

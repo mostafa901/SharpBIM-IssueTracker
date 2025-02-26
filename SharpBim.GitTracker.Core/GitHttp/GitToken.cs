@@ -116,9 +116,11 @@ namespace SharpBIM.GitTracker.GitHttp
             return report;
         }
 
-        protected override Task<bool> AreWeAuthorized()
+        protected override async Task<bool> AreWeAuthorized()
         {
-            return Task.FromResult(true);
+            if (User.IsPersonalToken)
+                return true;
+            return !(await AuthService.LoadGitConfig()).IsFailed;
         }
     }
 }

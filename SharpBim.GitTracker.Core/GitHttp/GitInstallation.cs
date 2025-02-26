@@ -100,6 +100,11 @@ namespace SharpBIM.GitTracker.GitHttp
             var response = await GET(LimitURL);
         }
 
+        protected override async Task<bool> AreWeAuthorized()
+        {
+            return !(await AuthService.LoadGitConfig()).IsFailed;
+        }
+
         public async Task<IServiceReport<AppModel>> GetApp()
         {
             string url = "https://api.github.com/app";

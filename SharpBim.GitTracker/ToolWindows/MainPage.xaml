@@ -74,28 +74,32 @@
                             Visibility="{Binding CurrentView,
                                                  Converter={Conv:ConvNullVisibility}}" />
         </Grid>
-        <Grid MinWidth="100"
-              MinHeight="100"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Visibility="{Binding ShowProgressBar,
-                                   Converter={Conv:ConvBoolToVisibility}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="prgBarTxt"
-                       Margin="0,5"
-                       HorizontalAlignment="Center"
-                       Text="{Binding ProgressMessage,
-                                      UpdateSourceTrigger=PropertyChanged}"
-                       TextWrapping="Wrap" />
-            <ProgressBar x:Name="prgBar"
-                         Grid.Row="1"
-                         Width="100"
-                         MinHeight="5"
-                         Foreground="{DynamicResource ControlBlueThemeBrush}"
-                         IsIndeterminate="True" />
-        </Grid>
+        <Border MinWidth="100"
+                Padding="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{DynamicResource ControlBackground}"
+                CornerRadius="15"
+                Visibility="{Binding ShowProgressBar,
+                                     Converter={Conv:ConvBoolToVisibility}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="prgBarTxt"
+                           Margin="0,5"
+                           HorizontalAlignment="Center"
+                           Text="{Binding ProgressMessage,
+                                          UpdateSourceTrigger=PropertyChanged}"
+                           TextWrapping="Wrap" />
+                <ProgressBar x:Name="prgBar"
+                             Grid.Row="1"
+                             Width="100"
+                             MinHeight="5"
+                             Foreground="{DynamicResource ControlBlueThemeBrush}"
+                             IsIndeterminate="True" />
+            </Grid>
+        </Border>
     </Grid>
 </uc:SharpBIMUserControl>
