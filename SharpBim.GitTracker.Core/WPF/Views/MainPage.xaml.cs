@@ -1,7 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+﻿global using System.Windows;
+global using System.Windows.Controls;
+global using System.Windows.Navigation;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts.QAQC;
 using SharpBIM.UIContexts;
@@ -45,7 +44,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             Loaded -= MainPage_Loaded;
 
             ViewModel.WindowHandle = this.GetWindow().Handle();
-            await ViewModel.Login(AppGlobals.User);
+            await ViewModel.Login(null);
         }
 
         public async void UpdateProgress(double value, double max, string message, bool isIndeterminate)

@@ -36,17 +36,13 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                <ui:TaggedTextBox Margin="0,0,0,10"
-                                  HorizontalAlignment="Center"
-                                  AcceptsReturn="True"
-                                  Background="Transparent"
-                                  BorderThickness="0"
-                                  FontSize="14"
-                                  Foreground="{DynamicResource ControlFontBrush}"
-                                  IsReadOnly="True"
-                                  IsReadOnlyCaretVisible="False"
-                                  Text="Type your personal token, or Authorize Git Tracker"
-                                  TextWrapping="Wrap" />
+                <TextBlock Margin="0,0,0,10"
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           FontSize="14"
+                           Foreground="{DynamicResource ControlFontBrush}"
+                           Text="Type your personal token, or Authorize Git Tracker"
+                           TextWrapping="Wrap" />
                 <Border Grid.Row="1"
                         Margin="0,0,0,10"
                         Padding="10"

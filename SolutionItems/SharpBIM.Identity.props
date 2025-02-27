@@ -11,8 +11,8 @@
         <DebugSymbols>true</DebugSymbols>
         <Deterministic>false</Deterministic>
         <EnableTargetFrameworkAlias>true</EnableTargetFrameworkAlias>
-        <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+        <ImplicitUsings>disable</ImplicitUsings>
         <LangVersion>latest</LangVersion>
         <NeutralLanguage>en</NeutralLanguage>
         <OutputType>Library</OutputType>

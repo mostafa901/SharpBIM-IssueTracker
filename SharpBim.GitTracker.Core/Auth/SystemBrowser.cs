@@ -51,6 +51,7 @@ namespace SharpBIM.GitTracker.Core.Auth
         )
         {
             var gitOps = options as GitBrowserOptions;
+
             var result = new BrowserResult();
 
             try
@@ -83,6 +84,7 @@ namespace SharpBIM.GitTracker.Core.Auth
 
                         try
                         {
+                            _httpListener.TimeoutManager.RequestQueue = TimeSpan.FromSeconds(gitOps.TimeOut);
                             context = await _httpListener.GetContextAsync();
                         }
                         //if _httpListener is aborted while waiting for response it throws HttpListenerException exception

@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIXSharpBIM.GitTracker", "VSIXProject1\VSIXSharpBIM.GitTracker.csproj", "{1A834861-A60C-49A5-8535-01BE63FD0B6B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker", "SharpBim.GitTracker\SharpBIM.GitTracker.csproj", "{7C9DC9DE-0899-4E9E-A899-10945B57C48D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC} = {77C21FB6-A74C-B4A2-4FD2-1931375D32AC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Core", "SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj", "{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionItems\SharpBIM.Identity.props = SolutionItems\SharpBIM.Identity.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +23,6 @@ Global
 		RWin|Any CPU = RWin|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.DNoWin|Any CPU.ActiveCfg = Release|Any CPU
-		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.DWin|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.DWin|Any CPU.Build.0 = Debug|Any CPU
-		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.RNoWin|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.RWin|Any CPU.ActiveCfg = Release|Any CPU
-		{1A834861-A60C-49A5-8535-01BE63FD0B6B}.RWin|Any CPU.Build.0 = Release|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DNoWin|Any CPU.ActiveCfg = Release|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DWin|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DWin|Any CPU.Build.0 = Debug|Any CPU

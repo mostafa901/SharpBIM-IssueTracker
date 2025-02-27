@@ -4,7 +4,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.VisualStudio.Text;
-using SharpBIM.GitTracker;
+using SharpBim.GitTracker;
+using SharpBIM.GitTracker.ToolWindows;
 
 namespace SharpBIM.GitTracker
 {

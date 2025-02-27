@@ -172,7 +172,7 @@ namespace SharpBIM.GitTracker.GitHttp
         {
             if (NeedAuthentication)
             {
-                var report = await AuthService.Login(AppGlobals.User);
+                var report = await AuthService.Login();
                 return !report.IsFailed;
             }
             return true;
