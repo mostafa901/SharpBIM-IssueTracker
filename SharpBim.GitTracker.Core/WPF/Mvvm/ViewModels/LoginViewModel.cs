@@ -12,7 +12,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
     {
         public LoginViewModel()
         {
-            AuthService.Login(AppGlobals.User);
             AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), "Authorize", Glyphs.empty, (x) => true);
             CancelCommand = new SharpBIMCommand(Cancel, "Cancel", Glyphs.empty, (x) => true);
         }
@@ -53,8 +52,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 if (string.IsNullOrEmpty(StoredToken))
                 {
                     // this is to rest the authentication and reautherize if needed
-                    AppGlobals.User = new User();
-                    var login = await AuthService.Login(AppGlobals.User);
+                    AppGlobals.User = new GitUser();
+                    var login = await AuthService.Login();
                     if (login.IsFailed)
                     {
                         AppGlobals.MsgService.AlertUser(WindowHandle, "Login failed", login.ErrorMessage);
@@ -103,7 +102,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         private void SaveUser()
         {
-            Properties.Settings.Default.USERJSON = AppGlobals.User.JSerialize();
+            AppGlobals.User.Save();
         }
     }
 }

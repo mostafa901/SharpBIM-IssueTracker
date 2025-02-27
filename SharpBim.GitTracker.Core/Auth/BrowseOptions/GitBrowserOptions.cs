@@ -15,6 +15,8 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
         {
         }
 
+        public virtual int TimeOut => 15; // 15 seconds
+
         public abstract bool Validate(HttpListenerContext listener);
     }
 }

@@ -1,8 +1,9 @@
 ﻿using SharpBIM.GitTracker.Core.Auth;
+using SharpBIM.ServiceContracts.Interfaces;
 
 namespace SharpBIM.GitTracker.Core.Auth
 {
-    public interface IUser
+    public interface IUser : ISharpUser
     {
         public void Save();
 

@@ -43,21 +43,25 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
 
-                var gitconfReport = await AuthService.LoadGitConfig();
-                if (gitconfReport.IsFailed)
-                {
-                    AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't login", gitconfReport.ErrorMessage);
-                }
+                //var gitconfReport = await AuthService.LoadGitConfig();
+                //if (gitconfReport.IsFailed)
+                //{
+                //    AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't login", gitconfReport.ErrorMessage);
+                //}
 
-                bool grantted = !gitconfReport.IsFailed;
+                //bool grantted = !gitconfReport.IsFailed;
+
+                bool grantted = AppGlobals.User.LoggedIn;
                 if (grantted)
                 {
-                    var accessReport = await AuthService.Login(AppGlobals.User);
+                    var accessReport = await AuthService.Login();
                     grantted = !(accessReport.IsFailed);
                 }
 
                 if (!grantted)
                 {
+                    AppGlobals.User.LoggedIn = false;
+                    AppGlobals.User.Save();
                     ShowLoginScreenCommand.Hint = "Login";
                     ShowLoginScreenCommand.Icon = Glyphs.login;
                     ShowLoginScreenCommand.Appearance = ButtonType.Transparent;
@@ -82,7 +86,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             try
             {
                 var vm = new LoginViewModel() { ParentModelView = this };
-                vm.AlreadyLoggedIn = x == null ? true : (!((bool)x) || ((await AuthService.Login(AppGlobals.User)).IsFailed));
+                vm.AlreadyLoggedIn = AppGlobals.User.LoggedIn;
 
                 vm.LoggedIn += ViewModel_LoggedIn;
                 CurrentView = new LoginView();
@@ -107,6 +111,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
 
         public async void ViewModel_LoggedIn(object sender, EventArgs e)
         {
+            AppGlobals.User.LoggedIn = true;
             AppGlobals.User.Save();
             IsLoginScreen = false;
             CurrentView = null;

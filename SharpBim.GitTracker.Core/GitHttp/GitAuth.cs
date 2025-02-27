@@ -63,21 +63,16 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return configReport;
         }
 
-        public async Task<IServiceReport<string>> Login(IUser user)
+        public async Task<IServiceReport<string>> Login()
         {
             var report = new ServiceReport<string>();
-            if (user == null)
-            {
-                return report.Failed("User must not be null");
-            }
+
             if ((await LoadGitConfig()).IsFailed)
             {
                 return report.Failed("Application missing credentials");
             }
             try
             {
-                AppGlobals.User = user;
-
                 if (!User.IsPersonalToken)
                 {
                     var isInstalledRep = await IsGitTrackerInstalled();
@@ -129,7 +124,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken)
         {
             var report = new ServiceReport<string>();
-            AppGlobals.User ??= new User();
+            AppGlobals.User ??= new GitUser();
             if (AppGlobals.User.UserAccount == null)
             {
                 User.Token.access_token = userAccesToken;
@@ -150,6 +145,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var isInstallReport = new ServiceReport<string>();
             if (User.Installation == null)
             {
+                // check if the app already authorized
                 var getAppRep = await InstallService.GetApp();
                 if (getAppRep.IsFailed)
                 {
@@ -175,11 +171,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             }
             User.UserAccount = User.Installation.account;
             return isInstallReport;
-        }
-
-        internal async Task Login(object user)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion Private Methods

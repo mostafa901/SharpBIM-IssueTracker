@@ -20,36 +20,6 @@ namespace SharpBIM.GitTracker.GitHttp
     {
         protected override string endPoint => "https://api.github.com/app/installations";
 
-        private string GenerateJwtToken()
-        {
-            var securityKey = new RsaSecurityKey(LoadRsaPrivateKey());
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
-
-            var header = new JwtHeader(credentials);
-            var payload = new JwtPayload
-        {
-            { "iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds() }, // Issued at time
-            { "exp", DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds() }, // Expiration time
-            { "iss", Config.ClientId } // GitHub App's client ID
-        };
-
-            var token = new JwtSecurityToken(header, payload);
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public RSA LoadRsaPrivateKey()
-        {
-            using var reader = new StringReader(Config.PrivateKey);
-            var pemReader = new PemReader(reader);
-            var keyPair = pemReader.ReadObject() as AsymmetricCipherKeyPair;
-
-            if (keyPair == null)
-                throw new Exception("Invalid RSA private key format.");
-
-            var privateKey = keyPair.Private as Org.BouncyCastle.Crypto.Parameters.RsaPrivateCrtKeyParameters;
-            return privateKey != null ? DotNetUtilities.ToRSA(privateKey) : throw new Exception("Failed to load RSA key.");
-        }
-
         protected override bool NeedAuthentication => false;
 
         public GitInstallation()
@@ -62,7 +32,7 @@ namespace SharpBIM.GitTracker.GitHttp
         protected override void AddHeaders(HttpRequestMessage request)
         {
             base.AddHeaders(request);
-            string jwtToken = GenerateJwtToken();
+            string jwtToken = Config.PrivateKey;
             request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, jwtToken);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
         }
@@ -123,9 +93,9 @@ namespace SharpBIM.GitTracker.GitHttp
 
         public async Task<bool> RequestInstalling()
         {
-            // check if the app already authorized
             var brw = new SystemBrowser();
             var gitOps = new GitInstallOptions();
+
             var res = await brw.InvokeAsync(gitOps);
             if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
             {

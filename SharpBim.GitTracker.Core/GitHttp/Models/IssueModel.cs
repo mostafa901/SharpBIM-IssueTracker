@@ -1,4 +1,5 @@
-﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
+﻿using System;
+using SharpBIM.UIContexts.Abstracts.Interfaces;
 
 public class IssueModel : IModel
 {

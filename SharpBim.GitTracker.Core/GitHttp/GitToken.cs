@@ -41,6 +41,7 @@ namespace SharpBIM.GitTracker.GitHttp
             // check if the app already authorized
             var brw = new SystemBrowser();
             var gitOps = new GitLoginOptions();
+            gitOps.DisplayMode = IdentityModel.OidcClient.Browser.DisplayMode.Hidden;
 
             var res = await brw.InvokeAsync(gitOps);
             var report = new ServiceReport<string>();

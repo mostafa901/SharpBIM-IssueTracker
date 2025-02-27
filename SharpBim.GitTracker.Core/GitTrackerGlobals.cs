@@ -1,14 +1,17 @@
 ﻿global using static SharpBIM.GitTracker.Core.GitTrackerGlobals;
+global using System;
+global using Task = System.Threading.Tasks.Task;
+global using System.Threading.Tasks;
+global using System.Linq;
+global using System.Collections.Generic;
+
+global using System.Collections.ObjectModel;
+
 using SharpBIM.GitTracker.Core.GitHttp;
 using SharpBIM.GitTracker.GitHttp;
-using SharpBIM.GitTracker.Core.Auth;
-using SharpBIM.GitTracker.Core;
-using SharpBIM.GitTracker;
 using SharpBIM.Services;
 using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
-using System.Threading.Tasks;
-using SharpBIM.ServiceContracts.Interfaces;
-using SharpBIM.ServiceContracts;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
 namespace SharpBIM.GitTracker.Core
 {
@@ -22,7 +25,7 @@ namespace SharpBIM.GitTracker.Core
 
         public string UriAppName = "SharpBIM-IssueTracker";
         internal IGitConfig Config { get; set; }
-        internal IUser? User { get; set; }
+        internal GitUser User { get; set; }
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }
@@ -33,6 +36,7 @@ namespace SharpBIM.GitTracker.Core
         static GitTrackerGlobals()
         {
             AppGlobals = new GitTrackerGlobals();
+            AppGlobals.User = GitUser.Parse();
         }
 
         public GitTrackerGlobals()

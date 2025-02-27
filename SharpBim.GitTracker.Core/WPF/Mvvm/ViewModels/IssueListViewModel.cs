@@ -114,8 +114,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 SetValue(value, nameof(SelectedRepo));
                 if (!string.IsNullOrEmpty(value?.name))
                 {
-                    Properties.Settings.Default.LastRepoName = value.name;
-                    Properties.Settings.Default.Save();
+                    AppGlobals.User.LastRepoName = value.name;
+                    AppGlobals.User.Save();
                 }
                 LoadIssuesAsync(null);
             }
@@ -321,7 +321,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             try
             {
                 LoggedIn = false;
-                var loginReport = await AuthService.Login(AppGlobals.User);
+                var loginReport = await AuthService.Login();
                 if (loginReport.IsFailed)
                 {
                     throw new Exception(loginReport.ErrorMessage);
@@ -378,7 +378,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 }
 
                 var repos = getRepoReport.Model;
-                string storedName = Properties.Settings.Default.LastRepoName;
+                string storedName = AppGlobals.User.LastRepoName;
                 SelectedRepo = string.IsNullOrEmpty(storedName) ? repos.FirstOrDefault() : repos.FirstOrDefault(o => o.name == storedName);
 
                 foreach (var repo in repos)
