@@ -99,7 +99,6 @@ namespace SharpBIM.GitTracker.GitHttp
             var res = await brw.InvokeAsync(gitOps);
             if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
             {
-                // User.InstallationId = gitOps.InstallationId;
                 return !string.IsNullOrEmpty(gitOps.InstallationId);
             }
             return false;
