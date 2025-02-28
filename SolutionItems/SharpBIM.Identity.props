@@ -22,8 +22,4 @@
         <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
         <XamlDebuggingInformation>True</XamlDebuggingInformation>
     </PropertyGroup>
-
-    <ItemGroup>
-        <Compile Remove="$(MSBuildProjectDirectory)\obj\*.*" />
-    </ItemGroup>
 </Project>

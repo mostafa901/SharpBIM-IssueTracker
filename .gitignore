@@ -2,3 +2,4 @@
 bin
 obj
 SharpBim.GitTracker.Core/Study
+SharpBim.GitTracker/GitPublish
