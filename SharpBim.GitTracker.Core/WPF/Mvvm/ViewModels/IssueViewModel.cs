@@ -310,8 +310,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     else
                     {
                         // this is a new image that needs uploading
-
-                        var report = await IssuesService.UploadImageAsync(SelectedRepo.name, key);
+                        var report = await IssuesService.UploadImageAsync(SelectedRepo.name, key, SelectedRepo.default_branch);
                         if (report.IsFailed)
                         {
                             markdownreport.Failed(report.ErrorMessage);
