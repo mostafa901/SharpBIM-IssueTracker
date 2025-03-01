@@ -1,6 +1,6 @@
 ![GitTracker_RepoCard](https://github.com/user-attachments/assets/a1a55b43-dc66-4c24-961a-c99ee8d9d987)
 
-# 🚀 SharpBIM.GitTracker v1.0.0 – Initial Release (beta version)  
+# 🚀 SharpBIM.GitTracker v0.55.0 – Initial Release (beta version)  
 
 ![image](https://github.com/user-attachments/assets/83bfad31-5ddc-4ffc-b2ca-e75c0af3b965)
 
