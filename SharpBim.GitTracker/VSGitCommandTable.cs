@@ -12,21 +12,22 @@ namespace SharpBim.GitTracker
     /// </summary>
     internal sealed partial class PackageGuids
     {
-        public const string SharpBIMGitTrackerString = "3f0acd17-c5e8-42a1-babb-9e81f813533c";
-        public static Guid SharpBIMGitTracker = new Guid(SharpBIMGitTrackerString);
+        public const string IconListString = "6f986d7f-725a-4a39-8a0e-5b668c90bed0";
+        public static Guid IconList = new Guid(IconListString);
 
-        public const string guidSHLMainMenuString = "d309f791-903f-11d0-9efc-00a0c911004f";
-        public static Guid guidSHLMainMenu = new Guid(guidSHLMainMenuString);
+        public const string SharpBIMGitTrackerPackageString = "7db12793-ba27-49f2-8664-ebcab7bb8ceb";
+        public static Guid SharpBIMGitTrackerPackage = new Guid(SharpBIMGitTrackerPackageString);
 
-        public const string guidKnownImageIdsString = "ae27a6b0-e345-4288-96df-5eaf394ee369";
-        public static Guid guidKnownImageIds = new Guid(guidKnownImageIdsString);
+        public const string ShowTrackerWindowCommandGuidString = "89b9a33a-9d0c-494b-a1bc-7b5ddda5a3ec";
+        public static Guid ShowTrackerWindowCommandGuid = new Guid(ShowTrackerWindowCommandGuidString);
     }
     /// <summary>
     /// Helper class that encapsulates all CommandIDs uses across VS Package.
     /// </summary>
     internal sealed partial class PackageIds
     {
-        public const int MyMenuGroup = 0x0001;
+        public const int GitWindowImg = 0x0001;
+        public const int MyMenuGroup = 0x1020;
         public const int ShowTrackerWindowCommand = 0x0100;
     }
 }

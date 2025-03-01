@@ -7,12 +7,12 @@ namespace SharpBim.GitTracker
 {
     internal sealed partial class Vsix
     {
-        public const string Id = "SharpBIM.GitTracker.5092b9ba-e35d-4c64-b831-b34fda31135b";
+        public const string Id = "SharpBIM.GitTracker.201D8256-D3A5-4AAC-9911-DA17EF82BB0D";
         public const string Name = "GitTracker";
-        public const string Description = @"A beta version application designed to help users visualize and manage issues within Visual Studio. It provides a streamlined interface for tracking and addressing common problems, offering an intuitive way to view issue details and take action directly from the application";
+        public const string Description = @"An  application designed to help users visualize and manage issues within Visual Studio. It provides a streamlined interface for tracking and addressing common problems, offering an intuitive way to view issue details and take action directly from the application.";
         public const string Language = "en-US";
-        public const string Version = "1.0";
+        public const string Version = "0.5";
         public const string Author = "SharpBIM";
-        public const string Tags = "";
+        public const string Tags = "issue, Tracker, Github Issues, tickets";
     }
 }

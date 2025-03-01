@@ -8,7 +8,6 @@ global using System.Collections.Generic;
 global using System.Collections.ObjectModel;
 
 using SharpBIM.GitTracker.Core.GitHttp;
-using SharpBIM.GitTracker.GitHttp;
 using SharpBIM.Services;
 using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
 using SharpBIM.GitTracker.Core.GitHttp.Models;

@@ -18,8 +18,9 @@ using System.Web;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.GitHttp.Events;
 using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
-namespace SharpBIM.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public static class MediaTypes
     {

@@ -4,8 +4,9 @@ using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
+using SharpBIM.Services;
 
-namespace SharpBIM.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.Core.GitHttp
 {
     /// <summary>
     /// Reference https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
@@ -24,17 +25,11 @@ namespace SharpBIM.GitTracker.GitHttp
 
         protected override string endPoint => $"https://github.com/login/oauth/access_token";
 
+        protected override bool NeedAuthentication => false;
+
         #endregion Protected Properties
 
-        #region Private Properties
-
-        private UserToken token => AppGlobals.User.Token;
-
-        #endregion Private Properties
-
         #region Public Methods
-
-        protected override bool NeedAuthentication => false;
 
         public async Task<IServiceReport<string>> AuthorizeApp()
         {
@@ -79,6 +74,23 @@ namespace SharpBIM.GitTracker.GitHttp
 
         #endregion Public Methods
 
+        #region Protected Methods
+
+        protected override void AddHeaders(HttpRequestMessage request)
+        {
+            base.AddHeaders(request);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
+        }
+
+        protected override async Task<bool> AreWeAuthorized()
+        {
+            if (User.IsPersonalToken)
+                return true;
+            return !(await AuthService.LoadGitConfig()).IsFailed;
+        }
+
+        #endregion Protected Methods
+
         #region Private Methods
 
         private async Task<IServiceReport<string>> RequestToken(string url, object requestBody)
@@ -88,40 +100,12 @@ namespace SharpBIM.GitTracker.GitHttp
                 return report;
             var responseJson = report.Model;
 
-            User.Token = ParseResponse<UserToken>(responseJson).FirstOrDefault();
+            User.Token = ParseResponse<SharpToken>(responseJson).FirstOrDefault();
             User.Token.ExpireTime = DateTime.Now.AddSeconds(AppGlobals.User.Token.expires_in);
             User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(AppGlobals.User.Token.refresh_token_expires_in);
             return report;
         }
 
         #endregion Private Methods
-
-        protected override void AddHeaders(HttpRequestMessage request)
-        {
-            base.AddHeaders(request);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
-        }
-
-        public async Task<IServiceReport<string>> CheckToken(string access_token)
-        {
-            string url = $"https://api.github.com/rate_limit";
-            ////    string authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{Config.ClientId}:{Config.ClientSecret}"));
-            ////    RequestAuth = new AuthenticationHeaderValue("Basic", authToken);
-            //var body = new
-            //{
-            //    access_token
-            //};
-
-            var report = await GET(url, null);
-
-            return report;
-        }
-
-        protected override async Task<bool> AreWeAuthorized()
-        {
-            if (User.IsPersonalToken)
-                return true;
-            return !(await AuthService.LoadGitConfig()).IsFailed;
-        }
     }
 }
