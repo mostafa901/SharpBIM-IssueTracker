@@ -1,16 +1,24 @@
- # SharpBIM.GitTracker  
+![GitTracker_RepoCard](https://github.com/user-attachments/assets/a1a55b43-dc66-4c24-961a-c99ee8d9d987)
 
-**SharpBIM.GitTracker** is a Visual Studio extension designed to simplify issue tracking and management directly within your development environment. It provides a streamlined and intuitive interface for visualizing issues, making it easier to stay organized while working on your projects.  
+# 🚀 SharpBIM.GitTracker v1.0.0 – Initial Release (beta version)  
 
-## Features  
-- ✅ View and track issues from your GitHub repository within Visual Studio  
-- ✅ Create new issues and sub-issues seamlessly  
-- ✅ Edit, label, and manage existing issues  
-- ✅ Close resolved issues efficiently  
-- ✅ Free to use, with ongoing improvements  
+![image](https://github.com/user-attachments/assets/83bfad31-5ddc-4ffc-b2ca-e75c0af3b965)
 
-The app is currently limited to personal GitHub accounts, but I’m open to expanding its capabilities based on user feedback. If you encounter any bugs or need additional features, feel free to reach out or add an issue on the repository.  
+## 🔥 Features & Functionality  
+- 📌 **Issue Tracking** – View GitHub issues directly in Visual Studio  
+- ➕ **Create New Issues & Sub-Issues** – Easily add and manage tasks  
+- ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
+- ✅ **Close Issues** – Mark issues as resolved within the extension  
 
-Your input is valuable—I’m happy to help improve the tool! 🚀  
-![2025-02-26 20_33_26-](https://github.com/user-attachments/assets/25c42cb1-fca2-4dec-b316-1928873fdc0f)
-![2025-02-26 20_34_25-](https://github.com/user-attachments/assets/dc32c154-52d0-4ef5-bfff-d282448196e4)
+![image](https://github.com/user-attachments/assets/e928d04a-a33f-42f3-b0dd-c17246396f36)
+
+## ⚠️ Limitations  
+- Currently supports **only personal GitHub accounts**  
+- Some UI elements are still **work in progress** (e.g., issue details page improvements)  
+
+## 🛠️ What’s Next?  
+- Enhancing the **issue detail page** with a more attractive UI  
+- Support for **organization repositories**  
+- Additional filtering and sorting options  
+
+If you find any bugs or have feature requests, please **report an issue** in the repository! 🚀  
