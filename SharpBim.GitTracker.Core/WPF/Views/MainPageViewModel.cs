@@ -6,6 +6,7 @@ using SharpBIM.WPF.Helpers;
 using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
+using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.WPF.Views
 {
@@ -20,6 +21,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             NavigateBackCommand = new SharpBIMCommand(NavigateBack, "NavigateBack", Glyphs.empty, (x) => true);
             NavigateForwardCommand = new SharpBIMCommand(NavigateForward, "Navigate Forward", Glyphs.empty, (x) => true);
             ShowLoginScreenCommand = new SharpBIMCommand(async (x) => await ShowLoginScreen(null), "Login", Glyphs.login, (x) => true);
+            FeedBackCommand = new SharpBIMCommand(FeedBack, "Feedback", Glyphs.notification, (x) => true);
             IsLoginScreen = true;
         }
 
@@ -37,19 +39,26 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             set { SetValue(value, nameof(ProgressMessage)); }
         }
 
+        public SharpBIMCommand FeedBackCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public void FeedBack(object x)
+        {
+            try
+            {
+                IOEx.OpenUrl("https://github.com/mostafa901/SharpBIM.GitTracker/issues");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         public async Task Login(object x)
         {
             try
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
-
-                //var gitconfReport = await AuthService.LoadGitConfig();
-                //if (gitconfReport.IsFailed)
-                //{
-                //    AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't login", gitconfReport.ErrorMessage);
-                //}
-
-                //bool grantted = !gitconfReport.IsFailed;
 
                 bool grantted = AppGlobals.User.LoggedIn;
                 if (grantted)
@@ -64,7 +73,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                     AppGlobals.User.Save();
                     ShowLoginScreenCommand.Hint = "Login";
                     ShowLoginScreenCommand.Icon = Glyphs.login;
-                    ShowLoginScreenCommand.Appearance = ButtonType.Transparent;
                     await ShowLoginScreen(grantted);
                 }
                 else
@@ -117,7 +125,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             CurrentView = null;
             ShowLoginScreenCommand.Icon = Glyphs.logout;
             ShowLoginScreenCommand.Hint = "Logout";
-            ShowLoginScreenCommand.Appearance = ButtonType.Success;
             var vm = new IssueListViewModel() { ParentModelView = this, LoggedIn = true };
             AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
             await vm.ReloadRepos(null);

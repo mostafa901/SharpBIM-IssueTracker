@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="SharpBIM.GitTracker.5092b9ba-e35d-4c64-b831-b34fda31135b" Version="1.0" Language="en-US" Publisher="SharpBIM" />
+        <Identity Id="SharpBIM.GitTracker.201D8256-D3A5-4AAC-9911-DA17EF82BB0D" Version="0.5" Language="en-US" Publisher="SharpBIM" />
         <DisplayName>GitTracker</DisplayName>
-        <Description xml:space="preserve">A beta version application designed to help users visualize and manage issues within Visual Studio. It provides a streamlined interface for tracking and addressing common problems, offering an intuitive way to view issue details and take action directly from the application</Description>
-        <MoreInfo>https://sharpbim.hashnode.dev/</MoreInfo>
-        <Icon>Resources\ticket.png</Icon>
-        <PreviewImage>Resources\ScreenShot.png</PreviewImage>
-        <Preview>true</Preview>
+        <Description xml:space="preserve">An  application designed to help users visualize and manage issues within Visual Studio. It provides a streamlined interface for tracking and addressing common problems, offering an intuitive way to view issue details and take action directly from the application.</Description>
+        <MoreInfo>https://github.com/mostafa901/SharpBIM.GitTracker</MoreInfo>
+        <ReleaseNotes>Release_Notes.md</ReleaseNotes>
+        <Icon>ticket.png</Icon>
+        <PreviewImage>ticket.png</PreviewImage>
+        <Tags>issue, Tracker, Github Issues, tickets</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">

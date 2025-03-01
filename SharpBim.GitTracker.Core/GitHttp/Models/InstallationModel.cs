@@ -1,4 +1,6 @@
-﻿public class InstallationModel
+﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
+public class InstallationModel
 {
     public int id { get; set; }
     public string client_id { get; set; }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
 namespace SharpBIM.GitTracker.Core.JsonConverters
 {

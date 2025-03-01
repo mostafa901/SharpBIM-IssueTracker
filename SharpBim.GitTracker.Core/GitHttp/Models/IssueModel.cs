@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
+using System;
 using SharpBIM.UIContexts.Abstracts.Interfaces;
 
 public class IssueModel : IModel

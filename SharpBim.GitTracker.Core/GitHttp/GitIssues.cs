@@ -9,13 +9,14 @@ using System.Text.Json;
 using System.Web;
 using Microsoft.Web.WebView2.Core;
 using SharpBIM.GitTracker.Core.Enums;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.GitTracker.Core.JsonConverters;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.UIContexts;
 using SharpBIM.Utility.Extensions;
 
-namespace SharpBIM.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitLables : GitClient
     {

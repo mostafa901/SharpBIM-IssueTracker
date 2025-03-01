@@ -1,9 +1,10 @@
 ﻿using System.Net.Http;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.UIContexts;
 
-namespace SharpBIM.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitContents : GitClient
     {

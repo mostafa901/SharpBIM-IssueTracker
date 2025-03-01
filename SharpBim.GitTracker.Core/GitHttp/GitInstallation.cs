@@ -14,7 +14,7 @@ using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 using System.IO;
 
-namespace SharpBIM.GitTracker.GitHttp
+namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitInstallation : GitClient
     {

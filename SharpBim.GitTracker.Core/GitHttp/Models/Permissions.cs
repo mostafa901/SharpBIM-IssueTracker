@@ -1,4 +1,6 @@
-﻿public class Permissions
+﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
+public class Permissions
 {
     public bool admin { get; set; }
     public bool maintain { get; set; }

@@ -10,6 +10,7 @@ using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.WPF.Helpers;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {

@@ -21,6 +21,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
@@ -30,7 +31,14 @@
                              ShowText="False"
                              Visibility="{Binding IsLoginScreen,
                                                   Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
-                <StackPanel Grid.Column="1"
+                <ui:UIButton Grid.Column="1"
+                             Width="25"
+                             Command="{Binding FeedBackCommand}"
+                             GlyphSize="25"
+                             ShowText="False"
+                             Visibility="{Binding IsLoginScreen,
+                                                  Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
+                <StackPanel Grid.Column="2"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
 

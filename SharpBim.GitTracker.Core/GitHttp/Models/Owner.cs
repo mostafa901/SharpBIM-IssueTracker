@@ -1,4 +1,6 @@
-﻿public class Account
+﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
+public class Account
 {
     public string login { get; set; }
     public int id { get; set; }

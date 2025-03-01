@@ -1,4 +1,6 @@
-﻿public class Reactions
+﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
+public class Reactions
 {
     public string url { get; set; }
     public int total_count { get; set; }

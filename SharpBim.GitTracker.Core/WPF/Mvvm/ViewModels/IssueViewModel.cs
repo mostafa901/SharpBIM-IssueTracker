@@ -20,6 +20,7 @@ using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Models;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {

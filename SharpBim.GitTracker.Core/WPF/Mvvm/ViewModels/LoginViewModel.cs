@@ -86,6 +86,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     else
                     {
                         AppGlobals.User.IsPersonalToken = false;
+                        AppGlobals.User.LoggedIn = true;
                     }
                     SaveUser();
                     LoggedIn?.Invoke(this, null);

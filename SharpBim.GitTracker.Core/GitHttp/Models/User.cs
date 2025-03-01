@@ -1,7 +1,11 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.ServiceContracts.Interfaces;
+using SharpBIM.Services;
 using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.GitHttp.Models
@@ -9,13 +13,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
     internal class GitUser : IUser
     {
         public bool IsPersonalToken { get; set; }
-        public UserToken Token { get; set; }
         public InstallationModel Installation { get; set; }
         public Account UserAccount { get; set; }
 
         public GitUser()
         {
-            Token = new UserToken();
+            Token = new SharpToken();
         }
 
         private static string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppGlobals.CompanyName, "GitTrackerConfig.json");
@@ -27,8 +30,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public string Password { get; set; }
         public int Version { get; set; }
         public string HashedPassword { get; set; }
-        IUserToken ISharpUser.Token { get; set; }
+
         public bool LoggedIn { get; set; }
+
+        public SharpToken Token { get; set; }
 
         public static GitUser? Parse()
         {

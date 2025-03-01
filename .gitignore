@@ -3,3 +3,5 @@ bin
 obj
 SharpBim.GitTracker.Core/Study
 SharpBim.GitTracker/GitPublish
+Sinf.ps1
+SharpBim.GitTracker.nrproj

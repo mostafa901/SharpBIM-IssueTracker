@@ -1,4 +1,6 @@
-﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
+﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
+using SharpBIM.UIContexts.Abstracts.Interfaces;
 
 public class RepoModel : IModel
 {

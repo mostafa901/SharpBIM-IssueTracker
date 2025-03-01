@@ -1,5 +1,7 @@
 ﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
 
+namespace SharpBIM.GitTracker.Core.GitHttp.Models;
+
 public class GitLabel : IModel
 {
     public long Id { get; set; }

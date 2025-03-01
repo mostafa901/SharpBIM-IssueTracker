@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SharpBIM.UIContexts;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {

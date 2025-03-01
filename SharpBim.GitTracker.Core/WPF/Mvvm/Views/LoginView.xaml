@@ -21,8 +21,9 @@
         </Grid.RowDefinitions>
         <Image HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
-               Source="/SharpBIM.GitTracker.Core;component/Resources/ticket.png" />
+               Source="/SharpBIM.GitTracker.Core;component/Resources/tickets_1500x1500.png" />
         <Grid Grid.Row="1"
+              Margin="0,20,0,0"
               VerticalAlignment="Center">
 
             <Grid.RowDefinitions>

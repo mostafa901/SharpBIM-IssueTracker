@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.UIContexts;
 using SharpBIM.Utility;
 using SharpBIM.WPF.Assets;

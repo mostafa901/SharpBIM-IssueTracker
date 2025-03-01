@@ -1,8 +1,8 @@
-﻿using SharpBIM.GitTracker.GitHttp;
-using SharpBIM.ServiceContracts.Interfaces;
+﻿using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
+using SharpBIM.GitTracker.Core.GitHttp;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {

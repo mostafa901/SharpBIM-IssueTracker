@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <Extern href="stdidcmd.h" />
+    <Extern href="vsshlids.h" />
+    <Include href="KnownImageIds.vsct" />
+    <Include href="VSGlobals.vsct" />
+
+    <Commands package="SharpBIMGitTrackerPackage">
+        <Groups>
+            <Group guid="ShowTrackerWindowCommandGuid" id="MyMenuGroup" priority="0x0600">
+                <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
+            </Group>
+        </Groups>
+
+        <Buttons>
+            <Button guid="ShowTrackerWindowCommandGuid" id="ShowTrackerWindowCommand" priority="0x0100" type="Button">
+                <Parent guid="ShowTrackerWindowCommandGuid" id="MyMenuGroup" />
+                <!--<Icon guid="ImageCatalogGuid" id="ButtonClick" />-->
+                <Icon guid="IconList" id="GitWindowImg" />
+
+                <Strings>
+                    <ButtonText>GiTracker Window</ButtonText>
+                </Strings>
+            </Button>
+        </Buttons>
+
+        <Bitmaps>
+            <Bitmap guid="IconList" href="Resources\tickets2_16.ico" usedList="GitWindowImg" />
+        </Bitmaps>
+    </Commands>
+
+    <KeyBindings>
+        <KeyBinding guid="ShowTrackerWindowCommandGuid" id="ShowTrackerWindowCommand" editor="guidVSStd2K" key1="VK_J" mod1="Alt" />
+    </KeyBindings>
+    <Symbols>
+        <GuidSymbol name="IconList" value="{6F986D7F-725A-4A39-8A0E-5B668C90BED0}">
+            <IDSymbol name="GitWindowImg" value="1" />
+        </GuidSymbol>
+        <GuidSymbol name="SharpBIMGitTrackerPackage" value="{7DB12793-BA27-49F2-8664-EBCAB7BB8CEB}" />
+        <GuidSymbol name="ShowTrackerWindowCommandGuid" value="{89B9A33A-9D0C-494B-A1BC-7B5DDDA5A3EC}">
+            <IDSymbol name="MyMenuGroup" value="0x1020" />
+            <IDSymbol name="ShowTrackerWindowCommand" value="0x0100" />
+        </GuidSymbol>
+    </Symbols>
+</CommandTable>
