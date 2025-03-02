@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
         <Image HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
-               Source="/SharpBIM.GitTracker.Core;component/Resources/tickets_1500x1500.png" />
+               Source="/SharpBIM.GitTracker.Core;component/Resources/tickets_Login.png" />
         <Grid Grid.Row="1"
               Margin="0,20,0,0"
               VerticalAlignment="Center">
@@ -42,7 +42,7 @@
                            Background="Transparent"
                            FontSize="14"
                            Foreground="{DynamicResource ControlFontBrush}"
-                           Text="Type your personal token, or Authorize Git Tracker"
+                           Text="Type your personal token, or Authorize Issue Tracker"
                            TextWrapping="Wrap" />
                 <Border Grid.Row="1"
                         Margin="0,0,0,10"

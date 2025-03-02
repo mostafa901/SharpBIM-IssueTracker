@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json.schemastore.org/vsix-publish",
+    "categories": [ "Documentation", "SourceControl" ], // The categories of the extension. Between 1 and 3 categories are required.
+    "identity": {
+        "internalName": "SharpBIMGitTracker", // If not specified, we try to generate the name from the display name of the extension in the vsixmanifest file.
+        // Required if the display name is not the actual name of the extension.
+
+        "Icon": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker\\IssueTracker_128x128.png"
+    },
+    "overview": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker\\OverView.md", // Path to the "readme" file that gets uploaded to the Marketplace. Required.
+    "priceCategory": "free", // Either "free", "trial", or "paid". Defaults to "free".
+    "publisher": "SharpBIM", // The name of the publisher. Required.
+    "private": false, // Specifies whether or not the extension should be public when uploaded. Defaults to false.
+    "qna": true, // Specifies whether or not the extension should have a Q&A section. Defaults to true.
+    "repo": "https://github.com/mostafa901/SharpBIM.GitTracker", // Not required.
+    "assetFiles": [
+        {
+            "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\GitTracker_RepoCard.png",
+            "targetPath": "images/GitTracker_RepoCard.png"
+        },
+        {
+            "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\OverView_Header.png",
+            "targetPath": "Images/OverView_Header.png"
+        },
+        {
+            "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\OverView_CreateIssue.png",
+            "targetPath": "Images/OverView_CreateIssue.png"
+        },
+
+        {
+            "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\overview_login.png",
+            "targetPath": "Images/overview_login.png"
+        },
+        {
+            "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\overview_subissue.png",
+            "targetPath": "Images/overview_subissue.png"
+        }
+    ]
+}
