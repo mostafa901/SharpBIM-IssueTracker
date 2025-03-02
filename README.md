@@ -10,24 +10,26 @@
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
 
-![OverView_CreateIssue](Images/Overview_CreateIssue.png)
 
 ## :hand: Important
 images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
 
 ## How it works
 ![Overview_Login](Images/overview_login.png)
-- Simply use your own personal token, tso you have a direct access to all your repos
-- or register the app to allow the app access your account.
-- select the rpo from the drop down repo list to view all issues related to the selected repo
-- double click on an issue to edit its title, and body
-- once finished hit upload to push your changes.
-- for sub issues:
-    - select an issue then click on the plus button to create a new (sub) issue  
-    - once created you will be in edit page to edit and upload
-    when you upload you will see progress meter as indication to how many sub-issues available
-    ![Overview_Login](Images/overview_subissue.png)
-    - to list all sub issues, you can hit over the progress bar to view them all.
+- Simply use your personal token to gain direct access to all your repositories.
+- Alternatively, register the app to allow it access to your account.
+- Select the repository from the dropdown list to view all issues related to the chosen repository.
+- Double-click on an issue to edit its title and body.
+- Once you're finished, click **"Upload"** to push your changes.
+
+### For sub-issues:
+  - Select an issue and click the **plus button** to create a new sub-issue.
+![OverView_CreateIssue](Images/Overview_CreateIssue.png)
+  - After creation, you will be redirected to the edit page to make changes and upload them.
+  - When uploading, you'll see a progress meter indicating the number of available sub-issues.
+  ![Overview_Login](Images/overview_subissue.png)
+  - To view all sub-issues, hover over the progress bar to see the full list.
+
 
 
 
