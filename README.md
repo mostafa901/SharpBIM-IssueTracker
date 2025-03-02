@@ -1,6 +1,6 @@
 ![GitTracker_RepoCard](Images/GitTracker_RepoCard.png)
 
-# 🚀 Issue Tracker
+# 🚀 Issue Tracker 
 
 ![OverView_Header](Images/OverView_Header.png)
 
