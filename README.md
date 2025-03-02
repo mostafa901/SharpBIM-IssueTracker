@@ -1,9 +1,8 @@
-![GitTracker_RepoCard](https://github.com/user-attachments/assets/6cf0303f-2aab-4887-a84a-8a5416991d2f)
-
+![GitTracker_RepoCard](Images/GitTracker_RepoCard.png)
 
 # 🚀 Issue Tracker
 
-![image](https://github.com/user-attachments/assets/83bfad31-5ddc-4ffc-b2ca-e75c0af3b965)
+![OverView_Header](Images/OverView_Header.png)
 
 ## 🔥 Features & Functionality  
 - 📌 **Issue Tracking** – View GitHub issues directly in Visual Studio  
@@ -11,7 +10,26 @@
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
 
-![image](https://github.com/user-attachments/assets/e928d04a-a33f-42f3-b0dd-c17246396f36)
+![OverView_CreateIssue](Images/OverView_CreateIssue.png)
+
+## :hand: Important
+images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
+
+## How it works
+![Overview_Login](Images/overview_login.png)
+- Simply use your own personal token, tso you have a direct access to all your repos
+- or register the app to allow the app access your account.
+- select the rpo from the drop down repo list to view all issues related to the selected repo
+- double click on an issue to edit its title, and body
+- once finished hit upload to push your changes.
+- for sub issues:
+    - select an issue then click on the plus button to create a new (sub) issue  
+    - once created you will be in edit page to edit and upload
+    when you upload you will see progress meter as indication to how many sub-issues available
+    ![Overview_Login](Images/overview_subissue.png)
+    - to list all sub issues, you can hit over the progress bar to view them all.
+
+
 
 ## ⚠️ Limitations  
 - Currently supports **only personal GitHub accounts**  
