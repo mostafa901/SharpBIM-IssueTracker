@@ -10,7 +10,7 @@
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
 
-![OverView_CreateIssue](Images/OverView_CreateIssue.png)
+![OverView_CreateIssue](Images/Overview_CreateIssue.png)
 
 ## :hand: Important
 images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
