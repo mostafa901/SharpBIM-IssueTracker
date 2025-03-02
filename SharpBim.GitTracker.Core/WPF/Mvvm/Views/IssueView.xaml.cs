@@ -11,6 +11,7 @@ using SharpBIM.WPF.Controls.UserControls;
 using System.Windows.Ink;
 using System.Windows.Media;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
+using SharpBIM.GitTracker.Core.WPF.Helpers.MdPlugins;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
 {
@@ -22,9 +23,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
         public IssueView()
         {
             InitializeComponent();
-       
+
             avtxt.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("MarkDownWithFontSize");
-            mk.MarkdownStyle = MdXaml.MarkdownStyle.GithubLike;
+
+          mk.Plugins = new MdXaml.Plugins.MdXamlPlugins();
+          mk.Plugins.Inline.Add(new CheckboxInlineParser());
         }
 
         public new IssueViewModel ViewModel => DataContext as IssueViewModel;
