@@ -15,7 +15,7 @@
 images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
 
 ## How it works
-![Overview_Login](Images/overview_login.png)
+![Overview_Login](Images/Overview_Login.png)
 - Simply use your personal token to gain direct access to all your repositories.
 - Alternatively, register the app to allow it access to your account.
 - Select the repository from the dropdown list to view all issues related to the chosen repository.
@@ -24,7 +24,9 @@ images are committed to the selected Repo's default branch under Images folder. 
 
 ### For sub-issues:
   - Select an issue and click the **plus button** to create a new sub-issue.
+
 ![OverView_CreateIssue](Images/Overview_CreateIssue.png)
+  
   - After creation, you will be redirected to the edit page to make changes and upload them.
   - When uploading, you'll see a progress meter indicating the number of available sub-issues.
   ![Overview_Login](Images/overview_subissue.png)
