@@ -1,7 +1,7 @@
 ![GitTracker_RepoCard](https://github.com/user-attachments/assets/6cf0303f-2aab-4887-a84a-8a5416991d2f)
 
 
-# 🚀 SharpBIM.GitTracker
+# 🚀 Issue Tracker
 
 ![image](https://github.com/user-attachments/assets/83bfad31-5ddc-4ffc-b2ca-e75c0af3b965)
 
