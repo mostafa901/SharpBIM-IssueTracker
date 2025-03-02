@@ -1,4 +1,5 @@
-![GitTracker_RepoCard](https://github.com/user-attachments/assets/a1a55b43-dc66-4c24-961a-c99ee8d9d987)
+![GitTracker_RepoCard](https://github.com/user-attachments/assets/6cf0303f-2aab-4887-a84a-8a5416991d2f)
+
 
 # 🚀 SharpBIM.GitTracker
 
