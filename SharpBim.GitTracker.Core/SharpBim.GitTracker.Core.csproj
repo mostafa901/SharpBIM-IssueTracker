@@ -22,7 +22,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\tickets_1500x1500.png" />
       <None Remove="Resources\tickets_Login.png" />
     </ItemGroup>
     
@@ -74,7 +73,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Resource Include="Resources\tickets_1500x1500.png" />
         <Resource Include="Resources\tickets_Login.png" />
     </ItemGroup>
 

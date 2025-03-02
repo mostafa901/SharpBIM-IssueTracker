@@ -1,4 +1,8 @@
-﻿# SharpBIM GitTracker Release notes
+﻿# Issue Tracker Release notes
+
+## Version 0.55 - March 2025
+✅ Fix pushing Image to over an issue
+
 ## Version 0.5 (initial) - March 2025
 
 ✅ View and track issues from your GitHub repository within Visual Studio  

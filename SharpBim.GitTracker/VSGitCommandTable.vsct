@@ -20,7 +20,7 @@
                 <Icon guid="IconList" id="GitWindowImg" />
 
                 <Strings>
-                    <ButtonText>GiTracker Window</ButtonText>
+                    <ButtonText>Issue Tracker Window</ButtonText>
                 </Strings>
             </Button>
         </Buttons>
