@@ -28,7 +28,7 @@ namespace SharpBIM.GitTracker.ToolWindows
                 );
         }
 
-        public override string GetTitle(int toolWindowId) => "SharpBIM Tracker";
+        public override string GetTitle(int toolWindowId) => "Issue Tracker";
 
         #endregion Public Methods
 
@@ -42,7 +42,6 @@ namespace SharpBIM.GitTracker.ToolWindows
             public Pane()
             {
                 BitmapImageMoniker = KnownMonikers.ToolWindow;
-                Caption = "Test caption";
             }
 
             #endregion Public Constructors

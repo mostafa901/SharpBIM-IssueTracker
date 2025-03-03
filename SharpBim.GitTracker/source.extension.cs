@@ -11,7 +11,7 @@ namespace SharpBim.GitTracker
         public const string Name = "Issue Tracker";
         public const string Description = @"An  application designed to help users visualize and manage issues within Visual Studio. It provides a streamlined interface for tracking and addressing common problems, offering an intuitive way to view issue details and take action directly from the application.";
         public const string Language = "en-US";
-        public const string Version = "0.571";
+        public const string Version = "0.60";
         public const string Author = "SharpBIM";
         public const string Tags = "issue, Tracker, Github Issues, tickets";
     }

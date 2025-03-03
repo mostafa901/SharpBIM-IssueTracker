@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
@@ -18,7 +14,6 @@ using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Models;
-using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 
@@ -144,6 +139,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         public override void Init(IssueModel dataModel)
         {
             srvrToLocal.Clear();
+            IssueLables.Clear();
+
             base.Init(dataModel);
             Title = dataModel.Title;
             Id = dataModel.number;
