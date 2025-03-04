@@ -142,11 +142,14 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top">
 
-                            <ui:UIButton Command="{Binding ShowOnWebCommand}"
+                            <ui:UIButton Background="Transparent"
+                                         Command="{Binding ShowOnWebCommand}"
                                          ShowText="False" />
-                            <ui:UIButton Command="{Binding CloseIssueCommand}"
+                            <ui:UIButton Background="Transparent"
+                                         Command="{Binding CloseIssueCommand}"
                                          ShowText="False" />
-                            <ui:UIButton Command="{Binding ReloadIssueCommand}"
+                            <ui:UIButton Background="Transparent"
+                                         Command="{Binding ReloadIssueCommand}"
                                          ShowText="False" />
                         </StackPanel>
                     </Grid>

@@ -11,6 +11,7 @@ using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.WPF.Helpers;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
+using Microsoft;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -229,7 +230,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     }
                 }
                 var issuemodel = new IssueModel();
-                issuemodel.Title = "Undefined";
+                issuemodel.Title = "";
                 issuemodel.Id = -1;
 
                 var issuemv = issuemodel.ToModelView<IssueViewModel>(this);
@@ -369,6 +370,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             AppGlobals.AppViewContext.UpdateProgress(1, 1, "Loading Repos", true);
             RepoModels.Clear();
+            IEnumerable<RepoModel> repoModels = [];
             await Task.Run(async () =>
                  {
                      try
@@ -381,24 +383,20 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                              return;
                          }
 
-                         var repos = getRepoReport.Model;
-
-                         Dispatcher.Invoke(() =>
-                         {
-                             foreach (var repo in repos)
-                             {
-                                 RepoModels.Add(repo);
-                             }
-                         });
+                         repoModels = getRepoReport.Model;
                      }
                      catch (Exception ex)
                      {
                      }
                      finally
                      {
-                         AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
                      }
                  });
+
+            foreach (var repo in repoModels)
+            {
+                RepoModels.Add(repo);
+            }
 
             string storedName = AppGlobals.User.LastRepoName;
             SelectedRepo = string.IsNullOrEmpty(storedName) ? RepoModels.FirstOrDefault() : RepoModels.FirstOrDefault(o => o.name == storedName);
