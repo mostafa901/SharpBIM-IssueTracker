@@ -1,9 +1,16 @@
 ﻿# Issue Tracker Release notes
 
+## Version 0.63 - March 2025
+:white_check_mark: Fix issue #4 Hitting push crash  
+:white_check_mark: Fix issue #3 Authorizing failure  
+:white_check_mark: Fix issue #2 Button background style  
+
+
 ## Version 0.60 - March 2025
 :white_check_mark: Fix issue body preview doesn't respect dark theme  
 :white_check_mark: After pushing issue, labels are duplicated  
 :white_check_mark: Login access duplication
+
 
 ## Version:white_check_mark:0.55 - March 2025
 :white_check_mark: Fix pushing Image to over an issue

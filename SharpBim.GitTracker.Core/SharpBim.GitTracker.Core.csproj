@@ -24,6 +24,10 @@
     <ItemGroup>
       <None Remove="Resources\tickets_Login.png" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Page Remove="WPF\Helpers\Markdown.Style.xaml" />
+    </ItemGroup>
     
     
     <ItemGroup>
@@ -74,6 +78,10 @@
 
     <ItemGroup>
         <Resource Include="Resources\tickets_Login.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="SharpBIM\" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

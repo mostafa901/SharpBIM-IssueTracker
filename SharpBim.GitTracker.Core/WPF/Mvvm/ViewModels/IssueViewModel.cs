@@ -151,11 +151,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 Completed = dataModel.sub_issues_summary?.completed ?? 0;
                 TotalSubIssues = dataModel.sub_issues_summary?.total ?? 0;
-
-                foreach (var label in dataModel.labels)
-                {
-                    IssueLables.Add(label.ToModelView<LabelModelView>(this));
-                }
             }
         }
 
@@ -165,6 +160,15 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 return;
             detailsLoaded = true;
             srvrToLocal.Clear();
+            IssueLables.Clear();
+            if (ContextData.labels != null)
+            {
+                foreach (var label in ContextData.labels)
+                {
+                    IssueLables.Add(label.ToModelView<LabelModelView>(this));
+                }
+            }
+
             Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
         }
 
@@ -454,7 +458,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     if (orig != ContextData.state)
                     {
                         var val = ContextData.state == IssueState.closed.ToString() ? 1 : -1;
-                        GetParentViewModel<IssueViewModel>().Completed += val;
+                        if (IsSubIssue)
+                            GetParentViewModel<IssueViewModel>().Completed += val;
                     }
                 }
             }

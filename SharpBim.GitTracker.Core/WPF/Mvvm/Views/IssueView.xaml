@@ -38,10 +38,13 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal">
-                <ui:UIButton HorizontalAlignment="Left"
+                <ui:UIButton Width="auto"
+                             Height="auto"
+                             HorizontalAlignment="Left"
                              Command="{Binding PushIssueCommand}"
                              Content="Update"
                              DockPanel.Dock="Top"
+                             GlyphSize="26"
                              ShowText="False" />
             </StackPanel>
         </Grid>
@@ -50,26 +53,32 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="5" />
+                <RowDefinition Height="10" />
                 <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
             <ui:TaggedTextBox Width="auto"
                               Height="auto"
+                              Margin="0,0,0,8"
                               HorizontalAlignment="Stretch"
                               Background="Transparent"
-                              BorderThickness="0"
+                              BorderThickness="0,0,0,1"
                               FontSize="18"
                               FontWeight="Bold"
                               Foreground="{DynamicResource ControlFontBrush}"
+                              PlaceHolder="Your Issue title goes here..."
                               Text="{Binding Title}" />
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ui:UIButton Command="{Binding AddNewLableCommand}"
+                <ui:UIButton Width="auto"
+                             Height="auto"
+                             Command="{Binding AddNewLableCommand}"
+                             GlyphSize="25"
                              ShowText="False" />
                 <ItemsControl Grid.Column="1"
+                              HorizontalAlignment="Center"
                               ItemsSource="{Binding IssueLables}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -78,15 +87,27 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="{x:Type Modelse2b90750:LabelModelView}">
-                            <ui:UIButton Width="auto"
-                                         Margin="2"
-                                         Background="{Binding BackgroundBrush}"
-                                         Command="{Binding AddRemoveCommand}"
-                                         Content="{Binding Title}"
-                                         Foreground="{Binding FontBrush}"
-                                         RadiusThickness="15"
-                                         Style="{StaticResource RoundedButtonStyle}"
-                                         ToolTip="{Binding Hint}" />
+                            <Border Padding="2"
+                                    Background="{Binding BackgroundBrush,
+                                                         UpdateSourceTrigger=PropertyChanged}"
+                                    CornerRadius="15"
+                                    Cursor="Hand">
+                                <TextBlock Width="auto"
+                                           MinWidth="25"
+                                           Margin="2"
+                                           Padding="0"
+                                           Foreground="{Binding FontBrush,
+                                                                UpdateSourceTrigger=PropertyChanged}"
+                                           IsHitTestVisible="False"
+                                           Text="{Binding Title}"
+                                           TextAlignment="Center"
+                                           ToolTip="{Binding Hint}" />
+                                <Border.InputBindings>
+
+                                    <MouseBinding Command="{Binding AddRemoveCommand}"
+                                                  Gesture="LeftClick" />
+                                </Border.InputBindings>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -95,7 +116,11 @@
                            Grid.Row="2"
                            MinHeight="200"
                            Margin="5"
+                           Padding="10"
                            Background="{DynamicResource ControlBackgroundBrush}"
+                           BorderBrush="Gray"
+                           BorderThickness="1"
+                           FontSize="14"
                            Foreground="{DynamicResource ControlForegroundBrush}"
                            PreviewKeyDown="Avtxt_PreviewKeyDown"
                            ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -105,7 +130,9 @@
                 </i:Interaction.Behaviors>
             </av:TextEditor>
             <GridSplitter Grid.Row="3"
+                          Margin="5,3"
                           HorizontalAlignment="Stretch"
+                          BorderBrush="Gray"
                           ResizeBehavior="PreviousAndNext"
                           ResizeDirection="Rows" />
             <md:MarkdownScrollViewer x:Name="mk"
@@ -114,6 +141,8 @@
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Stretch"
                                      Background="{DynamicResource ControlBackgroundBrush}"
+                                     BorderBrush="Gray"
+                                     BorderThickness="1"
                                      Foreground="{DynamicResource ControlForegroundBrush}"
                                      Markdown="{Binding MarkDown,
                                                         Mode=OneWay,

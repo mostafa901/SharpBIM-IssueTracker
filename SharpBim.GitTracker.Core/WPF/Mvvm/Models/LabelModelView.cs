@@ -52,14 +52,18 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
             {
                 IsAvailable = !IsAvailable;
                 if (IsAvailable)
-                {
-                    FontBrush = ("#" + ContextData.color).FromHexMedia().ToSolidColorBrush();
-                    BackgroundBrush = new SolidColorBrush(FontBrush.Color) { Opacity = .5 };
-                }
+                { 
+                    BackgroundBrush = ("#" + ContextData.color).FromHexMedia().ToSolidColorBrush();
+                  
+                        FontBrush = new SolidColorBrush(ResourceValues.SolidColorBrushs.ButtonFontBrush.Color) {   };
+                    }
                 else
                 {
-                    FontBrush = ResourceValues.SolidColorBrushs.ButtonFontBrush;
-                    BackgroundBrush = new SolidColorBrush(FontBrush.Color) { Opacity = .5 };
+                    FontBrush = new SolidColorBrush(ResourceValues.SolidColorBrushs.ButtonFontBrush.Color) { Opacity = .2 };
+                    BackgroundBrush = new SolidColorBrush(FontBrush.Color)
+                    {
+                        Opacity = .2
+                    };
                 }
             }
             catch (Exception ex)
