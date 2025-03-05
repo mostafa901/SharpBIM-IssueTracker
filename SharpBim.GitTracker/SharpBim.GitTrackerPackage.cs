@@ -14,7 +14,7 @@ using SharpBIM.GitTracker.ToolWindows;
 namespace SharpBIM.GitTracker
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [InstalledProductRegistration("SharpBIM Git Tracker", "A tool for tracking and managing Git issues within Visual Studio", "1.0.0")]
+    [InstalledProductRegistration("SharpBIM Git Tracker", "A tool for tracking and managing Git issues within Visual Studio", "0.77.0.0")]
     [ProvideToolWindow(typeof(MainPageViewModelToolWindow.Pane), Style = VsDockStyle.Tabbed, Window = WindowGuids.SolutionExplorer)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.SharpBIMGitTrackerPackageString)]

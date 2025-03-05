@@ -142,7 +142,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top">
 
-                            <ui:UIButton Background="Transparent"   
+                            <ui:UIButton Background="Transparent"
                                          Command="{Binding ShowOnWebCommand}"
                                          ShowText="False"
                                          Style="{DynamicResource IconButtonStyle}" />
@@ -177,7 +177,10 @@
                                ItemsSource="{Binding RepoModels}"
                                SelectedItem="{Binding SelectedRepo}" />
                 <ui:UIButton Grid.Column="1"
+                             Width="auto"
+                             Margin="8"
                              Command="{Binding ReloadReposCommand}"
+                             GlyphSize="25"
                              ShowText="False" />
             </Grid>
             <ui:TaggedTextBox Grid.Column="2"
@@ -195,6 +198,7 @@
         </StackPanel>
         <ui:SearchTextBox Grid.Row="1"
                           Width="auto"
+                          Margin="30,0,0,0"
                           HorizontalAlignment="Stretch"
                           PlaceHolder="Search within the current page"
                           Text="{Binding TextToFilter,
@@ -202,7 +206,8 @@
                                          UpdateSourceTrigger=PropertyChanged}"
                           UpdateOnEnter="true" />
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2"
+              Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />

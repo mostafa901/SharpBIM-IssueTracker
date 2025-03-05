@@ -18,11 +18,12 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid>
+            <Grid Margin="8,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <ui:UIButton Width="25"
@@ -63,6 +64,11 @@
                                                      ElementName=SharpBIMViewer}"
                                  ShowText="False" />
                 </StackPanel>
+                <TextBlock Grid.Column="3"
+                           HorizontalAlignment="Right">
+                    <Run>Ver.</Run>
+                    <Run Text="{Binding Version}" />
+                </TextBlock>
             </Grid>
             <Frame x:Name="SharpBIMViewer"
                    Grid.Row="1"

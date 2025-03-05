@@ -5,6 +5,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
+      <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+
     <ApplicationIcon>
     </ApplicationIcon>
     <Configurations>RWin;DWin</Configurations>

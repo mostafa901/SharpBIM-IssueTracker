@@ -1,5 +1,5 @@
 
-## Version 0.74 - March 2025
+## Version 0.742 - March 2025
 
 :white_check_mark: Fix issue #4 Hitting push crash  
 :white_check_mark: Fix issue #3 Authorizing failure  
