@@ -12,11 +12,11 @@
     "publisher": "SharpBIM", // The name of the publisher. Required.
     "private": false, // Specifies whether or not the extension should be public when uploaded. Defaults to false.
     "qna": true, // Specifies whether or not the extension should have a Q&A section. Defaults to true.
-    "repo": "https://github.com/mostafa901/SharpBIM.GitTracker", // Not required.
+    "repo": "https://github.com/mostafa901/SharpBIM-IssueTracker", // Not required.
     "assetFiles": [
         {
             "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\GitTracker_RepoCard.png",
-            "targetPath": "images/GitTracker_RepoCard.png"
+            "targetPath": "Images/GitTracker_RepoCard.png"
         },
         {
             "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\OverView_Header.png",

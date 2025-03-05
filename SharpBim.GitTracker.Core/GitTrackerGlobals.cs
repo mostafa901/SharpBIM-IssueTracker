@@ -31,6 +31,7 @@ namespace SharpBIM.GitTracker.Core
         public static GitContents ContentService { get; internal set; }
         public static GitToken TokenService { get; internal set; }
         public static GitInstallation InstallService { get; internal set; }
+        public static GitRelease ReleaseService { get; internal set; }
 
         static GitTrackerGlobals()
         {
@@ -47,6 +48,7 @@ namespace SharpBIM.GitTracker.Core
             IssuesService = new();
             ContentService = new();
             TokenService = new();
+            ReleaseService = new();
         }
     }
 }

@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker", "SharpBim.GitTracker\SharpBIM.GitTracker.csproj", "{7C9DC9DE-0899-4E9E-A899-10945B57C48D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC} = {77C21FB6-A74C-B4A2-4FD2-1931375D32AC}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Core", "SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj", "{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
@@ -18,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		Sign.ps1 = Sign.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Console", "SharpBIM.GitTracker.Console\SharpBIM.GitTracker.Console.csproj", "{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBim.GitTracker", "SharpBim.GitTracker\SharpBim.GitTracker.csproj", "{7C9DC9DE-0899-4E9E-A899-10945B57C48D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		DNoWin|Any CPU = DNoWin|Any CPU
@@ -26,20 +25,24 @@ Global
 		RWin|Any CPU = RWin|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DNoWin|Any CPU.ActiveCfg = Release|Any CPU
-		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DWin|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DWin|Any CPU.Build.0 = Debug|Any CPU
-		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RNoWin|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.ActiveCfg = Release|Any CPU
-		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.Build.0 = Release|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.DNoWin|Any CPU.ActiveCfg = DNoWin|Any CPU
-		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.DNoWin|Any CPU.Build.0 = DNoWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.DWin|Any CPU.ActiveCfg = DWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.DWin|Any CPU.Build.0 = DWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RNoWin|Any CPU.ActiveCfg = RNoWin|Any CPU
-		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RNoWin|Any CPU.Build.0 = RNoWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RWin|Any CPU.Build.0 = RWin|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DNoWin|Any CPU.ActiveCfg = Release|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DNoWin|Any CPU.Build.0 = Release|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DWin|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.RNoWin|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.RNoWin|Any CPU.Build.0 = Debug|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.RWin|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DNoWin|Any CPU.ActiveCfg = Release|Any CPU
+		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DWin|Any CPU.ActiveCfg = DWin|Any CPU
+		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.DWin|Any CPU.Build.0 = DWin|Any CPU
+		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RNoWin|Any CPU.ActiveCfg = DWin|Any CPU
+		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
+		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.Build.0 = RWin|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
