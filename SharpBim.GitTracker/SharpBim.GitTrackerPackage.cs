@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using Community.VisualStudio.Toolkit;
 using Microsoft.VisualStudio.Shell;
 using SharpBim.GitTracker;
 using SharpBIM.GitTracker.ToolWindows;
+
+[assembly: InternalsVisibleTo("SharpBIM.GitTracker.Console", AllInternalsVisible = true)]
 
 namespace SharpBIM.GitTracker
 {

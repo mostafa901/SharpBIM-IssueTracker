@@ -35,6 +35,7 @@
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
     <ItemGroup Condition="!($(DefineConstants.Contains('WINDOWS')))">
         <Compile Remove="WPF\**" />

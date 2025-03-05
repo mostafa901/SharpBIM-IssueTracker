@@ -1,11 +1,9 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Policy;
 using System.Text.Json;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
-using static System.Net.WebRequestMethods;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {

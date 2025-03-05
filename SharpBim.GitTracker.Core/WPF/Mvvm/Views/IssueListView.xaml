@@ -142,9 +142,10 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top">
 
-                            <ui:UIButton Background="Transparent"
+                            <ui:UIButton Background="Transparent"   
                                          Command="{Binding ShowOnWebCommand}"
-                                         ShowText="False" />
+                                         ShowText="False"
+                                         Style="{DynamicResource IconButtonStyle}" />
                             <ui:UIButton Background="Transparent"
                                          Command="{Binding CloseIssueCommand}"
                                          ShowText="False" />

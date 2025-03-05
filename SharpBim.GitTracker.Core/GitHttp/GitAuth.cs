@@ -86,7 +86,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                     {
                         var loginResult = false;
 
-                        if (User.Token != null && User.Token.ExpireTime<DateTime.Now && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
+                        if (User.Token != null && User.Token.ExpireTime < DateTime.Now && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
                         {
                             var refreshReport = await TokenService.RefreshToken();
                             loginResult = !refreshReport.IsFailed;
@@ -125,10 +125,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             var report = new ServiceReport<string>();
             AppGlobals.User ??= new GitUser();
+            User.IsPersonalToken = true;
+            User.Token.access_token = userAccesToken;
             if (AppGlobals.User.UserAccount == null)
             {
-                User.Token.access_token = userAccesToken;
-                User.IsPersonalToken = true;
                 var accountReport = await GetUserAccount();
                 report.Merge(accountReport);
                 AppGlobals.User.UserAccount = accountReport.Model;

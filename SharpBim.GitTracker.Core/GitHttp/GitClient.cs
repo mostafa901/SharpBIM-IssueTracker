@@ -63,6 +63,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 return null;
             List<T> result = new List<T>();
             var jop = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            jop.Converters.Add(new SharpBIM.Utility.JsonConvEx.CustomDateConverter());
             if (response.StartsWith("["))
                 result.AddRange(JsonSerializer.Deserialize<IEnumerable<T>>(response, jop));
             else
