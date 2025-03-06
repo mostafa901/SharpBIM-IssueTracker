@@ -22,11 +22,21 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="WPF\Mvvm\Views\LableSelectionView.xaml.cs" />
+      <Compile Remove="WPF\Mvvm\Views\SharpColorPicker.xaml.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="C:\Users\MoustafaElsayed\.nuget\packages\microsoft.vssdk.buildtools\17.12.2069\contentFiles\any\net472\msalruntime.dll" />
+      <None Remove="C:\Users\MoustafaElsayed\.nuget\packages\microsoft.vssdk.buildtools\17.12.2069\contentFiles\any\net472\msalruntime_arm64.dll" />
+      <None Remove="C:\Users\MoustafaElsayed\.nuget\packages\microsoft.vssdk.buildtools\17.12.2069\contentFiles\any\net472\msalruntime_x86.dll" />
       <None Remove="Resources\tickets_Login.png" />
     </ItemGroup>
 
     <ItemGroup>
       <Page Remove="WPF\Helpers\Markdown.Style.xaml" />
+      <Page Remove="WPF\Mvvm\Views\LableSelectionView.xaml" />
+      <Page Remove="WPF\Mvvm\Views\SharpColorPicker.xaml" />
     </ItemGroup>
     
     
@@ -83,6 +93,7 @@
 
     <ItemGroup>
       <Folder Include="SharpBIM\" />
+      <Folder Include="WPF\Mvvm\Views\Views\" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

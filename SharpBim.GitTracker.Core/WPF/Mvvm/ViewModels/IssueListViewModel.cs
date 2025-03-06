@@ -12,6 +12,7 @@ using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.WPF.Helpers;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using Microsoft;
+using System.Threading.Tasks;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -69,7 +70,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             CreateNewIssueCommand = new SharpBIMCommand(async (x) => await CreateNewIssue(x), "Create New Issue", Glyphs.plus_circle, (x) => true);
             ReloadCommand = new SharpBIMCommand(async (x) => await Reload(x), "Refresh", Glyphs.reload, (x) => true);
-            EditIssueCommand = new SharpBIMCommand(EditIssue, "Edit", Glyphs.edit, (x) => true);
+            EditIssueCommand = new SharpBIMCommand(async (x) => await EditIssue(x), "Edit", Glyphs.edit, (x) => true);
             LoadCurrentProjectCommand = new SharpBIMCommand(LoadCurrentProject, "Load Current Project", Glyphs.arrows_swap, (x) => true);
             LessPageCommand = new SharpBIMCommand(LessPage, "Less Page", Glyphs.arrow_60_left, (x) => true);
             MorePageCommand = new SharpBIMCommand(MorePage, "More Page", Glyphs.arrow_60_right, (x) => true);
@@ -133,12 +134,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         #region Public Methods
 
-        public void EditIssue(object x)
+        public async Task EditIssue(object x)
         {
             try
             {
                 var issueVM = x as IssueViewModel;
-                issueVM.LoadDetails();
+                await issueVM.LoadDetails();
                 AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueView), issueVM);
             }
             catch (Exception ex)
@@ -250,6 +251,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             Children.Clear();
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Fetching issues", true);
+            List<IssueViewModel> issmvs = new();
             await Task.Run(async () =>
           {
               try
@@ -270,7 +272,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                               else
                               {
                                   var issues = issuesReport.Model;
-                                  List<IssueViewModel> issmvs = new();
                                   List<long> addedIds = [];
                                   foreach (var issue in issues)
                                   {
@@ -278,10 +279,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                                           continue;
                                       if (addedIds.Any(o => o == issue.number))
                                           continue;
-                                      var issueModel = issue.ToModelView<IssueViewModel>(this);
+                                      var issueModel = Dispatcher.Invoke(() => issue.ToModelView<IssueViewModel>(this));
 
                                       issmvs.Add(issueModel);
                                   }
+
                                   await AddItemsAsync(issmvs, Token);
                                   if (!issues.Any() || issues.Count() < FetchIssueCounts)
                                   {

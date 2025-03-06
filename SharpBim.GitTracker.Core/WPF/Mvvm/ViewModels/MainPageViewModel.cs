@@ -24,7 +24,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             FeedBackCommand = new SharpBIMCommand(FeedBack, "Feedback", Glyphs.notification, (x) => true);
             IsLoginScreen = true;
             var ver = this.GetType().Assembly.GetName().Version;
-            Version = $"{ver.Major}.{ver.Revision}";
+            Version = $"{ver.Major}.{ver.Minor}";
         }
 
         public string Version
@@ -66,7 +66,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             try
             {
-               
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
 
                 bool grantted = AppGlobals.User.LoggedIn;
@@ -102,7 +101,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             try
             {
-               
                 var vm = new LoginViewModel() { ParentModelView = this };
                 vm.AlreadyLoggedIn = AppGlobals.User.LoggedIn;
 

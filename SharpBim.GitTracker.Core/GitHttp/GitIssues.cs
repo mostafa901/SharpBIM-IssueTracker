@@ -18,45 +18,6 @@ using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
-    public class GitLables : GitClient
-    {
-        protected override string endPoint => @$"https://api.github.com/repos/{Account.login}/REPO/labels";
-
-        public async Task<IServiceReport<IEnumerable<GitLabel>>> GetLables(string repoName)
-        {
-            var url = GetEndPoint(repoName);
-            var getReport = await GET(url);
-            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
-
-            if (!getReport.IsFailed)
-            {
-                labelReport.Model = ParseResponse<GitLabel>(getReport.Model);
-            }
-
-            return labelReport;
-        }
-
-        public async Task<IServiceReport<IEnumerable<GitLabel>>> CreateLable(string repoName, GitLabel newLable)
-        {
-            var url = GetEndPoint(repoName);
-            var body = new
-            {
-                newLable.name,
-                newLable.description,
-                newLable.color,
-            };
-            var getReport = await POST(url, body);
-            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
-
-            if (!getReport.IsFailed)
-            {
-                labelReport.Model = ParseResponse<GitLabel>(getReport.Model);
-            }
-
-            return labelReport;
-        }
-    }
-
     public class GitIssues : GitClient
     {
         // References: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
