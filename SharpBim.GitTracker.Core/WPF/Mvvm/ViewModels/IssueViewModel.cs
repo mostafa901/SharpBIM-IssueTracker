@@ -16,6 +16,12 @@ using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Models;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
+using System.ComponentModel;
+using System.Windows.Data;
+using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.Shell;
+using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -28,8 +34,25 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         #endregion Private Fields
 
+        #region Public Constructors
+
+        public IssueViewModel()
+        {
+            OpenSubIssueListCommand = new SharpBIMCommand(async (x) => await OpenSubIssueListAsync(x), "Load Sub Issues", Glyphs.empty, (x) => true);
+            CloseIssueCommand = new SharpBIMCommand(async (x) => await CloseIssueAsync(x), "Close Issue", Glyphs.kpi_status_open, (x) => true);
+            ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show On Web", Glyphs.hyperlink_globe, (x) => true);
+            PushIssueCommand = new SharpBIMCommand(async (x) => await PushIssueAsync(x), "Push", Glyphs.upload, (x) => true);
+            ReloadIssueCommand = new SharpBIMCommand(async (x) => await ReloadIssue(x), "Reload", Glyphs.reload_sm, (x) => true);
+            AddNewLableCommand = new SharpBIMCommand(AddNewLable, "Add New Label", Glyphs.plus_circle, (x) => true);
+            AddLabelTextChangedCommand = new SharpBIMCommand(async (x) => await AddLabelTextChanged(x), "UpdateLabels", Glyphs.empty, (x) => true);
+            LabelCollectionView = CollectionViewSource.GetDefaultView(AllLabelsList);
+        }
+
+        #endregion Public Constructors
+
         #region Public Properties
 
+        public SharpBIMCommand AddNewLableCommand { get; set; }
         public SharpBIMCommand CloseIssueCommand { get; set; }
 
         public int Completed
@@ -54,17 +77,29 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public bool IsSubIssue => GetParentViewModel<IssueViewModel>() != null;
 
+        public ObservableCollection<LabelModelView> IssueLables { get; set; } = [];
+        public ObservableCollection<LabelModelView> AllLabelsList { get; set; } = [];
+        public List<GitLabel> AllGitLabelsList { get; set; } = [];
+
         public string MarkDown
         {
             get { return GetValue<string>(nameof(MarkDown)); }
             set { SetValue(value, nameof(MarkDown)); }
         }
 
+        public SharpBIMCommand OpenSubIssueListCommand { get; set; }
+
         public SharpBIMCommand PushIssueCommand { get; set; }
 
         public SharpBIMCommand ReloadIssueCommand { get; set; }
 
         public RepoModel SelectedRepo => GetParentViewModel<IssueListViewModel>().SelectedRepo;
+
+        public bool ShowLabelsList
+        {
+            get { return GetValue<bool>(nameof(ShowLabelsList)); }
+            set { SetValue(value, nameof(ShowLabelsList)); }
+        }
 
         public SharpBIMCommand ShowOnWebCommand { get; set; }
 
@@ -76,9 +111,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         #endregion Public Properties
 
-        public SharpBIMCommand AddNewLableCommand { get; set; }
+        #region Public Methods
 
-        // Add this line to the constructor
+        public void AddImage(string localUrl, ContentModel sithubUrl)
+        {
+            srvrToLocal.Add(localUrl, sithubUrl);
+        }
 
         public void AddNewLable(object x)
         {
@@ -90,38 +128,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             catch (Exception ex)
             {
             }
-        }
-
-        public IssueViewModel()
-        {
-            OpenSubIssueListCommand = new SharpBIMCommand(async (x) => await OpenSubIssueListAsync(x), "Load Sub Issues", Glyphs.empty, (x) => true);
-            CloseIssueCommand = new SharpBIMCommand(async (x) => await CloseIssueAsync(x), "Close Issue", Glyphs.kpi_status_open, (x) => true);
-            ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show On Web", Glyphs.hyperlink_globe, (x) => true);
-            PushIssueCommand = new SharpBIMCommand(async (x) => await PushIssueAsync(x), "Push", Glyphs.upload, (x) => true);
-            ReloadIssueCommand = new SharpBIMCommand(async (x) => await ReloadIssue(x), "Reload", Glyphs.reload_sm, (x) => true);
-            AddNewLableCommand = new SharpBIMCommand(AddNewLable, "Add New Label", Glyphs.plus_circle, (x) => true);
-        }
-
-        public SharpBIMCommand OpenSubIssueListCommand { get; set; }
-
-        public async Task OpenSubIssueListAsync(object x)
-        {
-            try
-            {
-                var sublist = new SubIssueListViewModel() { ParentModelView = this };
-                await sublist.LoadIssuesAsync(x);
-                AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), sublist);
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        #region Public Methods
-
-        public void AddImage(string localUrl, ContentModel sithubUrl)
-        {
-            srvrToLocal.Add(localUrl, sithubUrl);
         }
 
         public async Task CloseIssueAsync(object x)
@@ -154,9 +160,80 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
-        public void LoadDetails()
+        public ICollectionView LabelCollectionView { get; set; }
+
+        public SharpBIMCommand AddLabelTextChangedCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public async Task AddLabelTextChanged(object x)
         {
-            if (detailsLoaded)
+            try
+            {
+                var value = (string)x;
+                if (value.LastOrDefault() == '\t')
+                {
+                    value = value.Trim().ToLower();
+                    if (value.Length > 1)
+                    {
+                        var exisitingLabel = AllLabelsList.FirstOrDefault(o => o.Title.EQ(value));
+                        if (exisitingLabel != null)
+                        {
+                            var exlabelIssue = IssueLables.FirstOrDefault(o => o.Title.EQ(exisitingLabel.Title));
+                            IssueLables.Remove(exlabelIssue);
+                        }
+                        else
+                        {
+                            var newLabel = new GitLabel() { name = value };
+
+                            exisitingLabel = newLabel.ToModelView<LabelModelView>(this);
+                            AllGitLabelsList.Add(newLabel);
+                            AllLabelsList.Add(exisitingLabel);
+                        }
+
+                        IssueLables.Add(exisitingLabel);
+                        TypedInLabelName = "";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public string TypedInLabelName
+        {
+            get { return GetValue<string>(nameof(TypedInLabelName)); }
+            set
+            {
+                if (value.Trim().Length == 0)
+                    value = value.Trim();
+                SetValue(value, nameof(TypedInLabelName));
+                ShowLabelsList = value.Length > 0 && AllLabelsList.Any();
+                LabelCollectionView.Filter = FilterLabels;
+            }
+        }
+
+        private bool FilterLabels(object obj)
+        {
+            if (string.IsNullOrEmpty(TypedInLabelName))
+                return true;
+            if (TypedInLabelName == ".")
+                return true;
+            var labelmv = obj as LabelModelView;
+            if (labelmv != null)
+            {
+                if (labelmv.ContextData.name.Contains(TypedInLabelName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (labelmv.ContextData.description.Contains(TypedInLabelName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        public async Task LoadDetails()
+        {
+            if (IssueLables.Any())
                 return;
             detailsLoaded = true;
             srvrToLocal.Clear();
@@ -169,7 +246,57 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 }
             }
 
+            if (!AllGitLabelsList.Any())
+            {
+                var repoLabelsReport = await LabelService.GetLables(SelectedRepo.name);
+                if (!(repoLabelsReport.IsFailed))
+                {
+                    AllGitLabelsList = repoLabelsReport.Model.ToList();
+                }
+            }
+            AllLabelsList.Clear();
+            foreach (var label in AllGitLabelsList)
+            {
+                var labelmv = label.ToModelView<LabelModelView>(this);
+                AllLabelsList.Add(labelmv);
+            }
+
             Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
+        }
+
+        public async Task<IServiceReport<IssueModel>> MakeSubIssue(bool force = false)
+        {
+            IssueModel parent = GetParentViewModel<IssueViewModel>().ContextData;
+            IssueModel subIssue = this.ContextData;
+
+            var report = await IssuesService.AddSubIssue(SelectedRepo.name, parent, subIssue, force);
+            if (force == false && report.IsFailed)
+            {
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+                if (ans.Model == Statics.REPLACE)
+                {
+                    return await MakeSubIssue(true);
+                }
+            }
+
+            if (force && report.IsFailed)
+            {
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+            }
+            return report;
+        }
+
+        public async Task OpenSubIssueListAsync(object x)
+        {
+            try
+            {
+                var sublist = new SubIssueListViewModel() { ParentModelView = this };
+                await sublist.LoadIssuesAsync(x);
+                AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), sublist);
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         public async Task ReloadIssue(object x)
@@ -200,6 +327,22 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         #endregion Public Methods
 
         #region Private Methods
+
+        private async Task<IServiceReport<IssueModel>> CreateIssueAsync()
+        {
+            IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo.name, ContextData);
+            if (!patchedReport.IsFailed)
+            {
+                if (!IsSubIssue)
+                    await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
+                else
+                {
+                    ContextData = patchedReport.Model;
+                    patchedReport = await MakeSubIssue();
+                }
+            }
+            return patchedReport;
+        }
 
         private async Task<string> ExtractImagesAsync(string markdownText)
         {
@@ -262,8 +405,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             return markdownText;
         }
 
-        public ObservableCollection<LabelModelView> IssueLables { get; set; } = [];
-
         private async Task<string> FetchImageAndSaveLocallyAsync(string imageUrl)
         {
             string tempImagePath = null;
@@ -290,6 +431,13 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
 
             return tempImagePath;
+        }
+
+        private async Task<IServiceReport<IssueModel>> PatchIssueAsync()
+        {
+            IServiceReport<IssueModel> patchedReport = await IssuesService.PatchIssue(SelectedRepo.name, ContextData);
+
+            return patchedReport;
         }
 
         // returns body of the issue
@@ -355,62 +503,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             return issueBody;
         }
 
-        public async Task<IServiceReport<IssueModel>> MakeSubIssue(bool force = false)
-        {
-            IssueModel parent = GetParentViewModel<IssueViewModel>().ContextData;
-            IssueModel subIssue = this.ContextData;
-
-            var report = await IssuesService.AddSubIssue(SelectedRepo.name, parent, subIssue, force);
-            if (force == false && report.IsFailed)
-            {
-                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
-                if (ans.Model == Statics.REPLACE)
-                {
-                    return await MakeSubIssue(true);
-                }
-            }
-
-            if (force && report.IsFailed)
-            {
-                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
-            }
-            return report;
-        }
-
-        private async Task<IServiceReport<IssueModel>> PatchIssueAsync()
-        {
-            IServiceReport<IssueModel> patchedReport = await IssuesService.PatchIssue(SelectedRepo.name, ContextData);
-
-            return patchedReport;
-        }
-
-        private async Task<IServiceReport<IssueModel>> CreateIssueAsync()
-        {
-            IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo.name, ContextData);
-            if (!patchedReport.IsFailed)
-            {
-                if (!IsSubIssue)
-                    await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
-                else
-                {
-                    ContextData = patchedReport.Model;
-                    patchedReport = await MakeSubIssue();
-                }
-            }
-            return patchedReport;
-        }
-
-        private bool VerifyIssueBoreISsue()
-        {
-            if (string.IsNullOrEmpty(Title))
-            {
-                AppGlobals.MsgService.AlertUser(WindowHandle, "Missing something", "Issue must have a title");
-                return false;
-            }
-
-            return true;
-        }
-
         private async Task PushIssueAsync(object obj)
         {
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Pushing", true);
@@ -433,7 +525,22 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 ContextData.body = markdownReport.Model;
                 var orig = ContextData.state;
                 ContextData.state = IsClosed ? IssueState.closed.ToString() : IssueState.open.ToString();
-                ContextData.labels = IssueLables.Where(o => o.IsAvailable).Select(o => o.ContextData).ToArray();
+                ContextData.labels = IssueLables.Select(o => o.ContextData).ToArray();
+                var newLabels = IssueLables.Where(o => o.Id == 0 || o.Description != o.ContextData.description);
+
+                foreach (var label in newLabels)
+                {
+                    var labelModel = label.ContextData;
+                    labelModel.description = label.Description;
+                    if (labelModel.Id == 0)
+                    {
+                        await LabelService.CreateLabel(SelectedRepo.name, labelModel);
+                    }
+                    else
+                    {
+                        await LabelService.UpdateLabel(SelectedRepo.name, labelModel);
+                    }
+                }
 
                 IServiceReport<IssueModel> patchedReport = null;
                 if (Id <= 0)
@@ -454,7 +561,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 else
                 {
                     Init(patchedReport.Model);
-
+                    await LoadDetails();
                     if (orig != ContextData.state)
                     {
                         var val = ContextData.state == IssueState.closed.ToString() ? 1 : -1;
@@ -475,6 +582,17 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         private void ShowOnWeb(object obj)
         {
             IOEx.OpenUrl(ContextData.html_url);
+        }
+
+        private bool VerifyIssueBoreISsue()
+        {
+            if (string.IsNullOrEmpty(Title))
+            {
+                AppGlobals.MsgService.AlertUser(WindowHandle, "Missing something", "Issue must have a title");
+                return false;
+            }
+
+            return true;
         }
 
         #endregion Private Methods

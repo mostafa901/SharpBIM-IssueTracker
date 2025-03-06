@@ -67,6 +67,60 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
                 }
             }
         }
+
+        private void labelTxtBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Down )
+            {
+                if (lst.HasItems)
+                {
+                    lst.Focus();
+                    lst.SelectedIndex = 0;
+                }
+            }
+
+            if (!pop.IsOpen && labelTxtBox.Text.Length==0 && e.Key == Key.Tab)
+            {
+                e.Handled = true;
+                avtxt.Focus();
+            }
+            if (pop.IsOpen && e.Key == Key.Tab)
+            {
+                if (lst.HasItems)
+                {
+
+                    e.Handled = true;
+                    lst.Focus();
+                    lst.SelectedIndex = 0;
+
+                }
+            }
+
+        }
+
+        private void pop_Closed(object sender, EventArgs e)
+        {
+            labelTxtBox.Focus();
+            labelTxtBox.SelectAll();
+        }
+
+        private void pop_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (pop.IsOpen && e.Key == Key.Back && e.OriginalSource is not TextBox)
+            {
+                e.Handled = true;
+                labelTxtBox.Focus();
+                labelTxtBox.SelectAll();
+                return;
+            }
+            if (pop.IsOpen && e.Key == Key.Escape)
+            {
+                pop.IsOpen = false;
+                labelTxtBox.Focus();
+                labelTxtBox.SelectAll();
+            }
+
+        }
     }
 
     public class cusHi : IHighlightingDefinition

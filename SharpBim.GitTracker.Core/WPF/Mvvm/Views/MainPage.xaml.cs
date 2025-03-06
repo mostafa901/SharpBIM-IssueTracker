@@ -102,5 +102,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             _contentLoaded = contentLoaded;
         }
+
+        private void SharpBIMViewer_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.OriginalSource is Frame || e.OriginalSource is ListBox)
+            e.Handled = true;
+        }
     }
 }
