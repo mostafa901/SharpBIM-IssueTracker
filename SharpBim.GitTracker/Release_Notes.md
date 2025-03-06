@@ -1,5 +1,8 @@
 
 ## Version 0.749 - March 2025
+☑️ Implemented Check for updates, just click on the version text  
+
+## Version 0.749 - March 2025
 - Added Label management feature  
     ☑️ Create new label  
     ☑️ Update description  
