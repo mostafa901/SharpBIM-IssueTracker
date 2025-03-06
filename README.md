@@ -1,8 +1,8 @@
-![GitTracker_RepoCard](Images/GitTracker_RepoCard.png)
+﻿![GitTracker_RepoCard](Images/GitTracker_RepoCard.png)
 
-# 🚀 Issue Tracker 
+# 🚀 Issue Tracker
 
-![OverView_Header](Images/OverView_Header.png)
+![OverView_Header](Images/OverView_Header.png)`
 
 ## 🔥 Features & Functionality  
 - 📌 **Issue Tracking** – View GitHub issues directly in Visual Studio  
@@ -10,15 +10,16 @@
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
 
+![OverView_Labels](Images/Overview_Labels.png)
 
 ## :hand: Important
 images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
 
 ## How it works
-![Overview_Login](Images/Overview_Login.png)
+![Overview_Login](Images/overview_login.png)
 - Simply use your personal token to gain direct access to all your repositories.
 - Alternatively, register the app to allow it access to your account.
-- Select the repository from the dropdown list to view all issues related to the chosen repository.
+- Select the repository from the drop down list to view all issues related to the chosen repository.
 - Double-click on an issue to edit its title and body.
 - Once you're finished, click **"Upload"** to push your changes.
 
@@ -32,7 +33,11 @@ images are committed to the selected Repo's default branch under Images folder. 
   ![Overview_Login](Images/overview_subissue.png)
   - To view all sub-issues, hover over the progress bar to see the full list.
 
-
+### Label management feature:
+☑️ Create new label  
+☑️ Update description  
+☑️ Assigns or unassigns label to an issue  
+☐ Remove Label from Repo [not yet]  
 
 
 ## ⚠️ Limitations  
