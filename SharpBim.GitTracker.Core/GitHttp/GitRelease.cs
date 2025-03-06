@@ -120,6 +120,25 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
+        public async Task<IServiceReport<ReleaseModel>> GetLatestReleaseersion(string repoName)
+        {
+            var url = $"{GetEndPoint(repoName)}/latest";
+            var releaseReport = new ServiceReport<ReleaseModel>();
+
+            var response = await GET(url);
+            if (response.IsFailed)
+            {
+                releaseReport.Merge(response);
+            }
+            else
+            {
+                var models = ParseResponse<ReleaseModel>(response.Model);
+                releaseReport.Model = models.LastOrDefault();
+            }
+
+            return releaseReport;
+        }
+
         public async Task<IServiceReport<IEnumerable<ReleaseModel>>> GetAssets(string repoName, ReleaseModel releaseModel)
         {
             var url = $"{GetEndPoint(repoName)}/{releaseModel.id}/assets";

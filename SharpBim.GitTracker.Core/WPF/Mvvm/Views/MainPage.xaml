@@ -3,6 +3,7 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:Conv="clr-namespace:SharpBIM.WPF.Helpers.Converters;assembly=SharpBIM"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:mv="clr-namespace:SharpBIM.GitTracker.Core.WPF.Views"
                         xmlns:uc="clr-namespace:SharpBIM.WPF.Controls.UserControls;assembly=SharpBIM"
@@ -64,11 +65,34 @@
                                                      ElementName=SharpBIMViewer}"
                                  ShowText="False" />
                 </StackPanel>
-                <TextBlock Grid.Column="3"
-                           HorizontalAlignment="Right">
-                    <Run>Ver.</Run>
-                    <Run Text="{Binding Version}" />
-                </TextBlock>
+                <Grid Grid.Column="3">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Right"
+                                   Cursor="Hand"
+                                   Foreground="{DynamicResource ControlDisabledBrush}"
+                                   Visibility="{Binding NewVersionLink,
+                                                        Converter={Conv:ConvNullVisibility Invert=True}}">
+                            <Run Text="Ver." />
+                            <Run Text="{Binding Version}" />
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LeftMouseDown">
+                                    <i:InvokeCommandAction Command="{Binding CheckForUpdatesCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
+                        <ProgressBar IsIndeterminate="True"
+                                     Visibility="{Binding IsCheckingForUpdate,
+                                                          Converter={Conv:ConvBoolToVisibility}}" />
+                    </StackPanel>
+                    <TextBlock Visibility="{Binding NewVersionLink, Converter={Conv:ConvNullVisibility Invert=False}}">
+                        <Hyperlink Command="{Binding VisitMarketPlaceCommand}"
+                                   NavigateUri="{Binding NewVersionLink}">
+                            <Run Text="Download latest" />
+                            <Run Text=" " />
+                            <Run Text="{Binding Version}" />
+                        </Hyperlink>
+                    </TextBlock>
+                </Grid>
             </Grid>
             <Frame x:Name="SharpBIMViewer"
                    Grid.Row="1"
