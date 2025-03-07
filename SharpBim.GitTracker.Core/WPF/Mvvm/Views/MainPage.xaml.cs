@@ -49,6 +49,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
 
         public async void UpdateProgress(double value, double max, string message, bool isIndeterminate)
         {
+            return;
             await this.Dispatcher.InvokeAsync(new Action(() =>
                   {
                       ViewModel.ShowProgressBar = !string.IsNullOrEmpty(message);
@@ -105,8 +106,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
 
         private void SharpBIMViewer_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.OriginalSource is Frame || e.OriginalSource is ListBox)
-            e.Handled = true;
+            if (e.OriginalSource is Frame || e.OriginalSource is ListBox)
+                e.Handled = true;
         }
     }
 }

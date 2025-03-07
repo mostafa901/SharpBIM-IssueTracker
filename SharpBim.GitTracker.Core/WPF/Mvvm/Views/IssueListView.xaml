@@ -9,171 +9,41 @@
                         xmlns:st="clr-namespace:SharpBIM.GitTracker.Core.Enums;assembly=SharpBIM.GitTracker.Core"
                         xmlns:uc="clr-namespace:SharpBIM.WPF.Controls.UserControls;assembly=SharpBIM"
                         xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM"
+                        Margin="5"
                         d:DataContext="{d:DesignInstance Type={x:Type mv:IssueListViewModel}}"
                         d:DesignHeight="450"
                         d:DesignWidth="800"
                         mc:Ignorable="d">
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="issueTemplate"
-                          DataType="mvv:IssueViewModel">
-                <Border Width="{Binding ActualWidth,
-                                        RelativeSource={RelativeSource AncestorType=ListBox}}"
-                        MinHeight="80"
-                        Background="Transparent"
-                        BorderBrush="{DynamicResource ControlBorderBrush}"
-                        BorderThickness="0,0,0,1">
-
-                    <Grid>
-                        <Grid.Style>
-                            <Style TargetType="{x:Type Grid}">
-                                <Style.Triggers>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Collapsed" />
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Margin" Value="0,0,15,0" />
-                                    </MultiDataTrigger>
-
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Visible" />
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Margin" Value="0,0,30,0" />
-                                    </MultiDataTrigger>
-
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding IsClosed}" Value="True" />
-                                            <Condition Binding="{Binding DataContext.CurrentState, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="{x:Static st:IssueState.open}" />
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background">
-                                            <Setter.Value>
-                                                <SolidColorBrush Opacity=".3"
-                                                                 Color="DarkGreen" />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value=".2" />
-                                    </MultiDataTrigger>
-
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding IsClosed}" Value="false" />
-                                            <Condition Binding="{Binding DataContext.CurrentState, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="{x:Static st:IssueState.open}" />
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background">
-                                            <Setter.Value>
-                                                <SolidColorBrush Opacity="1"
-                                                                 Color="Transparent" />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="1" />
-                                    </MultiDataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Grid.Style>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock FontSize="14"
-                                           FontWeight="Bold"
-                                           TextWrapping="Wrap">
-                                    <Run Text="#" />
-                                    <Run Text="{Binding Id}" />
-                                    <Run Text="-" />
-                                    <Run Text="{Binding Title}" />
-                                </TextBlock>
-                                <Border Grid.Column="1"
-                                        Width="auto"
-                                        Height="auto    "
-                                        Margin="15,0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Visibility="{Binding TotalSubIssues,
-                                                             Converter={Conv:ConvCountVisibility Min=0}}">
-                                    <Border.InputBindings>
-                                        <MouseBinding Command="{Binding OpenSubIssueListCommand}"
-                                                      Gesture="LeftClick" />
-                                    </Border.InputBindings>
-                                    <Grid Cursor="Hand">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <TextBlock HorizontalAlignment="Center"
-                                                   Background="Transparent"
-                                                   FontSize="9">
-                                            <Run Text="{Binding Completed}" />
-                                            <Run Text=" / " />
-                                            <Run Text="{Binding TotalSubIssues}" />
-                                        </TextBlock>
-                                        <ProgressBar Grid.Row="1"
-                                                     Width="50"
-                                                     Height="5"
-                                                     Maximum="{Binding TotalSubIssues}"
-                                                     Value="{Binding Completed}" />
-                                    </Grid>
-                                </Border>
-                            </Grid>
-
-                            <TextBlock Grid.Row="1"
-                                       Margin="0,0,5,0"
-                                       FontSize="11"
-                                       Foreground="{DynamicResource ControlBorderMidBrush}"
-                                       Text="{Binding Description}"
-                                       TextWrapping="Wrap" />
-                        </Grid>
-
-                        <StackPanel Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top">
-
-                            <ui:UIButton Background="Transparent"
-                                         Command="{Binding ShowOnWebCommand}"
-                                         ShowText="False"
-                                         Style="{DynamicResource IconButtonStyle}" />
-                            <ui:UIButton Background="Transparent"
-                                         Command="{Binding CloseIssueCommand}"
-                                         ShowText="False" />
-                            <ui:UIButton Background="Transparent"
-                                         Command="{Binding ReloadIssueCommand}"
-                                         ShowText="False" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </DataTemplate>
+            <ResourceDictionary Source="/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml" />
         </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <StackPanel VerticalAlignment="Top"
-                    Orientation="Horizontal">
+        <Grid VerticalAlignment="Top">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
             <Grid IsEnabled="{Binding LoggedIn}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <ui:UiComboBox MinWidth="150"
                                DisplayMemberPath="name"
+                               IsEditable="True"
                                ItemsSource="{Binding RepoModels}"
                                SelectedItem="{Binding SelectedRepo}" />
                 <ui:UIButton Grid.Column="1"
@@ -183,7 +53,7 @@
                              GlyphSize="25"
                              ShowText="False" />
             </Grid>
-            <ui:TaggedTextBox Grid.Column="2"
+            <ui:TaggedTextBox Grid.Column="1"
                               IsNumericOnly="True"
                               TaggedText="Issues / Page"
                               TaggedWidth="100"
@@ -191,14 +61,21 @@
                               ToolTip="Number of issues to show/fetch"
                               UpdateOnEnter="True" />
 
-            <ui:UIButton Margin="5"
+            <ui:UIButton Grid.Column="2"
+                         Margin="5"
                          Command="{Binding LoadCurrentProjectCommand}"
                          IsEnabled="{Binding LoggedIn}"
                          ShowText="False" />
-        </StackPanel>
+
+            <ui:TaggedTextBox Grid.Column="3"
+                              HorizontalAlignment="Stretch"
+                              PlaceHolder="Repo Owner name"
+                              Text="{Binding RepoOwner}"
+                              TextAlignment="Right"
+                              UpdateOnEnter="True" />
+        </Grid>
         <ui:SearchTextBox Grid.Row="1"
                           Width="auto"
-                          Margin="30,0,0,0"
                           HorizontalAlignment="Stretch"
                           PlaceHolder="Search within the current page"
                           Text="{Binding TextToFilter,

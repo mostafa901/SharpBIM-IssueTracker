@@ -21,7 +21,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     public class GitIssues : GitClient
     {
         // References: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
-        protected override string endPoint => $"https://api.github.com/repos/{Account.login}/REPO/issues";
+        protected override string endPoint => $"https://api.github.com/repos/{Owner}/REPO/issues";
 
         private string GetEndPoint(string repoName) => endPoint.Replace("REPO", repoName);
 
@@ -202,7 +202,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public async Task<IServiceReport<string>> UploadImageAsync(string repoName, string filePath, string branch = "master")
         {
             string imageName = Path.GetFileName(filePath);
-            string url = $"https://api.github.com/repos/{Account.login}/{repoName}/contents/images/{imageName}";
+            string url = $"https://api.github.com/repos/{Owner}/{repoName}/contents/images/{imageName}";
 
             // Convert image to Base64
             byte[] imageBytes = File.ReadAllBytes(filePath);

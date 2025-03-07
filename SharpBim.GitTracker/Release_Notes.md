@@ -1,6 +1,11 @@
 
 ## Version 0.749 - March 2025
 ☑️ Implemented Check for updates, just click on the version text  
+☑️ Add feature to access any public repo  
+☑️ Star this app  
+☑️ UI theme fixes
+☑️ Ability to type name for fast selection from repo combo-box
+
 
 ## Version 0.749 - March 2025
 - Added Label management feature  

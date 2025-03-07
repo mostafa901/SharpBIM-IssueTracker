@@ -11,7 +11,7 @@ namespace SharpBIM.GitTracker
     [Obfuscation(Exclude = true, ApplyToMembers = true)]
     internal sealed class ShowTrackerWindowCommand : BaseCommand<ShowTrackerWindowCommand>
     {
-        protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
+        protected override async System.Threading.Tasks.Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await BaseToolWindow<MainPageViewModelToolWindow>.ShowAsync();
         }

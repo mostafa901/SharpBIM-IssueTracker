@@ -31,6 +31,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public int Version { get; set; }
         public string HashedPassword { get; set; }
 
+        public string RepoOwner { get; set; }
         public bool LoggedIn { get; set; }
 
         public SharpToken Token { get; set; }
