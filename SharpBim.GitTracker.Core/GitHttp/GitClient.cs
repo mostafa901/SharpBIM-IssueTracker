@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Web.WebView2.Core;
-using SharpBIM;
 using SharpBIM.Utility.Extensions;
-using static System.Net.WebRequestMethods;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
-using Org.BouncyCastle.Asn1.Crmf;
 using System.Web;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.GitHttp.Events;
@@ -44,7 +35,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected IGitConfig Config => AppGlobals.Config;
         public IUser User => AppGlobals.User;
-        protected Account Account => User.UserAccount;
+        protected static string Owner { get; private set; }
+
+        public void UpdateOwnerAccount(string newOwner)
+        {
+            Owner = newOwner;
+        }
 
         public static int RemaingCalls { get; set; } = int.MaxValue;
 
@@ -172,6 +168,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected virtual async Task<bool> AreWeAuthorized()
         {
+            if (string.IsNullOrEmpty(Owner))
+                return false;
+
             if (NeedAuthentication)
             {
                 var report = await AuthService.Login();
@@ -217,7 +216,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var responseJson = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode == false || responseJson.Contains("error_description"))
             {
-                report.Failed(ResponseMessages.GetMessageToUser(responseJson));
+                report.Model = response.StatusCode.ToString();
+                report.Failed($"{ResponseMessages.GetMessageToUser(responseJson)}");
             }
             else
                 report.Model = responseJson;

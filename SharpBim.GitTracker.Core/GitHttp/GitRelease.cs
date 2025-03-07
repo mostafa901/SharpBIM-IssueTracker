@@ -120,7 +120,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
-        public async Task<IServiceReport<ReleaseModel>> GetLatestReleaseersion(string repoName)
+        public async Task<IServiceReport<ReleaseModel>> GetLatestRelease(string repoName)
         {
             var url = $"{GetEndPoint(repoName)}/latest";
             var releaseReport = new ServiceReport<ReleaseModel>();

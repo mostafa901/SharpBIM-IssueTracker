@@ -22,24 +22,36 @@
             <Grid Margin="8,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
-                <ui:UIButton Width="25"
-                             Command="{Binding ShowLoginScreenCommand}"
-                             GlyphSize="25"
-                             ShowText="False"
-                             Visibility="{Binding IsLoginScreen,
-                                                  Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
-                <ui:UIButton Grid.Column="1"
-                             Width="25"
-                             Command="{Binding FeedBackCommand}"
-                             GlyphSize="25"
-                             ShowText="False"
-                             Visibility="{Binding IsLoginScreen,
-                                                  Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:UIButton Width="25"
+                                 Command="{Binding ShowLoginScreenCommand}"
+                                 GlyphSize="25"
+                                 ShowText="False"
+                                 Visibility="{Binding IsLoginScreen,
+                                                      Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
+                    <ui:UIButton Grid.Column="1"
+                                 Width="25"
+                                 Command="{Binding FeedBackCommand}"
+                                 GlyphSize="25"
+                                 ShowText="False"
+                                 Visibility="{Binding IsLoginScreen,
+                                                      Converter={Conv:ConvBoolToVisibility Inverse=True}}" />
+                    <ui:UIButton Grid.Column="2"
+                                 Command="{Binding StarRepoCommand}"
+                                 GlyphSize="25"
+                                 ShowText="False"
+                                 Visibility="{Binding StarRepoCommand.IsVisible,
+                                                      Converter={Conv:ConvBoolToVisibility}}" />
+                </Grid>
                 <StackPanel Grid.Column="2"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
@@ -96,18 +108,21 @@
             </Grid>
             <Frame x:Name="SharpBIMViewer"
                    Grid.Row="1"
-                   Grid.Column="1"
                    IsEnabled="{Binding IsBusy,
                                        Converter={Conv:ConvBoolToInverse}}"
                    JournalOwnership="OwnsJournal"
                    NavigationUIVisibility="Hidden" />
         </Grid>
-        <Grid>
+        <Grid Visibility="{Binding CurrentView, Converter={Conv:ConvNullVisibility}}">
+            <Rectangle Fill="{DynamicResource ControlBackground}">
+                <Rectangle.Effect>
+                    <BlurEffect Radius="25" />
+                </Rectangle.Effect>
+            </Rectangle>
             <ContentControl HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Content="{Binding CurrentView}"
-                            Visibility="{Binding CurrentView,
-                                                 Converter={Conv:ConvNullVisibility}}" />
+                            Background="Transparent"
+                            Content="{Binding CurrentView}" />
         </Grid>
         <Border MinWidth="100"
                 Padding="10"

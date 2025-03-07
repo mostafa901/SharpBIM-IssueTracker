@@ -13,6 +13,8 @@ using SharpBIM.GitTracker.Core.WPF.Helpers;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using Microsoft;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using Newtonsoft.Json.Linq;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -37,6 +39,20 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             FetchIssueCounts = 200;
             PageNumber = 1;
             AutoFilterState = true;
+        }
+
+        public override async void Init(DummyListContext dataModel)
+        {
+            base.Init(dataModel);
+
+            if (AppGlobals.User.RepoOwner == null || AppGlobals.User.RepoOwner.Length == 0)
+            {
+                RepoOwner = AppGlobals.User.UserAccount.login;
+                AppGlobals.User.Save();
+            }
+            else
+                RepoOwner = AppGlobals.User.RepoOwner;
+            await ReloadRepos(null);
         }
 
         public string TextToFilter
@@ -66,12 +82,27 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             return false;
         }
 
+        public string RepoOwner
+        {
+            get { return GetValue<string>(nameof(RepoOwner)); }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    return;
+                SetValue(value, nameof(RepoOwner));
+                IssuesService.UpdateOwnerAccount(value);
+                AppGlobals.User.RepoOwner = value;
+                AppGlobals.User.Save();
+                ReloadRepos(null);
+            }
+        }
+
         private void LoadCommands()
         {
             CreateNewIssueCommand = new SharpBIMCommand(async (x) => await CreateNewIssue(x), "Create New Issue", Glyphs.plus_circle, (x) => true);
             ReloadCommand = new SharpBIMCommand(async (x) => await Reload(x), "Refresh", Glyphs.reload, (x) => true);
             EditIssueCommand = new SharpBIMCommand(async (x) => await EditIssue(x), "Edit", Glyphs.edit, (x) => true);
-            LoadCurrentProjectCommand = new SharpBIMCommand(LoadCurrentProject, "Load Current Project", Glyphs.arrows_swap, (x) => true);
+            LoadCurrentProjectCommand = new SharpBIMCommand(LoadCurrentProject, "Sync to Current Project", Glyphs.arrows_swap, (x) => true);
             LessPageCommand = new SharpBIMCommand(LessPage, "Less Page", Glyphs.arrow_60_left, (x) => true);
             MorePageCommand = new SharpBIMCommand(MorePage, "More Page", Glyphs.arrow_60_right, (x) => true);
             ReloadReposCommand = new SharpBIMCommand(async (x) => await ReloadRepos(x), "Reload Repos", Glyphs.reload_sm, (x) => true);
@@ -115,12 +146,23 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             set
             {
                 SetValue(value, nameof(SelectedRepo));
-                if (!string.IsNullOrEmpty(value?.name))
+
+            }
+        }
+
+        protected override async void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            base.OnPropertyChanged(propertyName);
+
+            if (propertyName.Equals(nameof(SelectedRepo)))
+            {
+
+                if (!string.IsNullOrEmpty(SelectedRepo?.name))
                 {
-                    AppGlobals.User.LastRepoName = value.name;
+                    AppGlobals.User.LastRepoName = SelectedRepo.name;
                     AppGlobals.User.Save();
+                  await  LoadIssuesAsync(null);
                 }
-                LoadIssuesAsync(null);
             }
         }
 

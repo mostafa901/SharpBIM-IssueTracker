@@ -49,10 +49,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 bool auth = false;
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Authorizing...", true);
-                if (string.IsNullOrEmpty(StoredToken) || !AppGlobals.User.IsPersonalToken)
+                if ( !AppGlobals.User.IsPersonalToken)
                 {
                     // this is to rest the authentication and reautherize if needed
 
+                    if(string.IsNullOrEmpty(StoredToken))
+                    AppGlobals.User = new GitUser();
                     var login = await AuthService.Login();
                     if (login.IsFailed)
                     {
@@ -80,6 +82,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 }
                 if (auth)
                 {
+                    AppGlobals.User.RepoOwner = AppGlobals.User.UserAccount.login;
                     LoggedIn?.Invoke(this, null);
                 }
             }

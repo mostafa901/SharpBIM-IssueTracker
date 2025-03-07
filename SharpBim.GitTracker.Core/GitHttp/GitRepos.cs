@@ -10,7 +10,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     public class GitRepos : GitClient
     {
         //  protected override string endPoint => $"{AppGlobals.User.Installation.account.repos_url}?type=private";
-        protected override string endPoint => $"https://api.github.com/user/repos";
+        protected override string endPoint => $"https://api.github.com/users";
 
         internal GitRepos()
         {
@@ -22,19 +22,35 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
         }
 
+        public async Task<IServiceReport<string>> StarRepo(string repoName)
+        {
+            string url = $"https://api.github.com/user/starred/{Owner}/{repoName}";
+            var response = await PUT(url, null);
+            return response;
+        }
+
+        public async Task<IServiceReport<string>> IsRepoStared(string repoName)
+        {
+            string url = $"https://api.github.com/user/starred/{Owner}/{repoName}";
+            var response = await GET(url);
+
+            return response;
+        }
+
         public async Task<IServiceReport<IEnumerable<RepoModel>>> GetRepos()
         {
             var repoReport = new ServiceReport<IEnumerable<RepoModel>>();
             List<RepoModel> repos = new List<RepoModel>();
             int page = 1;
             int trials = 5;
+            var baseurl = $"{endPoint}/{Owner}/repos";
             while (true)
             {
                 string response = null;
                 IServiceReport<string> getReport = new ServiceReport<string>();
                 while (trials > 0)
                 {
-                    var url = $"{endPoint}?page={page}";
+                    var url = $"{baseurl}?page={page}&sort =full_name";
 
                     getReport = await GET(url);
                     if (!getReport.IsFailed)

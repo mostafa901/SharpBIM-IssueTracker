@@ -8,6 +8,10 @@ using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.Utility.Extensions;
 using System.Threading.Tasks;
+using SharpBIM.WPF.Controls.Dialogs;
+using System.Windows.Media;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
+using SharpBIM.Services.Statics;
 
 namespace SharpBIM.GitTracker.Core.WPF.Views
 {
@@ -24,7 +28,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             NavigateForwardCommand = new SharpBIMCommand(NavigateForward, "Navigate Forward", Glyphs.empty, (x) => true);
             CheckForUpdatesCommand = new SharpBIMCommand(async (x) => await CheckForUpdates(x), "Check for updates", Glyphs.empty, (x) => true);
             ShowLoginScreenCommand = new SharpBIMCommand(async (x) => await ShowLoginScreen(null), "Login", Glyphs.login, (x) => true);
-            FeedBackCommand = new SharpBIMCommand(FeedBack, "Feedback", Glyphs.notification, (x) => true);
+            FeedBackCommand = new SharpBIMCommand(async (x) => await FeedBack(x), "Feedback", Glyphs.notification, (x) => true);
+            StarRepoCommand = new SharpBIMCommand(async (x) => await StarRepo(x), "Star me", Glyphs.star_outline, (x) => true);
             IsLoginScreen = true;
             var ver = this.GetType().Assembly.GetName().Version;
             Version = $"{ver.Major}.{ver.Minor}";
@@ -49,11 +54,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                 IsCheckingForUpdate = true;
                 await Task.Delay(200);
                 var appReport = await InstallService.GetApp();
-                if (appReport.IsFailed)
+                if (!appReport.IsFailed)
                 {
                     var app = appReport.Model;
-                    string repoName = app.name;
-                    var releaseReport = await ReleaseService.GetLatestReleaseersion(repoName);
+                    InstallService.UpdateOwnerAccount(app.owner.login);
+                    string repoName = app.slug;
+                    var releaseReport = await ReleaseService.GetLatestRelease(repoName);
                     if (releaseReport.Model != null)
                     {
                         var releaseModel = releaseReport.Model;
@@ -69,6 +75,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             }
             finally
             {
+                InstallService.UpdateOwnerAccount(AppGlobals.User.RepoOwner);
                 IsCheckingForUpdate = false;
             }
         }
@@ -116,11 +123,58 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
 
         // Add this line to the constructor
 
-        public void FeedBack(object x)
+        public async Task FeedBack(object x)
         {
             try
             {
-                IOEx.OpenUrl("https://github.com/mostafa901/SharpBIM.GitTracker/issues");
+                var feebackmv = new FeedbackViewModel();
+                var feedbackView = new FeedbackView();
+                feedbackView.Background = Brushes.Transparent;
+                feedbackView.DataContext = feebackmv;
+
+                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Feedback", "Type your issue below", [Statics.OK, Statics.CANCEL], feedbackView);
+                if (!ans.IsFailed && ans.Model == Statics.OK)
+                {
+                    var issuemodel = new IssueModel
+                    {
+                        body = feebackmv.IssueBody,
+                        Title = feebackmv.IssueTitle
+                    };
+                    var respons = await IssuesService.CreateIssue(AppGlobals.User.Installation.app_slug, issuemodel);
+                    if (respons.IsFailed)
+                    {
+                        AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to issue", respons.ErrorMessage);
+                    }
+                    else
+                    {
+                        AppGlobals.MsgService.AlertUser(WindowHandle, "Thanks", "Thanks for your feedback");
+                    }
+                }
+
+                //IOEx.OpenUrl("https://github.com/mostafa901/SharpBIM.GitTracker/issues");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public SharpBIMCommand StarRepoCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public async Task StarRepo(object x)
+        {
+            try
+            {
+                var response = await ReposSerivce.IsRepoStared(AppGlobals.User.Installation.app_slug);
+                if (response.IsFailed)
+                {
+                    StarRepoCommand.Icon = Glyphs.star_outline;
+                    response = await ReposSerivce.StarRepo(AppGlobals.User.Installation.app_slug);
+                    if (!response.IsFailed)
+                        StarRepoCommand.Icon = Glyphs.star;
+                }
+                 
             }
             catch (Exception ex)
             {
@@ -194,14 +248,23 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             AppGlobals.User.LoggedIn = true;
             AppGlobals.User.Save();
+            AuthService.UpdateOwnerAccount(AppGlobals.User.RepoOwner);
             IsLoginScreen = false;
             CurrentView = null;
             ShowLoginScreenCommand.Icon = Glyphs.logout;
             ShowLoginScreenCommand.Hint = "Logout";
             var vm = new IssueListViewModel() { ParentModelView = this, LoggedIn = true };
             AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
-            await vm.ReloadRepos(null);
+ 
+            vm.Init(new DummyListContext());
             await CheckForUpdates(null);
+ 
+            var response = await ReposSerivce.IsRepoStared(AppGlobals.User.Installation.app_slug);
+            if (!response.IsFailed)
+            {
+                //StarRepoCommand.Icon = Glyphs.empty;
+                StarRepoCommand.IsVisible = false;
+            }
         }
 
         public SharpBIMCommand NavigateForwardCommand { get; set; }
