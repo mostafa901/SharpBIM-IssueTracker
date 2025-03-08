@@ -333,12 +333,20 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo.name, ContextData);
             if (!patchedReport.IsFailed)
             {
+                ContextData = patchedReport.Model;
                 if (!IsSubIssue)
                     await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
                 else
                 {
-                    ContextData = patchedReport.Model;
                     patchedReport = await MakeSubIssue();
+                }
+            }
+            else
+            {
+                AppGlobals.MsgService.AlertUser(WindowHandle, "Creation Failed", patchedReport.ErrorMessage);
+                if (ParentModelView is IssueViewModel parentismv)
+                {
+                    parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
                 }
             }
             return patchedReport;
@@ -436,7 +444,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         private async Task<IServiceReport<IssueModel>> PatchIssueAsync()
         {
             IServiceReport<IssueModel> patchedReport = await IssuesService.PatchIssue(SelectedRepo.name, ContextData);
-
+            if (patchedReport.IsFailed)
+            {
+                AppGlobals.MsgService.AlertUser(WindowHandle, "Patch Failed", patchedReport.ErrorMessage);
+                if (ParentModelView is IssueViewModel parentismv)
+                {
+                    parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
+                }
+            }
             return patchedReport;
         }
 
@@ -444,7 +459,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         private async Task<IServiceReport<string>> PrepareForPushAsync()
         {
             var markdownreport = new ServiceReport<string>();
-            ContextData.Title = Title;
 
             string markDown = MarkDown;
             foreach (var key in srvrToLocal.Keys)
@@ -458,8 +472,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     }
                     else
                     {
+                        var finfo = new FileInfo(key);
+                        finfo.MoveTo(Path.Combine(finfo.Directory.FullName, $"issue-{ContextData.number}-{DateTime.Now.Ticks}.png"));
+                        var neName = finfo.FullName;
                         // this is a new image that needs uploading
-                        var report = await IssuesService.UploadImageAsync(SelectedRepo.name, key, SelectedRepo.default_branch);
+                        var report = await IssuesService.UploadImageAsync(SelectedRepo.name, neName, ContextData.number, SelectedRepo.default_branch);
                         if (report.IsFailed)
                         {
                             markdownreport.Failed(report.ErrorMessage);
@@ -514,14 +531,23 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     return;
                 }
 
+                ContextData.Title = Title;
+
+                IServiceReport<IssueModel> patchedReport = null;
+                if (Id <= 0)
+                {
+                    patchedReport = await CreateIssueAsync();
+                    if (patchedReport.IsFailed)
+                    { return; }
+                }
+
                 var markdownReport = await PrepareForPushAsync();
-                ;
                 if (markdownReport.IsFailed)
                 {
                     AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Error", markdownReport.ErrorMessage);
                     return;
                 }
-                ContextData.Title = Title;
+
                 ContextData.body = markdownReport.Model;
                 var orig = ContextData.state;
                 ContextData.state = IsClosed ? IssueState.closed.ToString() : IssueState.open.ToString();
@@ -542,21 +568,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     }
                 }
 
-                IServiceReport<IssueModel> patchedReport = null;
-                if (Id <= 0)
-                {
-                    patchedReport = await CreateIssueAsync();
-                }
-                else
-                    patchedReport = await PatchIssueAsync();
+                patchedReport = await PatchIssueAsync();
 
                 if (patchedReport.IsFailed)
                 {
-                    AppGlobals.MsgService.AlertUser(IntPtr.Zero, "Patch Failed", patchedReport.ErrorMessage);
-                    if (ParentModelView is IssueViewModel parentismv)
-                    {
-                        parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
-                    }
+                    return;
                 }
                 else
                 {

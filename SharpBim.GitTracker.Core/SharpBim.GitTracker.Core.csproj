@@ -42,6 +42,9 @@
     
     <ItemGroup>
         <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
+        <PackageReference Include="Avalonia" Version="11.2.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
+        <PackageReference Include="AvaloniaEdit.TextMate" Version="11.1.0" />
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
@@ -65,9 +68,6 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
             <Version>1.1.135</Version>
-        </PackageReference>
-        <PackageReference Include="AvalonEdit">
-            <Version>6.3.0.90</Version>
         </PackageReference>
         <PackageReference Include="HtmlAgilityPack">
             <Version>1.11.72</Version>
@@ -93,10 +93,13 @@
 
     <ItemGroup>
       <Folder Include="SharpBIM\" />
-      <Folder Include="WPF\Mvvm\Views\Views\" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="call xcopy $(MSBuildProjectDirectory)\$(OutputPath)*.* $(MSBuildProjectDirectory)\..\SharpBIM.GitTracker\GitPublish\* /s /y" />
     </Target>
+
+    <ItemGroup>
+      <VSCTInclude Remove="WPF\Mvvm\Views\Views\**" />
+    </ItemGroup>
 </Project>

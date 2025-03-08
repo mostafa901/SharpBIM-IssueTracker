@@ -43,13 +43,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             Loaded -= MainPage_Loaded;
 
-            ViewModel.WindowHandle = this.GetWindow().Handle();
+            AppGlobals.MainWindowHandle = ViewModel.WindowHandle = this.GetWindow().Handle();
             await ViewModel.Login(null);
         }
 
         public async void UpdateProgress(double value, double max, string message, bool isIndeterminate)
         {
-            return;
             await this.Dispatcher.InvokeAsync(new Action(() =>
                   {
                       ViewModel.ShowProgressBar = !string.IsNullOrEmpty(message);

@@ -12,6 +12,7 @@ using SharpBIM.WPF.Controls.Dialogs;
 using System.Windows.Media;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.Services.Statics;
+using System.Text.Json;
 
 namespace SharpBIM.GitTracker.Core.WPF.Views
 {
@@ -127,23 +128,19 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             try
             {
-                var feebackmv = new FeedbackViewModel();
-                var feedbackView = new FeedbackView();
-                feedbackView.Background = Brushes.Transparent;
-                feedbackView.DataContext = feebackmv;
-
-                var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Feedback", "Type your issue below", [Statics.OK, Statics.CANCEL], feedbackView);
-                if (!ans.IsFailed && ans.Model == Statics.OK)
+                var ans = AppGlobals.MsgService.FeedBack(WindowHandle, "Feedback", "");
+                if (!ans.IsFailed && ans.Model != null)
                 {
                     var issuemodel = new IssueModel
                     {
-                        body = feebackmv.IssueBody,
-                        Title = feebackmv.IssueTitle
+                        Title = ans.Model.Item1,
+                        body = ans.Model.Item2
                     };
+
                     var respons = await IssuesService.CreateIssue(AppGlobals.User.Installation.app_slug, issuemodel);
                     if (respons.IsFailed)
                     {
-                        AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to issue", respons.ErrorMessage);
+                        AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to send feedback", respons.ErrorMessage);
                     }
                     else
                     {
@@ -174,7 +171,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                     if (!response.IsFailed)
                         StarRepoCommand.Icon = Glyphs.star;
                 }
-                 
             }
             catch (Exception ex)
             {
@@ -255,10 +251,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             ShowLoginScreenCommand.Hint = "Logout";
             var vm = new IssueListViewModel() { ParentModelView = this, LoggedIn = true };
             AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
- 
+
             vm.Init(new DummyListContext());
             await CheckForUpdates(null);
- 
+
             var response = await ReposSerivce.IsRepoStared(AppGlobals.User.Installation.app_slug);
             if (!response.IsFailed)
             {

@@ -199,10 +199,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         }
 
         // this requires contentsPErmisison Read and write
-        public async Task<IServiceReport<string>> UploadImageAsync(string repoName, string filePath, string branch = "master")
+        public async Task<IServiceReport<string>> UploadImageAsync(string repoName, string filePath, int issueNumber, string branch = "master")
         {
             string imageName = Path.GetFileName(filePath);
-            string url = $"https://api.github.com/repos/{Owner}/{repoName}/contents/images/{imageName}";
+            string url = $"https://api.github.com/repos/{Owner}/{repoName}/contents/issue-images/{issueNumber}/{imageName}";
 
             // Convert image to Base64
             byte[] imageBytes = File.ReadAllBytes(filePath);

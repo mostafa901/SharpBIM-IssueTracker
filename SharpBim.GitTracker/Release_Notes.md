@@ -3,8 +3,10 @@
 ☑️ Implemented Check for updates, just click on the version text  
 ☑️ Add feature to access any public repo  
 ☑️ Star this app  
-☑️ UI theme fixes
+☑️ UI theme fixes  
 ☑️ Ability to type name for fast selection from repo combo-box
+☑️ Upload images to issue-images folder
+☑️ Images are named by issue-number and push date ticks
 
 
 ## Version 0.749 - March 2025
@@ -14,10 +16,10 @@
     ☑️ Assigns or unassigns label to an issue  
 
 ## Version 0.748 - March 2025
-- Fix build automation
-- fix assembly version to be consistent
-- Fix bad linked references
-- Display app version on the interface
+☑️ Fix build automation  
+☑️ fix assembly version to be consistent  
+☑️ Fix bad linked references  
+☑️ Display app version on the interface  
 
 ## Version 0.740 - March 2025
 

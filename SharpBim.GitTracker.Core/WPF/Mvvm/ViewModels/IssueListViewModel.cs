@@ -15,6 +15,7 @@ using Microsoft;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Linq;
+using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -88,7 +89,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             set
             {
                 if (string.IsNullOrEmpty(value))
-                    return;
+                    value = AppGlobals.User.UserAccount.login;
                 SetValue(value, nameof(RepoOwner));
                 IssuesService.UpdateOwnerAccount(value);
                 AppGlobals.User.RepoOwner = value;
@@ -146,7 +147,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             set
             {
                 SetValue(value, nameof(SelectedRepo));
-
             }
         }
 
@@ -156,12 +156,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
             if (propertyName.Equals(nameof(SelectedRepo)))
             {
-
                 if (!string.IsNullOrEmpty(SelectedRepo?.name))
                 {
                     AppGlobals.User.LastRepoName = SelectedRepo.name;
                     AppGlobals.User.Save();
-                  await  LoadIssuesAsync(null);
+                    await LoadIssuesAsync(null);
                 }
             }
         }
@@ -181,6 +180,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             try
             {
                 var issueVM = x as IssueViewModel;
+                if (issueVM == null)
+                    return;
                 await issueVM.LoadDetails();
                 AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueView), issueVM);
             }
@@ -443,7 +444,9 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
 
             string storedName = AppGlobals.User.LastRepoName;
-            SelectedRepo = string.IsNullOrEmpty(storedName) ? RepoModels.FirstOrDefault() : RepoModels.FirstOrDefault(o => o.name == storedName);
+            SelectedRepo = string.IsNullOrEmpty(storedName) ? RepoModels.FirstOrDefault() : RepoModels.FirstOrDefault(o => o.name.EQ(storedName));
+            if (SelectedRepo == null)
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
         }
 
         public virtual async Task Reload(object x)
