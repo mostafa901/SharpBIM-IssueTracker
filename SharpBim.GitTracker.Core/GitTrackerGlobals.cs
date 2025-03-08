@@ -33,6 +33,7 @@ namespace SharpBIM.GitTracker.Core
         public static GitInstallation InstallService { get; internal set; }
         public static GitRelease ReleaseService { get; internal set; }
         public static GitLabels LabelService { get; internal set; }
+        public static GitIssueComments CommentService { get; internal set; }
 
         static GitTrackerGlobals()
         {
@@ -51,6 +52,7 @@ namespace SharpBIM.GitTracker.Core
             TokenService = new();
             ReleaseService = new();
             LabelService = new();
+            CommentService = new();
         }
     }
 }

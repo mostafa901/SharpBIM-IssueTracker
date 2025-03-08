@@ -31,7 +31,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public static event EventHandler<CallEventArgs> OnRequestCompletedEvent;
 
-        protected virtual string GetEndPoint(string repoName) => endPoint.Replace("REPO", repoName);
+        protected virtual string GetEndPoint(params object[] repoName) => endPoint.Replace("REPO", repoName[0].ToString());
 
         protected IGitConfig Config => AppGlobals.Config;
         public IUser User => AppGlobals.User;

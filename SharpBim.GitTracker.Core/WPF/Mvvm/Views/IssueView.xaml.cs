@@ -35,20 +35,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
         public IssueView()
         {
             InitializeComponent();
-
-            avtxt.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("MarkDownWithFontSize");
-            foreach (var cl in avtxt.SyntaxHighlighting.NamedHighlightingColors)
-            {
-                cl.Foreground = new SimpleHighlightingBrush(ResourceValues.SolidColorBrushs.ControlForegroundBrush.Color);
-                cl.Background = new SimpleHighlightingBrush(ResourceValues.SolidColorBrushs.ControlBackground.Color);
-            }
-
-            mk.Plugins = MdXamlPlugins.Default;
-            mk.Plugins.Inline.Add(new CheckboxInlineParser());
         }
 
         public new IssueViewModel ViewModel => DataContext as IssueViewModel;
 
+#if false
         private void Avtxt_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (ViewModel == null)
@@ -67,10 +58,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
                 }
             }
         }
+#endif
 
         private void labelTxtBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Down )
+            if (e.Key == Key.Down)
             {
                 if (lst.HasItems)
                 {
@@ -79,7 +71,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
                 }
             }
 
-            if (!pop.IsOpen && labelTxtBox.Text.Length==0 && e.Key == Key.Tab)
+            if (!pop.IsOpen && labelTxtBox.Text.Length == 0 && e.Key == Key.Tab)
             {
                 e.Handled = true;
                 avtxt.Focus();
@@ -88,14 +80,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             {
                 if (lst.HasItems)
                 {
-
                     e.Handled = true;
                     lst.Focus();
                     lst.SelectedIndex = 0;
-
                 }
             }
-
         }
 
         private void pop_Closed(object sender, EventArgs e)
@@ -119,7 +108,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
                 labelTxtBox.Focus();
                 labelTxtBox.SelectAll();
             }
-
         }
     }
 

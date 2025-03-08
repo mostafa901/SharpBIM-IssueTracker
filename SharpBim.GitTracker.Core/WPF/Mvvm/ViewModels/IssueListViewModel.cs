@@ -415,6 +415,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             AppGlobals.AppViewContext.UpdateProgress(1, 1, "Loading Repos", true);
             RepoModels.Clear();
+            Children.Clear();
             IEnumerable<RepoModel> repoModels = [];
             await Task.Run(async () =>
                  {
@@ -444,7 +445,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
 
             string storedName = AppGlobals.User.LastRepoName;
-            SelectedRepo = string.IsNullOrEmpty(storedName) ? RepoModels.FirstOrDefault() : RepoModels.FirstOrDefault(o => o.name.EQ(storedName));
+            SelectedRepo = RepoModels.FirstOrDefault(o => o.name.EQ(storedName))
+                ?? RepoModels.FirstOrDefault(o => o.has_issues)
+                ?? RepoModels.FirstOrDefault();
+
             if (SelectedRepo == null)
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
         }
