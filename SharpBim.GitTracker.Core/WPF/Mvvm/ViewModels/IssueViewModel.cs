@@ -22,6 +22,8 @@ using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using SharpBIM.Utility;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -46,9 +48,13 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             AddNewLableCommand = new SharpBIMCommand(AddNewLable, "Add New Label", Glyphs.plus_circle, (x) => true);
             AddLabelTextChangedCommand = new SharpBIMCommand(async (x) => await AddLabelTextChanged(x), "UpdateLabels", Glyphs.empty, (x) => true);
             LabelCollectionView = CollectionViewSource.GetDefaultView(AllLabelsList);
+            OpenCommentsCommand = new SharpBIMCommand(OpenComments, "Open comments", Glyphs.comment, (x) => true);
+            PastImageCommand = new SharpBIMCommand(PastImage, "Past Image", Glyphs.empty, (x) => true);
         }
 
         #endregion Public Constructors
+
+        public SharpBIMCommand OpenCommentsCommand { get; set; }
 
         #region Public Properties
 
@@ -507,6 +513,21 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             return markdownreport;
         }
 
+        public SharpBIMCommand PastImageCommand { get; set; }
+
+        // Add this line to the constructor
+
+        public void PastImage(object x)
+        {
+            try
+            {
+                AddImage(x.ToString(), null);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         private async Task<string> ProcessImagesInMarkdownAsync()
         {
             string issueBody = ContextData.body?.ToString() ?? "";
@@ -518,6 +539,21 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 return markdownText;
             }
             return issueBody;
+        }
+
+        // Add this line to the constructor
+
+        public void OpenComments(object x)
+        {
+            try
+            {
+                var mv = new IssueCommentViewModel() { ParentModelView = this };
+                mv.Init(ContextData);
+                AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueCommentView), mv);
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         private async Task PushIssueAsync(object obj)

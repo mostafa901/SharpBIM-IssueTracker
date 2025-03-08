@@ -9,6 +9,7 @@
 - ➕ **Create New Issues & Sub-Issues** – Easily add and manage tasks  
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
+- :punch: View and Add Comments  
 
 ![OverView_Labels](Images/Overview_Labels.png)
 
@@ -33,12 +34,21 @@ images are committed to the selected Repo's default branch under Images folder. 
   ![Overview_Login](Images/overview_subissue.png)
   - To view all sub-issues, hover over the progress bar to see the full list.
 
+
 ### Label management feature:
 ☑️ Create new label  
 ☑️ Update description  
 ☑️ Assigns or unassigns label to an issue  
 ☐ Remove Label from Repo [not yet]  
 
+### Label management feature:
+☑️ Add comment  
+☑️ View all comments  
+☑️ Visit comment on web  
+☐ Remove Comment [not yet]  
+☐ Update Comment [not yet]  
+
+![OverView_CreateIssue](Images/Overview_GoodFirstComment.png)  
 
 ## ⚠️ Limitations  
 - Currently supports **only personal GitHub accounts**  

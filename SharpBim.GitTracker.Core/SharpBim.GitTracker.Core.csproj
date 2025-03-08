@@ -38,18 +38,16 @@
       <Page Remove="WPF\Mvvm\Views\LableSelectionView.xaml" />
       <Page Remove="WPF\Mvvm\Views\SharpColorPicker.xaml" />
     </ItemGroup>
-    
-    
+
+
     <ItemGroup>
         <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
-        <PackageReference Include="Avalonia" Version="11.2.5" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
-        <PackageReference Include="AvaloniaEdit.TextMate" Version="11.1.0" />
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
         <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
+    
     <ItemGroup Condition="!($(DefineConstants.Contains('WINDOWS')))">
         <Compile Remove="WPF\**" />
         <EmbeddedResource Remove="WPF\**" />

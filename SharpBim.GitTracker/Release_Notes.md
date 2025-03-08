@@ -1,12 +1,14 @@
 
-## Version 0.749 - March 2025
+## Version 0.751 - March 2025
 ☑️ Implemented Check for updates, just click on the version text  
 ☑️ Add feature to access any public repo  
-☑️ Star this app  
+☑️ Star Issue Tracker  
 ☑️ UI theme fixes  
-☑️ Ability to type name for fast selection from repo combo-box
-☑️ Upload images to issue-images folder
-☑️ Images are named by issue-number and push date ticks
+☑️ Ability to type name for fast selection from repo combo-box  
+☑️ Upload images to issue-images folder  
+☑️ Images are named by issue-number and push date ticks  
+☑️ Add Comments  (initial implementation)  
+☑️ View all comments for issues (initial implementation)  
 
 
 ## Version 0.749 - March 2025

@@ -4,6 +4,7 @@
                         xmlns:Behaviors1f2cd76a="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Behaviors"
                         xmlns:Modelse2b90750="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Models"
                         xmlns:av="http://icsharpcode.net/sharpdevelop/avalonedit"
+                        xmlns:cmp="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Components"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -108,8 +109,11 @@
                     </ui:TaggedTextBox>
                 </Grid>
             </Grid>
-            <av:TextEditor x:Name="avtxt"
-                           Grid.Row="2"
+            <cmp:MarkDownEditor x:Name="avtxt"
+                                Grid.Row="2"
+                                DataContext="{Binding}"
+                                ImagePastedCommand="{Binding PastImageCommand}" />
+            <!--<av:TextEditor x:Name="avtxt"
                            MinHeight="200"
                            Margin="5"
                            Padding="10"
@@ -120,196 +124,19 @@
                            Foreground="{DynamicResource ControlForegroundBrush}"
                            PreviewKeyDown="Avtxt_PreviewKeyDown"
                            ScrollViewer.VerticalScrollBarVisibility="Auto"
-                           WordWrap="True">
-                <i:Interaction.Behaviors>
+                           WordWrap="True">-->
+            <!--<i:Interaction.Behaviors>
                     <Behaviors1f2cd76a:AvalonEditBehaviour GiveMeTheText="{Binding MarkDown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </i:Interaction.Behaviors>
-            </av:TextEditor>
+            </av:TextEditor>-->
             <GridSplitter Grid.Row="3"
                           Margin="5,3"
                           HorizontalAlignment="Stretch"
                           BorderBrush="Gray"
                           ResizeBehavior="PreviousAndNext"
                           ResizeDirection="Rows" />
-            <md:MarkdownScrollViewer x:Name="mk"
-                                     Grid.Row="4"
-                                     Margin="5"
-                                     HorizontalAlignment="Stretch"
-                                     VerticalAlignment="Stretch"
-                                     Background="{DynamicResource ControlBackgroundBrush}"
-                                     BorderBrush="Gray"
-                                     BorderThickness="1"
-                                     Foreground="{DynamicResource ControlForegroundBrush}"
-                                     Markdown="{Binding MarkDown,
-                                                        Mode=OneWay,
-                                                        UpdateSourceTrigger=PropertyChanged}"
-                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <md:MarkdownScrollViewer.MarkdownStyle>
-                    <Style TargetType="FlowDocument">
-                        <Style.Resources>
-                            <Style TargetType="Section">
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="Blockquote">
-                                        <Setter Property="Padding" Value="10,5" />
-                                        <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderMidBrush}" />
-                                        <Setter Property="BorderThickness" Value="5,0,0,0" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                            <Style xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-                                   TargetType="avalonEdit:TextEditor">
-                                <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
-                                <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
-                                <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-                                <Setter Property="Margin" Value="2,0,2,0" />
-                                <Setter Property="Padding" Value="3" />
-                            </Style>
-
-                            <Style TargetType="Paragraph">
-                                <Setter Property="Margin" Value="0,7,0,0" />
-
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="Heading1">
-                                        <Setter Property="Margin" Value="0,0,15,0" />
-
-                                        <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
-                                        <Setter Property="FontSize" Value="28" />
-                                        <Setter Property="FontWeight" Value="UltraBold" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="Heading2">
-                                        <Setter Property="Margin" Value="0,0,15,0" />
-
-                                        <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
-                                        <Setter Property="FontSize" Value="21" />
-                                        <Setter Property="FontWeight" Value="Bold" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="Heading3">
-                                        <Setter Property="Margin" Value="0,0,10,0" />
-
-                                        <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
-                                        <Setter Property="FontSize" Value="17.5" />
-                                        <Setter Property="FontWeight" Value="Bold" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="Heading4">
-                                        <Setter Property="Margin" Value="0,0,5,0" />
-
-                                        <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
-                                        <Setter Property="FontSize" Value="14" />
-                                        <Setter Property="FontWeight" Value="Bold" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="CodeBlock">
-                                        <Setter Property="FontFamily" Value="Courier New" />
-                                        <Setter Property="FontSize" Value="11.9" />
-                                        <Setter Property="Background" Value="#12181F25" />
-                                        <Setter Property="Padding" Value="20,10" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="Note">
-                                        <Setter Property="Margin" Value="5,0,5,0" />
-                                        <Setter Property="Padding" Value="10,5" />
-                                        <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderMidBrush}" />
-                                        <Setter Property="BorderThickness" Value="3,3,3,3" />
-                                        <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                            <Style TargetType="Run">
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="CodeSpan">
-                                        <Setter Property="FontFamily" Value="Courier New" />
-                                        <Setter Property="FontSize" Value="11.9" />
-                                        <Setter Property="Background" Value="#12181F25" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                            <Style TargetType="Span">
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="CodeSpan">
-                                        <Setter Property="FontFamily" Value="Courier New" />
-                                        <Setter Property="FontSize" Value="11.9" />
-                                        <Setter Property="Background" Value="#12181F25" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                            <Style TargetType="Hyperlink">
-                                <Setter Property="TextDecorations" Value="None" />
-                            </Style>
-
-                            <Style TargetType="Image">
-                                <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="imageright">
-                                        <Setter Property="Margin" Value="20,0,0,0" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                            <!--
-                                The Table's style don't seem to support border-collapse.
-                                By making the ruled line width 0.5 and applying it to cell and table,
-                                it looks like the ruled lines are not doubled.
-                            -->
-                            <Style TargetType="Table">
-                                <Setter Property="CellSpacing" Value="0" />
-                                <Setter Property="BorderThickness" Value="0.5" />
-                                <Setter Property="BorderBrush" Value="#DFE2E5" />
-                                <Style.Resources>
-                                    <Style TargetType="TableCell">
-                                        <Setter Property="BorderThickness" Value="0.5" />
-                                        <Setter Property="BorderBrush" Value="#DFE2E5" />
-                                        <Setter Property="Padding" Value="13,6" />
-                                    </Style>
-                                </Style.Resources>
-                            </Style>
-
-                            <Style TargetType="TableRowGroup">
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="TableHeader">
-                                        <Setter Property="FontWeight" Value="DemiBold" />
-                                        <Setter Property="FontWeight" Value="Bold" />
-                                        <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                            <Style TargetType="TableRow">
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="EvenTableRow">
-                                        <Setter Property="Background" Value="#F6F8FA" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-
-                            <Style TargetType="BlockUIContainer">
-                                <Style.Triggers>
-                                    <Trigger Property="Tag" Value="RuleSingle">
-                                        <Setter Property="Margin" Value="0,3" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="RuleDouble">
-                                        <Setter Property="Margin" Value="0,3" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="RuleBold">
-                                        <Setter Property="Margin" Value="0,3" />
-                                    </Trigger>
-
-                                    <Trigger Property="Tag" Value="RuleBoldWithSingle">
-                                        <Setter Property="Margin" Value="0,3" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Style.Resources>
-                    </Style>
-                </md:MarkdownScrollViewer.MarkdownStyle>
-            </md:MarkdownScrollViewer>
+            <cmp:MarkDownViewer x:Name="mk"
+                                DataContext="{Binding}" />
         </Grid>
         <Popup x:Name="pop"
                Width="auto"

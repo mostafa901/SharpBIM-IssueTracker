@@ -44,6 +44,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             int page = 1;
             int trials = 5;
             var baseurl = $"{endPoint}s/{Owner}/repos";
+            //https://api.github.com/users/USERNAME/repos
             while (true)
             {
                 string response = null;
@@ -52,7 +53,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 {
                     string url = $"{endPoint}/repos?page={page}";
                     if (Owner != AppGlobals.User.UserAccount.login)
-                        url = $"{baseurl}/?page={page}&sort=full_name";
+                        url = $"{baseurl}?page={page}&sort=full_name";
 
                     getReport = await GET(url);
                     if (!getReport.IsFailed)

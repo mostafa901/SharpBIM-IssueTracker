@@ -93,7 +93,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                 var page = new Page() { Content = uc };
 
                 ((FrameworkElement)page.Content).DataContext = e;
-
+                if(e!=null)
                 ((ModelViewBase)(e)).GetParentViewModel<MainPageViewModel>().Title = ((ModelViewBase)e).Title;
                 Navigator.Navigate(page);
             };
