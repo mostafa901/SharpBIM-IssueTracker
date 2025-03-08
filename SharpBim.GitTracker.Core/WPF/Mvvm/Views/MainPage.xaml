@@ -52,7 +52,7 @@
                                  Visibility="{Binding StarRepoCommand.IsVisible,
                                                       Converter={Conv:ConvBoolToVisibility}}" />
                 </Grid>
-                <StackPanel Grid.Column="2"
+                <StackPanel Grid.Column="1"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
 
@@ -77,17 +77,18 @@
                                                      ElementName=SharpBIMViewer}"
                                  ShowText="False" />
                 </StackPanel>
-                <Grid Grid.Column="3">
-                    <StackPanel>
+                <Grid Grid.Column="2">
+                    <StackPanel VerticalAlignment="Center">
                         <TextBlock HorizontalAlignment="Right"
                                    Cursor="Hand"
                                    Foreground="{DynamicResource ControlDisabledBrush}"
+                                   ToolTip="Check for updates"
                                    Visibility="{Binding NewVersionLink,
                                                         Converter={Conv:ConvNullVisibility Invert=True}}">
                             <Run Text="Ver." />
                             <Run Text="{Binding Version}" />
                             <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="LeftMouseDown">
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
                                     <i:InvokeCommandAction Command="{Binding CheckForUpdatesCommand}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
