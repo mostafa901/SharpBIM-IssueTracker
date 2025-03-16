@@ -13,7 +13,7 @@
 
 ![OverView_Labels](Images/Overview_Labels.png)
 
-## :hand: Important
+## ✋ Important
 images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
 
 ## How it works
