@@ -18,7 +18,6 @@ using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
-
     public class GitIssues : GitClient
     {
         // References: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
@@ -88,7 +87,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var issueReport = new ServiceReport<IEnumerable<IssueModel>>(getissueReport);
             if (!issueReport.IsFailed)
             {
-                issueReport.Model = ParseResponse<IssueModel>(getissueReport.Model);
+                var issues = ParseResponse<IssueModel>(getissueReport.Model);
+                issueReport.Model = issues.Where(o => o.pull_request == null);
             }
             return issueReport;
         }
@@ -126,7 +126,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 var response = report.Model;
                 var issues = ParseResponse<IssueModel>(response);
-                issueReport.Model = issues;
+                issueReport.Model = issues.Where(o => o.pull_request == null);
             }
             return issueReport;
         }
