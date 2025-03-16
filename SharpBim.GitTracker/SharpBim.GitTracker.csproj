@@ -64,6 +64,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <Compile Include="Statics.cs" />
     <Compile Include="ToolWindows\MainPageViewModelToolWindow.cs" />
     <Compile Include="SharpBim.GitTrackerPackage.cs" />
     <Compile Include="VSGitCommandTable.cs">

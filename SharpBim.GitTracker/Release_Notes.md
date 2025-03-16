@@ -1,5 +1,8 @@
 
-## Version 0.751 - March 2025
+## Version 0.755 - March 2025
+☑️ Fix invalid credential upon login  
+
+## Version 0.753 - March 2025
 ☑️ Implemented Check for updates, just click on the version text  
 ☑️ Add feature to access any public repo  
 ☑️ Star Issue Tracker  
