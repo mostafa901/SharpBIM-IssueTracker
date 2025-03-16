@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
         <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-        <AssemblyVersion>0.751.0.0</AssemblyVersion>
+        <AssemblyVersion>0.755.0.0</AssemblyVersion>
         <Authors>Moustafa K. Elsayed</Authors>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Company>https://github.com/mostafa901</Company>

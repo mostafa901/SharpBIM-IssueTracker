@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="SharpBIM.GitTracker.201D8256-D3A5-4AAC-9911-DA17EF82BB0D" Version="0.751" Language="en-US" Publisher="SharpBIM" />
+        <Identity Id="SharpBIM.GitTracker.201D8256-D3A5-4AAC-9911-DA17EF82BB0D" Version="0.755" Language="en-US" Publisher="SharpBIM" />
         <DisplayName>Issue Tracker</DisplayName>
         <Description xml:space="preserve">Issue Tracker helps to visualize &amp; manage Git-hub issues in Visual Studio, offering an intuitive interface to track, view details, &amp; take action easily.</Description>
         <MoreInfo>https://github.com/mostafa901/SharpBIM.GitTracker</MoreInfo>
+        <ReleaseNotes>https://github.com/mostafa901/SharpBIM-IssueTracker/releases/tag/0.755</ReleaseNotes>
         <Icon>IssueTracker_128x128.png</Icon>
         <PreviewImage>IssueTracker_128x128.png</PreviewImage>
         <Tags>issue, Tracker, Github Issues, tickets</Tags>
@@ -24,3 +25,4 @@
         <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="SharpBIM.GitTracker.Core" Path="|SharpBIM.GitTracker.Core|" AssemblyName="|SharpBIM.GitTracker.Core;AssemblyName|" />
     </Assets>
 </PackageManifest>
+

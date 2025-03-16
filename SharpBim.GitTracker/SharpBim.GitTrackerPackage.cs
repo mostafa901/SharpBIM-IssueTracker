@@ -6,10 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Community.VisualStudio.Toolkit;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using SharpBim.GitTracker;
 using SharpBIM.GitTracker.ToolWindows;
 
-[assembly: InternalsVisibleTo("SharpBIM.GitTracker.Console", AllInternalsVisible = true)]
+[assembly: InternalsVisibleTo(Statics.SHARPBIMGITTRACKERCONSOLE, AllInternalsVisible = true)]
 
 namespace SharpBIM.GitTracker
 {
