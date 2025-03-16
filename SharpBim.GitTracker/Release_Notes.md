@@ -1,5 +1,5 @@
 
-## Version 0.755 - March 2025
+## Version 0.756 - March 2025
 ☑️ Fix invalid credential upon login  
 
 ## Version 0.753 - March 2025

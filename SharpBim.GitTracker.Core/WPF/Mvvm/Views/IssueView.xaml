@@ -113,22 +113,7 @@
                                 Grid.Row="2"
                                 DataContext="{Binding}"
                                 ImagePastedCommand="{Binding PastImageCommand}" />
-            <!--<av:TextEditor x:Name="avtxt"
-                           MinHeight="200"
-                           Margin="5"
-                           Padding="10"
-                           Background="{DynamicResource ControlBackgroundBrush}"
-                           BorderBrush="Gray"
-                           BorderThickness="1"
-                           FontSize="14"
-                           Foreground="{DynamicResource ControlForegroundBrush}"
-                           PreviewKeyDown="Avtxt_PreviewKeyDown"
-                           ScrollViewer.VerticalScrollBarVisibility="Auto"
-                           WordWrap="True">-->
-            <!--<i:Interaction.Behaviors>
-                    <Behaviors1f2cd76a:AvalonEditBehaviour GiveMeTheText="{Binding MarkDown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </i:Interaction.Behaviors>
-            </av:TextEditor>-->
+
             <GridSplitter Grid.Row="3"
                           Margin="5,3"
                           HorizontalAlignment="Stretch"
@@ -136,6 +121,7 @@
                           ResizeBehavior="PreviousAndNext"
                           ResizeDirection="Rows" />
             <cmp:MarkDownViewer x:Name="mk"
+                                Grid.Row="4"
                                 DataContext="{Binding}" />
         </Grid>
         <Popup x:Name="pop"
