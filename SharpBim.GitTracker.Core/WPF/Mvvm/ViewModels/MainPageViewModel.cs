@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using SharpBIM.WPF.Controls.Dialogs;
 using System.Windows.Media;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
-using SharpBIM.Services.Statics;
 using System.Text.Json;
 
 namespace SharpBIM.GitTracker.Core.WPF.Views

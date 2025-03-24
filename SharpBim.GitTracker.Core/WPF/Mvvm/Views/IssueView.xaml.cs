@@ -25,7 +25,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
     using MdXaml.Highlighting;
     using ICSharpCode.AvalonEdit.Document;
     using System.Windows.Documents;
+
+#if !NET472
     using Microsoft.VisualStudio.Shell;
+#endif
 
     /// <summary>
     /// Interaction logic for IssueView.xaml

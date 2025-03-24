@@ -3,7 +3,6 @@ using System.ComponentModel;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
-using SharpBIM.Services.Statics;
 using SharpBIM.UIContexts;
 using SharpBIM.UIContexts.Abstracts.Interfaces;
 using SharpBIM.WPF.Assets.Fonts;
@@ -14,7 +13,6 @@ using SharpBIM.GitTracker.Core.GitHttp.Models;
 using Microsoft;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
-using Newtonsoft.Json.Linq;
 using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
