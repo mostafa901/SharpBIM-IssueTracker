@@ -4,12 +4,16 @@
 
 ![OverView_Header](Images/OverView_Header.png)`
 
+## :telescope: Open and run from Tools Menu
+![OverView_MenuPosition](Images/Overview_MenuPosition.png)
+
+
 ## 🔥 Features & Functionality  
 - 📌 **Issue Tracking** – View GitHub issues directly in Visual Studio  
 - ➕ **Create New Issues & Sub-Issues** – Easily add and manage tasks  
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
-- :punch: View and Add Comments  
+- 👊 View and Add Comments  
 
 ![OverView_Labels](Images/Overview_Labels.png)
 
