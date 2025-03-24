@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		publish.ps1 = publish.ps1
 		SolutionItems\SharpBIM.Identity.props = SolutionItems\SharpBIM.Identity.props
 		Sign.ps1 = Sign.ps1
+		UpdateSharpBIM.bat = UpdateSharpBIM.bat
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Console", "SharpBIM.GitTracker.Console\SharpBIM.GitTracker.Console.csproj", "{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}"
