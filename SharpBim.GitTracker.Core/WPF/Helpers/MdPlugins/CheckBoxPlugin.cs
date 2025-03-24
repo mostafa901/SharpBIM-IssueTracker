@@ -8,7 +8,6 @@ using MdXaml.Plugins;
 using MdXaml;
 using System.Windows.Documents;
 using System.Windows.Media;
-using Microsoft.VisualStudio.PlatformUI;
 using SharpBIM.GitTracker.Core.WPF.Views;
 using SharpBIM.WPF.Controls;
 
@@ -61,7 +60,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Helpers.MdPlugins
             var chk = sender as UICheckBox;
             chk.Loaded -= Chk_Loaded;
 
-            chk.Resources = chk.FindAncestor<MainPage>()?.Resources;
+            chk.Resources = Microsoft.VisualStudio.PlatformUI.ExtensionMethods.FindAncestor<MainPage>(chk)?.Resources;
         }
 
         private void UpdateChkEnabled(UICheckBox chk, string text)

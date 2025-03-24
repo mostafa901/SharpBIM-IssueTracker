@@ -108,9 +108,6 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SharpBIM">
-      <HintPath>..\publish\$(Configuration)\net48\SharpBIM.dll</HintPath>
-    </Reference>
     <!-- <Reference Include="SharpBIM.GitTracker.Core" Condition="'$(Configuration)' == 'Release'"> -->
     <!-- <HintPath>..\SharpBim.GitTracker.Core\bin\RWin\net48\SharpBIM.GitTracker.Core.dll</HintPath> -->
     <!-- </Reference> -->
