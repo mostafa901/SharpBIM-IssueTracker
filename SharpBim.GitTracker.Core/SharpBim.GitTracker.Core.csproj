@@ -78,7 +78,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SharpBIM-win" Version="1.1.27" />
+      <PackageReference Include="SharpBIM-win" Version="1.1.32" />
     </ItemGroup>
 
     
