@@ -10,7 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		PostBuild.ps1 = PostBuild.ps1
 		publish.ps1 = publish.ps1
 		SolutionItems\SharpBIM.Identity.props = SolutionItems\SharpBIM.Identity.props
-		Sign.ps1 = Sign.ps1
 		UpdateSharpBIM.bat = UpdateSharpBIM.bat
 	EndProjectSection
 EndProject
