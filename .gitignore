@@ -8,3 +8,4 @@ SharpBim.GitTracker.nrproj
 *tmp.csproj
 UpdateSharpBIM.bat
 PostBuild.ps1
+/appsettings.local.json
