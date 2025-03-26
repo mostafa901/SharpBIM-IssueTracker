@@ -10,7 +10,7 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
         private static string _state = StringEx.RandomString(6);
 
         public GitInstallOptions()
-            : base($"https://github.com/apps/{Uri.EscapeDataString(AppGlobals.Config.UriAppName)}/installations/new?state={_state}")
+            : base($"https://github.com/apps/{Uri.EscapeDataString(AppGlobals.UriAppName)}/installations/new?state={_state}")
         {
         }
 

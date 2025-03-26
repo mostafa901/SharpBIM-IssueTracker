@@ -34,7 +34,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected virtual string GetEndPoint(params object[] repoName) => endPoint.Replace("REPO", repoName[0].ToString());
 
         protected IGitConfig Config => AppGlobals.Config;
-        public IUser User => AppGlobals.User;
+        internal GitUser User => AppGlobals.User;
         protected static string Owner { get; private set; }
 
         public void UpdateOwnerAccount(string newOwner)

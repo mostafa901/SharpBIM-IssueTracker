@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <Configurations>DWin;RWin;DNoWin;RNoWin</Configurations>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+       
         <LangVersion>latest</LangVersion>
         <UserSecretsId>b2fcdead-28ce-41dd-9cf5-ec9e67c5f44e</UserSecretsId>
     </PropertyGroup>
@@ -74,6 +74,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SharpBIM-win" Version="1.1.41" />
+        <PackageReference Include="SharpBIM-win" Version="1.1.43" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.local.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

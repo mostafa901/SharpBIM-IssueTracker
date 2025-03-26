@@ -178,28 +178,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
 
         public async Task Login(object x)
         {
+            bool grantted = false;
             try
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
 
-                bool grantted = AppGlobals.User.LoggedIn;
+                  grantted = AppGlobals.User.LoggedIn;
                 if (grantted)
                 {
                     var accessReport = await AuthService.Login();
                     grantted = !(accessReport.IsFailed);
-                }
-
-                if (!grantted)
-                {
-                    AppGlobals.User.LoggedIn = false;
-                    AppGlobals.User.Save();
-                    ShowLoginScreenCommand.Hint = "Login";
-                    ShowLoginScreenCommand.Icon = Glyphs.login;
-                    await ShowLoginScreen(grantted);
-                }
-                else
-                {
-                    ViewModel_LoggedIn(null, null);
                 }
             }
             catch (Exception ex)
@@ -208,6 +196,19 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             finally
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
+            }
+
+            if (!grantted)
+            {
+                AppGlobals.User.LoggedIn = false;
+                AppGlobals.User.Save();
+                ShowLoginScreenCommand.Hint = "Login";
+                ShowLoginScreenCommand.Icon = Glyphs.login;
+                await ShowLoginScreen(grantted);
+            }
+            else
+            {
+                ViewModel_LoggedIn(null, null);
             }
         }
 

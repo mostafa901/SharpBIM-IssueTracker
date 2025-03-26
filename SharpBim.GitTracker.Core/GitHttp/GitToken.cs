@@ -86,7 +86,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             if (User.IsPersonalToken)
                 return true;
-            return !(await AuthService.LoadGitConfig()).IsFailed;
+            return !(await AuthService.LoadGitConfigAsync()).IsFailed;
         }
 
         #endregion Protected Methods
