@@ -10,7 +10,7 @@ using SharpBIM.Utility.Extensions;
 
 namespace SharpBIM.GitTracker.Core.GitHttp.Models
 {
-    internal class GitUser : IUser
+    internal class GitUser : SharpUserModel
     {
         public bool IsPersonalToken { get; set; }
         public InstallationModel Installation { get; set; }
@@ -19,33 +19,30 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public GitUser()
         {
             Token = new SharpToken();
+            var json = File.ReadAllText("appsettings.local.json");
+            var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            MySecret = config["MySecret"];
         }
 
         private static string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppGlobals.CompanyName, "GitTrackerConfig.json");
 
         public string LastRepoName { get; set; }
-        public string Email { get; set; }
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public string Password { get; set; }
-        public int Version { get; set; }
-        public string HashedPassword { get; set; }
-
+        public string MySecret { get; private set; }
         public string RepoOwner { get; set; }
         public bool LoggedIn { get; set; }
 
-        public SharpToken Token { get; set; }
-
         public static GitUser? Parse()
         {
+            var user = new GitUser();
             try
             {
-                return JsonSerializer.Deserialize<GitUser>(File.ReadAllText(UserConfigPath));
+                user = JsonSerializer.Deserialize<GitUser>(File.ReadAllText(UserConfigPath));
             }
             catch (Exception)
             {
-                return new GitUser();
             }
+
+            return user;
         }
 
         public void Save()

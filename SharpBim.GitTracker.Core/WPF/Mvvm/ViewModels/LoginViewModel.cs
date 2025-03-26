@@ -12,8 +12,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
     {
         public LoginViewModel()
         {
-            AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), "Authorize", Glyphs.empty, (x) => true);
-            CancelCommand = new SharpBIMCommand(Cancel, "Cancel", Glyphs.empty, (x) => true);
+            AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), Statics.AUTHORIZE, Glyphs.empty, (x) => true);
+            CancelCommand = new SharpBIMCommand(Cancel, Statics.CANCEL, Glyphs.empty, (x) => true);
         }
 
         public event EventHandler LoggedIn;
@@ -48,17 +48,17 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             try
             {
                 bool auth = false;
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, "Authorizing...", true);
-                if ( !AppGlobals.User.IsPersonalToken)
+                AppGlobals.AppViewContext.UpdateProgress(1, 1, Statics.AUTHORIZING, true);
+                if (!AppGlobals.User.IsPersonalToken)
                 {
                     // this is to rest the authentication and reautherize if needed
 
-                    if(string.IsNullOrEmpty(StoredToken))
-                    AppGlobals.User = new GitUser();
+                    if (string.IsNullOrEmpty(StoredToken))
+                        AppGlobals.User = new GitUser();
                     var login = await AuthService.Login();
                     if (login.IsFailed)
                     {
-                        AppGlobals.MsgService.AlertUser(WindowHandle, "Login failed", login.ErrorMessage);
+                        AppGlobals.MsgService.AlertUser(WindowHandle, Statics.LOGINFAILED, login.ErrorMessage);
                     }
                     else
                     {
@@ -71,7 +71,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     var userAccountReport = await AuthService.LoginByPersonalToken(StoredToken);
                     if (userAccountReport.IsFailed)
                     {
-                        AppGlobals.MsgService.AlertUser(WindowHandle, "Invalid Token", userAccountReport.ErrorMessage);
+                        AppGlobals.MsgService.AlertUser(WindowHandle, Statics.INVALIDTOKEN, userAccountReport.ErrorMessage);
                     }
                     else
                     {

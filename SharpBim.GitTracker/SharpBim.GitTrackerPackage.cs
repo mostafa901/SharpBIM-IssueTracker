@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using SharpBim.GitTracker;
 using SharpBIM.GitTracker.ToolWindows;
 
-[assembly: InternalsVisibleTo(Statics.SHARPBIMGITTRACKERCONSOLE, AllInternalsVisible = true)]
+[assembly: InternalsVisibleTo("SharpBIM.GitTracker.Console", AllInternalsVisible = true)]
 
 namespace SharpBIM.GitTracker
 {

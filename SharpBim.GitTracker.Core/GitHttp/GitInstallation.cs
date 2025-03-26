@@ -1,18 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using System.Text.Json;
-using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
-using System.IO;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -73,7 +65,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override async Task<bool> AreWeAuthorized()
         {
-            return !(await AuthService.LoadGitConfig()).IsFailed;
+            return !(await AuthService.LoadGitConfigAsync()).IsFailed;
         }
 
         public async Task<IServiceReport<AppModel>> GetApp()
@@ -91,7 +83,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return repModel;
         }
 
-        public async Task<bool> RequestInstalling()
+        public async Task<bool> RequestInstallingAsync()
         {
             var brw = new SystemBrowser();
             var gitOps = new GitInstallOptions();

@@ -3,6 +3,7 @@ using SharpBIM.ServiceContracts;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.GitTracker.Core.GitHttp;
+using System.Configuration;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -42,12 +43,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return accountReport;
         }
 
-        public async Task<IServiceReport<string>> LoadGitConfig()
+        public async Task<IServiceReport<string>> LoadGitConfigAsync()
         {
             var configReport = new ServiceReport<string>();
             if (Config == null)
             {
-                var confReport = await AppGlobals.HttpService.GetGitConfigAsync();
+                var confReport = await AppGlobals.HttpService.GetGitConfigAsync(AppGlobals.User.MySecret);
                 if (confReport.IsFailed)
                 {
                     AppGlobals.Config = null;
@@ -67,7 +68,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             var report = new ServiceReport<string>();
 
-            if ((await LoadGitConfig()).IsFailed)
+            if ((await LoadGitConfigAsync()).IsFailed)
             {
                 return report.Failed("Application missing credentials");
             }
@@ -154,7 +155,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 else if (getAppRep.Model.installations_count == 0)
                 {
                     // user has not installed the app.
-                    if (!await InstallService.RequestInstalling())
+                    if (!await InstallService.RequestInstallingAsync())
                     {
                         isInstallReport.Failed("Failed to install the application");
                         return isInstallReport;
