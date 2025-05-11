@@ -5,6 +5,7 @@ using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 
 namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
 {
+#if WINDOWS
     public class GitInstallOptions : GitBrowserOptions
     {
         private static string _state = StringEx.RandomString(6);
@@ -32,5 +33,6 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
             }
             return false;
         }
-    }
+    } 
+#endif
 }

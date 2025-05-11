@@ -33,13 +33,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<string>> AuthorizeApp()
         {
+            var report = new ServiceReport<string>();
+#if WINDOWS
             // check if the app already authorized
             var brw = new SystemBrowser();
             var gitOps = new GitLoginOptions();
             gitOps.DisplayMode = IdentityModel.OidcClient.Browser.DisplayMode.Hidden;
 
             var res = await brw.InvokeAsync(gitOps);
-            var report = new ServiceReport<string>();
             if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
             {
                 report.Model = gitOps.Code;
@@ -47,7 +48,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             else
             {
                 report.Failed(res.Error);
-            }
+            } 
+#endif
             return report;
         }
 

@@ -85,6 +85,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<bool> RequestInstallingAsync()
         {
+#if WINDOWS
             var brw = new SystemBrowser();
             var gitOps = new GitInstallOptions();
 
@@ -92,7 +93,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
             {
                 return !string.IsNullOrEmpty(gitOps.InstallationId);
-            }
+            } 
+#endif
             return false;
         }
     }

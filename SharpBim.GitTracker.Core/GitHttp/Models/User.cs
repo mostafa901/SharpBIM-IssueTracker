@@ -19,9 +19,13 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public GitUser()
         {
             Token = new SharpToken();
-            var json = File.ReadAllText("appsettings.local.json");
-            var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            MySecret = config["MySecret"];
+            string settingsPath = Path.Combine(AppGlobals.FileService.GetAssemblyDirectoryPath(), "appsettings.local.json");
+            if (File.Exists(settingsPath))
+            {
+                var json = File.ReadAllText(settingsPath);
+                var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                MySecret = config["MySecret"];
+            }
         }
 
         private static string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppGlobals.CompanyName, "GitTrackerConfig.json");

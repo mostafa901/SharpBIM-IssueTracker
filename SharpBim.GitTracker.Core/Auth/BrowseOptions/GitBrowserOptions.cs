@@ -1,4 +1,5 @@
-﻿using IdentityModel.OidcClient.Browser;
+﻿#if WINDOWS
+using IdentityModel.OidcClient.Browser;
 using SharpBIM.ServiceContracts.Interfaces;
 using System.Net;
 using SharpBIM.GitTracker.Core.Auth;
@@ -19,4 +20,5 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
 
         public abstract bool Validate(HttpListenerContext listener);
     }
-}
+} 
+#endif

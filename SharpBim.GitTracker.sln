@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		PostBuild.ps1 = PostBuild.ps1
-		publish.ps1 = publish.ps1
 		SolutionItems\SharpBIM.Identity.props = SolutionItems\SharpBIM.Identity.props
 		UpdateSharpBIM.bat = UpdateSharpBIM.bat
 	EndProjectSection
@@ -31,8 +30,8 @@ Global
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RNoWin|Any CPU.ActiveCfg = RNoWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
 		{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}.RWin|Any CPU.Build.0 = RWin|Any CPU
-		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DNoWin|Any CPU.ActiveCfg = Release|Any CPU
-		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DNoWin|Any CPU.Build.0 = Release|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DNoWin|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DNoWin|Any CPU.Build.0 = Debug|Any CPU
 		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.DWin|Any CPU.ActiveCfg = Debug|Any CPU
 		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.RNoWin|Any CPU.ActiveCfg = Debug|Any CPU
 		{A13AB6DF-9BED-F917-D2AE-21E5B8EEE92B}.RNoWin|Any CPU.Build.0 = Debug|Any CPU

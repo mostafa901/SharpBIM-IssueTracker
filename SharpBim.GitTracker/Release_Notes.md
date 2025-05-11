@@ -1,4 +1,7 @@
 
+## Version 0.762 - March 2025
+☑️ Fix Rest credential
+
 ## Version 0.756 - March 2025
 ☑️ Fix invalid credential upon login  
 

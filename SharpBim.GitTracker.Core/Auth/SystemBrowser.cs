@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if WINDOWS
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
@@ -134,4 +135,5 @@ namespace SharpBIM.GitTracker.Core.Auth
 
         #endregion Public Methods
     }
-}
+} 
+#endif

@@ -1,4 +1,5 @@
-﻿using SharpBIM.Utility.Extensions;
+﻿#if WINDOWS
+using SharpBIM.Utility.Extensions;
 using System.Diagnostics;
 using System.Net;
 using SharpBIM.GitTracker.Core.Auth;
@@ -30,3 +31,5 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
         }
     }
 }
+
+#endif
