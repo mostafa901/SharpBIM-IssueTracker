@@ -15,7 +15,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     {
         #region Public Constructors
 
-        public GitToken()
+        public GitToken(IConfig appGlobals) : base(appGlobals)
         {
         }
 
@@ -55,7 +55,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<string>> GetAppAccessCode()
         {
-            string url = $"https://github.com/login/oauth/authorize?client_id={AppGlobals.Config.ClientId}&state=xxx";
+            string url = $"https://github.com/login/oauth/authorize?client_id={Config.ClientId}&state=xxx";
 
             var accessCodeReport = await GET(url);
             return accessCodeReport;
@@ -86,9 +86,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override async Task<bool> AreWeAuthorized()
         {
-            if (User.IsPersonalToken)
+            if (User.Name != null)
                 return true;
-            return !(await AuthService.LoadGitConfigAsync()).IsFailed;
+            return !(await new GitAuth(AppGlobals).LoadGitConfigAsync()).IsFailed;
         }
 
         #endregion Protected Methods
@@ -103,8 +103,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var responseJson = report.Model;
 
             User.Token = ParseResponse<SharpToken>(responseJson).FirstOrDefault();
-            User.Token.ExpireTime = DateTime.Now.AddSeconds(AppGlobals.User.Token.expires_in);
-            User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(AppGlobals.User.Token.refresh_token_expires_in);
+            User.Token.ExpireTime = DateTime.Now.AddSeconds(User.Token.expires_in);
+            User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(User.Token.refresh_token_expires_in);
+         //   User.Save();
             return report;
         }
 

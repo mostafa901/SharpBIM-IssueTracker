@@ -1,13 +1,15 @@
 ﻿using System.Net.Http;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
+
 using SharpBIM.ServiceContracts;
-using SharpBIM.ServiceContracts.Interfaces;
-using SharpBIM.UIContexts;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitContents : GitClient
     {
+        public GitContents(IConfig appGlobals) : base(appGlobals)
+        {
+        }
+
         protected override string endPoint => $"https://api.github.com/repos/{Owner}/REPO/contents";
 
         //either delete,or create or update, no concurrent actions

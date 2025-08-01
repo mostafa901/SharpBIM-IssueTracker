@@ -1,12 +1,4 @@
-﻿using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using SharpBIM.GitTracker.Core.Enums;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
-using SharpBIM.GitTracker.Core.JsonConverters;
-using SharpBIM.ServiceContracts;
-using SharpBIM.ServiceContracts.Interfaces;
+﻿
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -17,7 +9,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         private string GetEndPoint(string repoName) => endPoint.Replace("REPO", repoName);
 
-        internal GitIssues()
+        public GitIssues(IConfig appGlobals) : base(appGlobals)
         {
         }
 
@@ -123,9 +115,11 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return issueReport;
         }
 
-        protected override JsonSerializerOptions GetPostOptions()
+        
+        protected override JsonSerializerOptions GetJsonOptions(JsonSerializerOptions jop)
         {
-            var js = base.GetPostOptions();
+            
+            var js = base.GetJsonOptions(jop);
 
             js.Converters.Add(new IssueJsonConv());
             return js;

@@ -1,81 +1,41 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
-using SharpBIM.Utility.Extensions;
-using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
 using System.Web;
 using SharpBIM.GitTracker.Core.Auth;
-using SharpBIM.GitTracker.Core.GitHttp.Events;
 using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
+using SharpBIM.Utility.Helpers;
+using SharpBIM.Utility.Helpers.Events;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
-    public static class MediaTypes
+    public abstract class GitClient : SharpBIMHTTP
     {
-        public const string MACHINEMANPREVIEWJSON = "application/vnd.github.machine-man-preview+json";
-        public const string APPLICATIONJSON = "application/json";
-        public const string VNDGITHUBJSON = "application/vnd.github+json";
-        public const string RAWJSON = "application/vnd.github.raw+json";
-        public const string TXTJSON = "application/vnd.github.text+json";
-        public const string FULLJSON = "application/vnd.github.full+json";
-    }
-
-    public abstract class GitClient
-    {
-        protected static HttpClient httpClient;
-        protected virtual string endPoint => "";
-        protected virtual bool NeedAuthentication => true;
-
-        public static event EventHandler<CallEventArgs> OnRequestCompletedEvent;
+        public static IGitConfig Config { get; set; }
 
         protected virtual string GetEndPoint(params object[] repoName) => endPoint.Replace("REPO", repoName[0].ToString());
 
-        protected IGitConfig Config => AppGlobals.Config;
-        internal GitUser User => AppGlobals.User;
+        internal ISharpUser<SharpToken> User => AppGlobals.SharpUser;
         protected static string Owner { get; private set; }
+
+        protected GitClient(IConfig appGlobals) : base(appGlobals)
+        {
+        }
 
         public void UpdateOwnerAccount(string newOwner)
         {
             Owner = newOwner;
         }
 
-        public static int RemaingCalls { get; set; } = int.MaxValue;
-
-        protected GitClient()
-        {
-            httpClient ??= new HttpClient();
-        }
-
-        protected virtual void AddHeaders(HttpRequestMessage request)
-        {
-        }
-
-        protected virtual IEnumerable<T> ParseResponse<T>(string response)
-        {
-            if (response == null)
-                return null;
-            List<T> result = new List<T>();
-            var jop = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-            jop.Converters.Add(new SharpBIM.Utility.JsonConvEx.CustomDateConverter());
-            if (response.StartsWith("["))
-                result.AddRange(JsonSerializer.Deserialize<IEnumerable<T>>(response, jop));
-            else
-                result.Add(JsonSerializer.Deserialize<T>(response, jop));
-
-            return result;
-        }
-
-        private async Task<IServiceReport<string>> SEND(HttpMethod method, string url, object requestBody)
+        protected override async Task<IServiceReport<string>> SEND(HttpMethod method, string url, object requestBody)
         {
             if (!await AreWeAuthorized())
                 return new ServiceReport<string>().Failed("Not Authorized");
-            if (RemaingCalls == 0)
-            {
-                return new ServiceReport<string>().Failed($"Tokens credits depleted. Credits will be refilled with in {TimeToReset}");
-            }
+            //if (RemaingCalls == 0)
+            //{
+            //    return new ServiceReport<string>().Failed($"Tokens credits depleted. Credits will be refilled with in {TimeToReset}");
+            //}
             var report = new ServiceReport<string>();
             try
             {
@@ -88,11 +48,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 var response = await httpClient.SendAsync(request);
                 report = await EvaluateResponse(response);
 
-                if (OnRequestCompletedEvent != null)
-                {
-                    var callev = new CallEventArgs(method, url, requestBody?.JSerialize() ?? "Null body", response, report.Model);
-                    OnRequestCompletedEvent.Invoke(this, callev);
-                }
+                var callev = new CallEventArgs(method, url, requestBody?.JSerialize() ?? "Null body", response, report.Model);
+                ExecuteOnRequestedEvent(callev);
 
                 if (response.Headers.TryGetValues("X-RateLimit-Remaining", out IEnumerable<string> remaingCallString))
                 {
@@ -110,21 +67,13 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        protected virtual async Task<IServiceReport<string>> GET(string url, object requestBody = null)
-        {
-            var report = await SEND(HttpMethod.Get, url, requestBody);
-
-            return report;
-        }
-
-        protected virtual AuthenticationHeaderValue RequestAuth { get; set; }
-        public static TimeSpan TimeToReset { get; private set; }
-
-        protected virtual AuthenticationHeaderValue GetAuthentication()
+        protected override AuthenticationHeaderValue GetAuthentication()
         {
             if (!string.IsNullOrEmpty(User.Token.access_token))
             {
-                var auth = RequestAuth ?? new AuthenticationHeaderValue("Bearer", User.Token.access_token);
+                //var auth = User.IsPersonalToken ? new AuthenticationHeaderValue("Token", User.Token.access_token) : new AuthenticationHeaderValue(QueryString.BEARER, User.Token.access_token);
+
+                var auth = new AuthenticationHeaderValue(QueryString.BEARER, User.Token.access_token);
                 return auth;
             }
             return null;
@@ -137,56 +86,51 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             AddHeaders(request);
         }
 
-        protected virtual JsonSerializerOptions GetPostOptions()
-        {
-            return new JsonSerializerOptions();
-        }
-
-        protected virtual StringContent GetStringContent(object requestBody)
+        protected override StringContent GetStringContent(object requestBody)
         {
             if (requestBody != null)
             {
-                var content = new StringContent(JsonSerializer.Serialize(requestBody, GetPostOptions()), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
+                var content = new StringContent(JsonSerializer.Serialize(requestBody, GetJsonOptions(null)), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
                 return content;
             }
             return null;
         }
 
-        protected virtual async Task<IServiceReport<string>> POST(string url, object requestBody)
+        protected override async Task<IServiceReport<string>> POST(string url, object requestBody)
         {
             var report = await SEND(HttpMethod.Post, url, requestBody);
 
             return report;
         }
 
-        protected virtual async Task<IServiceReport<string>> DELETE(string url, object requestBody)
+        protected override async Task<IServiceReport<string>> DELETE(string url, object requestBody)
         {
             var report = await SEND(HttpMethod.Delete, url, requestBody);
 
             return report;
         }
 
-        protected virtual async Task<bool> AreWeAuthorized()
+        protected override async Task<bool> AreWeAuthorized()
         {
-            if (string.IsNullOrEmpty(Owner))
+            if (string.IsNullOrEmpty(Owner ??= User?.Name))
                 return false;
 
-            if (NeedAuthentication)
+            if (NeedAuthentication && string.IsNullOrEmpty(AppGlobals.SharpUser.Token.access_token))
             {
-                var report = await AuthService.Login();
+                var report = await new GitAuth(AppGlobals).Login();
                 return !report.IsFailed;
             }
             return true;
         }
 
-        protected virtual async Task<IServiceReport<string>> PUT(string url, object requestBody)
+        protected override async Task<IServiceReport<string>> PUT(string url, object requestBody)
         {
             var report = await SEND(HttpMethod.Put, url, requestBody);
 
             return report;
         }
 
-        protected virtual async Task<IServiceReport<string>> PATCH(string url, object requestBody)
+        protected override async Task<IServiceReport<string>> PATCH(string url, object requestBody)
         {
             var report = await SEND(new HttpMethod("PATCH"), url, requestBody);
 #if false
@@ -209,7 +153,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        protected virtual async Task<ServiceReport<string>> EvaluateResponse(HttpResponseMessage response)
+        protected override async Task<ServiceReport<string>> EvaluateResponse(HttpResponseMessage response)
         {
             var report = new ServiceReport<string>();
 

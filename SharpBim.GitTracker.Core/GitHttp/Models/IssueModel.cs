@@ -1,7 +1,7 @@
 ﻿namespace SharpBIM.GitTracker.Core.GitHttp.Models;
 
+using SharpBIM.UIContext.Abstracts.Interfaces;
 using System;
-using SharpBIM.UIContexts.Abstracts.Interfaces;
 
 public class IssueModel : IModel
 {
@@ -38,4 +38,5 @@ public class IssueModel : IModel
     public string Title { get; set; }
     public string url { get; set; }
     public Sub_Issues_Summary sub_issues_summary { get; set; }
+    public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }

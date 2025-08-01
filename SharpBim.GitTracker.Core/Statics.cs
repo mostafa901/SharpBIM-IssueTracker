@@ -1,6 +1,6 @@
 ﻿namespace SharpBIM.GitTracker.Core
 {
-    public static class Statics
+    internal static class Statics
     {
         public const string INVALIDTOKEN = "Invalid Token";
         public const string LOGINFAILED = "Login failed";

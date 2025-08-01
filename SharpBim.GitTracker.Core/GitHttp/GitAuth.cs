@@ -4,6 +4,7 @@ using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.GitTracker.Core.GitHttp;
 using System.Configuration;
+using SharpBIM.Utility.Helpers;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -11,8 +12,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     {
         #region Public Constructors
 
-        public GitAuth()
+        public GitAuth(IConfig appGlobals) : base(appGlobals)
         {
+
         }
 
         #endregion Public Constructors
@@ -48,17 +50,19 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var configReport = new ServiceReport<string>();
             if (Config == null)
             {
-                var confReport = await AppGlobals.HttpService.GetGitConfigAsync(AppGlobals.User.MySecret);
+                var confReport = await GetGitConfigAsync(User.UserSecret);
                 if (confReport.IsFailed)
                 {
-                    AppGlobals.Config = null;
+                    Config = null;
                     configReport.Merge(confReport);
                 }
                 else
                 {
-                    AppGlobals.Config = confReport.Model;
+                    Config = confReport.Model;
 
-                    InstallService = new();
+#if WINDOWS
+                    InstallService = new(AppGlobals); 
+#endif
                 }
             }
             return configReport;
@@ -74,7 +78,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             }
             try
             {
-                if (!User.IsPersonalToken)
+                if (User.Name == null)
                 {
                     var isInstalledRep = await IsGitTrackerInstalled();
                     if (isInstalledRep.IsFailed)
@@ -85,6 +89,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                     if (RequiresToken)
 
                     {
+                        var TokenService = new GitToken(AppGlobals);
                         var loginResult = false;
 
                         if (User.Token != null && User.Token.ExpireTime < DateTime.Now && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
@@ -122,17 +127,21 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken)
+        public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken, string secret = "")
         {
             var report = new ServiceReport<string>();
-            AppGlobals.User ??= new GitUser();
-            User.IsPersonalToken = true;
+      
+            //User.IsPersonalToken = true;
             User.Token.access_token = userAccesToken;
-            if (AppGlobals.User.UserAccount == null)
+            if (secret != string.Empty)
+            {
+                User.UserSecret  = secret;
+            }
+            if (User.Name == null)
             {
                 var accountReport = await GetUserAccount();
                 report.Merge(accountReport);
-                AppGlobals.User.UserAccount = accountReport.Model;
+                User.Name = accountReport.Model.login;
             }
             return report;
         }
@@ -144,6 +153,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         private async Task<IServiceReport<string>> IsGitTrackerInstalled()
         {
             var isInstallReport = new ServiceReport<string>();
+#if WINDOWS
             if (User.Installation == null)
             {
                 // check if the app already authorized
@@ -170,7 +180,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
                 User.Installation = getInsModelReport.Model;
             }
-            User.UserAccount = User.Installation.account;
+            User.UserAccount = User.Installation.account; 
+#endif
             return isInstallReport;
         }
 

@@ -6,15 +6,9 @@ using HtmlAgilityPack;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Enums;
-using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts.QAQC;
-using SharpBIM.UIContexts;
-using SharpBIM.Utility.Extensions;
-using SharpBIM.WPF.Assets.Fonts;
-using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Models;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
 using System.ComponentModel;
 using System.Windows.Data;
 
@@ -141,7 +135,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
-        public override void Init(IssueModel dataModel)
+        async public override Task Init(IssueModel dataModel)
         {
             srvrToLocal.Clear();
             IssueLables.Clear();
@@ -638,6 +632,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
 
             return true;
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Private Methods

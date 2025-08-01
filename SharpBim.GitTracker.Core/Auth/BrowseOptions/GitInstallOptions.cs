@@ -6,12 +6,13 @@ using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
 {
 #if WINDOWS
+        public string UriAppName = "SharpBIM-IssueTracker";
     public class GitInstallOptions : GitBrowserOptions
     {
         private static string _state = StringEx.RandomString(6);
 
         public GitInstallOptions()
-            : base($"https://github.com/apps/{Uri.EscapeDataString(AppGlobals.UriAppName)}/installations/new?state={_state}")
+            : base($"https://github.com/apps/{Uri.EscapeDataString(UriAppName)}/installations/new?state={_state}")
         {
         }
 

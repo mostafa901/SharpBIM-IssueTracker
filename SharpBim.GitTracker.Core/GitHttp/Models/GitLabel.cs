@@ -1,4 +1,4 @@
-﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
+﻿ 
 
 namespace SharpBIM.GitTracker.Core.GitHttp.Models;
 
@@ -17,4 +17,5 @@ public class GitLabel : IModel
     public bool _default { get; set; }
     public string description { get; set; }
     public string Title { get; set; }
+    public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }

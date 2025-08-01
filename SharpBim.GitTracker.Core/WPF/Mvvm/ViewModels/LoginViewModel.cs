@@ -1,10 +1,5 @@
 ﻿using SharpBIM.GitTracker.Core.Auth;
-using SharpBIM.UIContexts;
-using SharpBIM.Utility.Extensions;
-using SharpBIM.WPF.Assets.Fonts;
-using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Views;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -14,6 +9,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), Statics.AUTHORIZE, Glyphs.empty, (x) => true);
             CancelCommand = new SharpBIMCommand(Cancel, Statics.CANCEL, Glyphs.empty, (x) => true);
+   
         }
 
         public event EventHandler LoggedIn;
@@ -49,7 +45,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 bool auth = false;
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, Statics.AUTHORIZING, true);
-                if (!AppGlobals.User.IsPersonalToken)
+
+                if (string.IsNullOrEmpty(StoredToken))
                 {
                     // this is to rest the authentication and reautherize if needed
 
@@ -98,6 +95,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         private void SaveUser()
         {
             AppGlobals.User.Save();
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

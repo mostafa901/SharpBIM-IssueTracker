@@ -15,23 +15,24 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public bool IsPersonalToken { get; set; }
         public InstallationModel Installation { get; set; }
         public Account UserAccount { get; set; }
-
+        public bool IsOrg { get; set; } = false;
         public GitUser()
         {
             Token = new SharpToken();
-            string settingsPath = Path.Combine(AppGlobals.FileService.GetAssemblyDirectoryPath(), "appsettings.local.json");
-            if (File.Exists(settingsPath))
-            {
-                var json = File.ReadAllText(settingsPath);
-                var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                MySecret = config["MySecret"];
-            }
+            //string settingsPath = Path.Combine(AppGlobals.FileService.GetAssemblyDirectoryPath(), "appsettings.local.json");
+            //if (File.Exists(settingsPath))
+            //{
+            //    var json = File.ReadAllText(settingsPath);
+            //    var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            //    UserSecret  = config["UserSecret "];
+            //}
+                UserSecret  = "SharpBim@gmail.com";
         }
 
-        private static string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppGlobals.CompanyName, "GitTrackerConfig.json");
+        private static string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SharpBIM", "GitTrackerConfig.json");
 
         public string LastRepoName { get; set; }
-        public string MySecret { get; private set; }
+        public string UserSecret  { get;  set; }
         public string RepoOwner { get; set; }
         public bool LoggedIn { get; set; }
 

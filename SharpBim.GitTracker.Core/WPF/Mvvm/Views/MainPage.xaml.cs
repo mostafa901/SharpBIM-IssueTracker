@@ -1,12 +1,9 @@
 ﻿global using System.Windows;
 global using System.Windows.Controls;
 global using System.Windows.Navigation;
-using SharpBIM.ServiceContracts.Interfaces;
+
 using SharpBIM.ServiceContracts.QAQC;
-using SharpBIM.UIContexts;
-using SharpBIM.Utility.Extensions;
 using SharpBIM.WPF.Controls.UserControls;
-using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.WPF.Utilities;
 
 namespace SharpBIM.GitTracker.Core.WPF.Views

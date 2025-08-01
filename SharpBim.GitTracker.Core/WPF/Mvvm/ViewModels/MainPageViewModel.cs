@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using SharpBIM.UIContexts;
 using SharpBIM.WPF.Assets.Fonts;
 using SharpBIM.WPF.Helpers;
 using SharpBIM.WPF.Helpers.Commons;
@@ -12,6 +11,7 @@ using SharpBIM.WPF.Controls.Dialogs;
 using System.Windows.Media;
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using System.Text.Json;
+using SharpBIM.ServiceContracts.Interfaces;
 
 namespace SharpBIM.GitTracker.Core.WPF.Views
 {
@@ -290,6 +290,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             catch (Exception ex)
             {
             }
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

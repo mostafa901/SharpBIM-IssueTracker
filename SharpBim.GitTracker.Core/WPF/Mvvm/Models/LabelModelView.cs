@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
-using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
-using SharpBIM.UIContexts;
-using SharpBIM.Utility;
-using SharpBIM.Utility.Extensions;
-using SharpBIM.WPF.Assets;
-using SharpBIM.WPF.Assets.Fonts;
-using SharpBIM.WPF.Helpers.Commons;
+﻿
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
 {
@@ -42,7 +29,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
 
         public bool IsTemplate { get; set; }
 
-        public override void Init(GitLabel dataModel)
+        async public override Task Init(GitLabel dataModel)
         {
             base.Init(dataModel);
             Title = dataModel.name;
@@ -187,6 +174,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
             catch (Exception ex)
             {
             }
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

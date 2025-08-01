@@ -6,6 +6,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitLabels : GitClient
     {
+        public GitLabels(IConfig appGlobals) : base(appGlobals)
+        {
+        }
+
         protected override string endPoint => @$"https://api.github.com/repos/{Owner}/REPO/labels";
 
         public async Task<IServiceReport<IEnumerable<GitLabel>>> GetLables(string repoName)

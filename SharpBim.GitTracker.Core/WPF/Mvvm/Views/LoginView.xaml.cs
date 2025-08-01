@@ -25,7 +25,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
         public LoginView()
         {
             InitializeComponent();
-            pasBox.Password = AuthService.User?.Token?.access_token;
+            if (AppGlobals.User.IsPersonalToken)
+                pasBox.Password = AuthService.User?.Token?.access_token;
         }
 
         protected override Task<bool> OnLoadedAsync()

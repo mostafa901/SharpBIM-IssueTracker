@@ -1,4 +1,4 @@
-﻿using SharpBIM.UIContexts.Abstracts.Interfaces;
+﻿using SharpBIM.UIContext.Abstracts.Interfaces;
 
 namespace SharpBIM.GitTracker.Core.GitHttp.Models;
 
@@ -19,6 +19,7 @@ public class ContentModel : IModel
     public string content { get; set; }
     public string encoding { get; set; }
     public _Links _links { get; set; }
+    public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public class _Links
     {

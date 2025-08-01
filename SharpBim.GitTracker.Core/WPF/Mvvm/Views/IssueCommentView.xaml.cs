@@ -1,11 +1,4 @@
-﻿using System.Threading.Tasks;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
-using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
-using SharpBIM.UIContexts;
-using SharpBIM.Utility.Extensions;
-using SharpBIM.WPF.Assets.Fonts;
-using SharpBIM.WPF.Controls.UserControls;
-using SharpBIM.WPF.Helpers.Commons;
+﻿using SharpBIM.WPF.Controls.UserControls;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
 {
@@ -24,7 +17,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
     {
         public IssueCommentModelView()
         {
-            ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show on web", Glyphs.hyperlink_globe, (x) => true);
+            ShowOnWebCommand = new SharpBIMCommand(ShowOnWeb, "Show on web", Glyphs.hyperlink_globe, static (x) => true);
         }
 
         public string MarkDown
@@ -45,7 +38,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             set { SetValue(value, nameof(ModifiedDate)); }
         }
 
-        public override void Init(CommentModel dataModel)
+   async     public override Task Init(CommentModel dataModel)
         {
             base.Init(dataModel);
             Title = dataModel.user.login;
@@ -67,6 +60,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             catch (Exception ex)
             {
             }
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -133,7 +136,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             set { SetValue(value, nameof(NewComment)); }
         }
 
-        public override async void Init(IssueModel dataModel)
+        public override async Task Init(IssueModel dataModel)
         {
             base.Init(dataModel);
             Title = $"Comments on #{dataModel.number}";
@@ -164,6 +167,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
 
                 Children.Add(cmv);
             }
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

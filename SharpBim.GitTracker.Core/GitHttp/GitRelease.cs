@@ -6,7 +6,11 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitRelease : GitClient
     {
-        protected override string endPoint => $"https://api.github.com/repos/{User.UserAccount.login}/REPO/releases";
+        public GitRelease(IConfig appGlobals) : base(appGlobals)
+        {
+        }
+
+        protected override string endPoint => $"https://api.github.com/repos/{User.Name}/REPO/releases";
 
 #if false
         public async Task<IServiceReport<ReleaseNoteModel>> GenerateRelease(string repoName, string tag_name)

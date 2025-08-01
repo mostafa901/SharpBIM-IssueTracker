@@ -6,22 +6,33 @@
        
         <LangVersion>latest</LangVersion>
         <UserSecretsId>b2fcdead-28ce-41dd-9cf5-ec9e67c5f44e</UserSecretsId>
+        <AssemblyVersion>0.768.0.0</AssemblyVersion>
     </PropertyGroup>
     <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
-        <TargetFrameworks>net472;net48;net8.0-windows8</TargetFrameworks>
+        <TargetFrameworks>net47;net472;net48;net8.0-windows8</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
         <UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Configuration)' == 'DNoWin' Or '$(Configuration)' == 'RNoWin')">
-        <TargetFrameworks>net472;net48;net8.0</TargetFrameworks>
+        <TargetFrameworks>net47;net472;net48;net8.0</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WEB</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="$(TargetFramework.startswith('net8'))">
         <DefineConstants>$(DefineConstants);DOTNET</DefineConstants>
     </PropertyGroup>
+    <!-- Configuration-specific settings -->
+    <PropertyGroup Condition="$(Configuration.StartsWith('D'))">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
 
+    <PropertyGroup Condition="$(Configuration.StartsWith('R'))">
+        <DebugSymbols>false</DebugSymbols>
+        <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    </PropertyGroup>
     <ItemGroup>
         <Compile Remove="WPF\Mvvm\Views\LableSelectionView.xaml.cs" />
         <Compile Remove="WPF\Mvvm\Views\SharpColorPicker.xaml.cs" />
@@ -56,9 +67,13 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))" >
 
-        <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET'))" />
+        <Reference Include="System.Net.Http">
+          <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.Http.dll</HintPath>
+        </Reference>
+
+        <Reference Include="System.Web" />
     </ItemGroup>
 
     <ItemGroup>
@@ -73,13 +88,23 @@
         <VSCTInclude Remove="WPF\Mvvm\Views\Views\**" />
     </ItemGroup>
 
-    <ItemGroup Condition="$(DefineConstants.Contains('WINDOWS'))" >
-        <PackageReference Include="SharpBIM-win" Version="1.1.50" />
+    <ItemGroup Condition="!$(DefineConstants.Contains('DEBUG'))">
+        <PackageReference  Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.56" />
+   
+        <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.50" />
     </ItemGroup>
-    <ItemGroup Condition="!$(DefineConstants.Contains('WINDOWS'))" >
-        <PackageReference Include="SharpBIM-nowin" Version="1.1.50" />
+ 
+    <ItemGroup Condition="$(DefineConstants.Contains('DEBUG'))">
+
+        <Reference Include="SharpBIM">
+            <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
+        </Reference>
+
     </ItemGroup>
-    
+ 
+    <ItemGroup>
+      <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    </ItemGroup>
 
     <ItemGroup>
       <None Update="appsettings.local.json">

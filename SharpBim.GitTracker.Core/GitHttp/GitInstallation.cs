@@ -14,9 +14,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override bool NeedAuthentication => false;
 
-        public GitInstallation()
-        {
-        }
+
 
         private const string ResponseMissingPermission = "You do not have permission to perform this action. You need to reinstall the application.";
         private const string MissingGitPermission = "Resource not accessible by integration";
@@ -58,6 +56,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         private string LimitURL = "https://api.github.com/rate_limit";
 
+        public GitInstallation(IConfig appGlobals) : base(appGlobals)
+        {
+        }
+
         public async Task GetLimits()
         {
             var response = await GET(LimitURL);
@@ -65,7 +67,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override async Task<bool> AreWeAuthorized()
         {
-            return !(await AuthService.LoadGitConfigAsync()).IsFailed;
+            return !(await new GitAuth(AppGlobals).LoadGitConfigAsync()).IsFailed;
         }
 
         public async Task<IServiceReport<AppModel>> GetApp()

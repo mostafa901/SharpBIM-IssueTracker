@@ -1,19 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using SharpBIM.GitTracker.Core.Enums;
 using SharpBIM.ServiceContracts;
-using SharpBIM.ServiceContracts.Interfaces;
-using SharpBIM.UIContexts;
-using SharpBIM.UIContexts.Abstracts.Interfaces;
-using SharpBIM.WPF.Assets.Fonts;
-using SharpBIM.WPF.Helpers.Commons;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.WPF.Helpers;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
-using Microsoft;
-using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
-using SharpBIM.Utility.Extensions;
+using SharpBIM.UIContext.Abstracts.Interfaces;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -21,6 +12,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
     {
         public long Id { get; set; }
         public string Title { get; set; }
+        public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
     public class IssueListViewModel : ModelViewBase<DummyListContext, IssueViewModel>
@@ -40,7 +32,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             AutoFilterState = true;
         }
 
-        public override async void Init(DummyListContext dataModel)
+        public override async Task Init(DummyListContext dataModel)
         {
             base.Init(dataModel);
 
@@ -464,6 +456,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
             }
+        }
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Public Methods

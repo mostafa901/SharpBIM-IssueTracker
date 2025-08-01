@@ -1,30 +1,53 @@
-﻿global using static SharpBIM.GitTracker.Core.GitTrackerGlobals;
-global using System;
+﻿global using System;
 global using Task = System.Threading.Tasks.Task;
 global using System.Threading.Tasks;
 global using System.Linq;
 global using System.Collections.Generic;
 
 global using System.Collections.ObjectModel;
+global using System.Text;
+global using SharpBIM.GitTracker.Core.GitHttp.Models;
+global using SharpBIM.ServiceContracts.Interfaces;
+global using SharpBIM.UIContext;
+global using SharpBIM.Utility.Extensions;
 
-using SharpBIM.GitTracker.Core.GitHttp;
-using SharpBIM.Services;
-using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
+global using System.IO;
+global using System.Net.Http;
+global using System.Net.Http.Headers;
+global using System.Text.Json;
+global using SharpBIM.GitTracker.Core.Enums;
+global using SharpBIM.GitTracker.Core.JsonConverters;
+global using SharpBIM.ServiceContracts;
+global using SharpBIM.ServiceContracts.Abstracts;
 
+
+#if WINDOWS
+global using System.Windows.Media;
+global using SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels;
+global using SharpBIM.WPF.Assets;
+global using SharpBIM.WPF.Assets.Fonts;
+
+#endif
+global using SharpBIM.GitTracker.Core.GitHttp;
+global using SharpBIM.Services;
+global using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
+global using SharpBIM.Utility.Helpers;
+global using SharpBIM.UIContext.Abstracts.Interfaces;
+
+
+#if WINDOWS
+global using static SharpBIM.GitTracker.Core.GitTrackerGlobals;
 namespace SharpBIM.GitTracker.Core
 {
     public class GitTrackerGlobals : Config
     {
         internal static GitTrackerGlobals AppGlobals;
-        public string AppId { get; set; }
-        public string ClientSecret { get; set; }
-        public string PrivateKey { get; set; }
-        public string ClientId { get; set; }
+        //public string AppId { get; set; }
+        //public string ClientSecret { get; set; }
+        //public string PrivateKey { get; set; }
+        //public string ClientId { get; set; }
 
-        public string UriAppName = "SharpBIM-IssueTracker";
-        internal IGitConfig Config { get; set; }
-        internal GitUser User { get => SharpUser as GitUser; set => SharpUser = value; }
+
         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }
@@ -38,21 +61,28 @@ namespace SharpBIM.GitTracker.Core
         static GitTrackerGlobals()
         {
             AppGlobals = new GitTrackerGlobals();
-            AppGlobals.User = GitUser.Parse();
         }
 
         public GitTrackerGlobals()
         {
+        }
+
+
+
+        protected override void LoadServices()
+        {
+            base.LoadServices();
             ApplicationName = "SharpBIM.IssueTracker";
             ApplicationDisplayName = "SharpBIM IssueTracker";
-            AuthService = new();
-            ReposSerivce = new();
-            IssuesService = new();
-            ContentService = new();
-            TokenService = new();
-            ReleaseService = new();
-            LabelService = new();
-            CommentService = new();
+            AuthService = new(this);
+            ReposSerivce = new(this);
+            IssuesService = new(this);
+            ContentService = new(this);
+            TokenService = new(this);
+            ReleaseService = new(this);
+            LabelService = new(this);
+            CommentService = new(this);
         }
     }
-}
+} 
+#endif

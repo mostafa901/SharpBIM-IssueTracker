@@ -9,12 +9,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitRepos : GitClient
     {
+        public GitRepos(IConfig appGlobals) : base(appGlobals)
+        {
+        }
+
         //  protected override string endPoint => $"{AppGlobals.User.Installation.account.repos_url}?type=private";
         protected override string endPoint => $"https://api.github.com/user";
 
-        internal GitRepos()
-        {
-        }
+        
 
         protected override void AddHeaders(HttpRequestMessage request)
         {
@@ -43,19 +45,18 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             List<RepoModel> repos = new List<RepoModel>();
             int page = 1;
             int trials = 5;
-            var baseurl = $"{endPoint}s/{Owner}/repos";
-            //https://api.github.com/users/USERNAME/repos
+            
+            var baseurl = $"{endPoint}s/{Owner}/repo";
             while (true)
             {
                 string response = null;
                 IServiceReport<string> getReport = new ServiceReport<string>();
                 while (trials > 0)
                 {
-                    string url = $"{endPoint}/repos?page={page}";
-                    if (Owner != AppGlobals.User.UserAccount.login)
-                        url = $"{baseurl}?page={page}&sort=full_name";
-
-                    getReport = await GET(url);
+                    string url = $"{endPoint}s/{Owner}/repos?page={page}";
+                    if (Owner != User.Name)
+                        url = $"{baseurl}s?page={page}&sort=full_name";
+                     getReport = await GET(url);
                     if (!getReport.IsFailed)
                     {
                         response = getReport.Model;
@@ -74,14 +75,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 repos.AddRange(importedRepos);
                 page++;
             }
-            if (repos.Any())
-                if (AppGlobals.User.IsPersonalToken)
-                {
-                    if (AppGlobals.User.UserAccount == null)
-                    {
-                        AppGlobals.User.UserAccount = repos.First().owner;
-                    }
-                }
+            //if (repos.Any())
+            //    if (User.IsPersonalToken)
+            //    {
+            //        if (User.UserAccount == null)
+            //        {
+            //            User.UserAccount = repos.First().owner;
+            //        }
+            //    }
             repoReport.Model = repos;
             return repoReport;
         }

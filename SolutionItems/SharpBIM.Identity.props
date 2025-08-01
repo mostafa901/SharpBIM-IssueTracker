@@ -8,7 +8,6 @@
         <Company>https://github.com/mostafa901</Company>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>(c) SharpBIM</Copyright>
-        <DebugSymbols>true</DebugSymbols>
         <Deterministic>false</Deterministic>
         <EnableTargetFrameworkAlias>true</EnableTargetFrameworkAlias>
         <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>

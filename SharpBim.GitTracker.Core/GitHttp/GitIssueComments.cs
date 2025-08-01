@@ -6,7 +6,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitIssueComments : GitClient
     {
-        public GitIssueComments()
+        public GitIssueComments(IConfig appGlobals): base(appGlobals)
         {
         }
 
