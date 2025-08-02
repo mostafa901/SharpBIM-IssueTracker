@@ -48,7 +48,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
                 }
                 else
                 {
-                    user.Name = "";
+                    user.Name = user.UserAccount?.login??"";
                 }
             }
             catch (Exception)

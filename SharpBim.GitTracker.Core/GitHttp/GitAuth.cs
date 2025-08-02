@@ -1,9 +1,14 @@
-﻿using SharpBIM.ServiceContracts.Interfaces;
-using SharpBIM.ServiceContracts;
+﻿using System.Configuration;
+
+using IdentityModel.OidcClient;
+
+using Microsoft;
+
 using SharpBIM.GitTracker.Core.Auth;
-using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.GitTracker.Core.GitHttp;
-using System.Configuration;
+using SharpBIM.GitTracker.Core.GitHttp.Models;
+using SharpBIM.ServiceContracts;
+using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.Utility.Helpers;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
@@ -72,59 +77,61 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<string>> Login()
         {
-            var report = new ServiceReport<string>();
+            IServiceReport<string> loginReport = new ServiceReport<string>();
 
 
             try
             {
-                await LoadGitConfigAsync();
+                Config ??= (await GetGitConfigAsync()).Model;
+                GitTrackerGlobals.AppGlobals.User = GitUser.Parse();
 
-
-                if (string.IsNullOrEmpty(User.Name))
+                if (User.Token != null && User.Token.access_token != null)
                 {
-                    var tokenReport = await TokenService.RequestInstalltionToken();
-                    if (!tokenReport.IsFailed)
+                    if (User.Token.ExpireTime < DateTime.Now && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
                     {
-
-                        var loginResult = false;
-
-                        if (User.Token != null && User.Token.ExpireTime < DateTime.Now && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
-                        {
-                            var refreshReport = await TokenService.RefreshToken();
-                            loginResult = !refreshReport.IsFailed;
-                        }
+                        loginReport = await TokenService.RefreshToken();
                     }
-                    else
-                    {
-                        var accessCodeReport = await TokenService.AuthorizeApp();
-                        if (accessCodeReport.IsFailed)
-                        {
-                            // user did not authorize the app
-                            report.Merge(accessCodeReport);
-                            return report;
-                        }
-
-                        var accesCode = accessCodeReport.Model;
-                        var userTokenReport = await TokenService.RequestUserToken(accesCode);
-
-                        var loginResult = !userTokenReport.IsFailed;
-                        if (loginResult == false)
-                        {
-                            // user did not authorize the app
-                            report.Merge(userTokenReport);
-                        }
-                    }
-
                 }
+
                 else
                 {
+                    loginReport.Failed("No token");
                 }
+                if (loginReport.IsFailed)
+                {
+                    loginReport = await AuthService.GetGitInstallationTokenAsync();
+                    if (loginReport.IsFailed)
+                    {
+                        
+                        return loginReport;
+                    }
+                    User.Token.access_token = loginReport.Model;
+                    
+                    var appReport = await InstallService.GetApp();
+                    if (appReport.IsFailed)
+                    {
+                        var installReport = await InstallService.RequestInstallingAsync();
+                        if (installReport.IsFailed)
+                        {
+                            // user canceled installation
+                            return installReport;
+                        }
+                    }
+                    User.Installation = (await InstallService.GetInstallationAsync()).Model;
+                    loginReport = await TokenService.AuthorizeApp();
+                    var accesCode = loginReport.Model;
+                    loginReport = await TokenService.RequestAppUserToken(accesCode);
+                    User.UserAccount =appReport.Model.owner;
+                    UpdateOwnerAccount(User.UserAccount.login);
+                    
+                }
+
             }
             catch (Exception ex)
             {
-                report.Failed(ex);
+                loginReport.Failed(ex);
             }
-            return report;
+            return loginReport;
         }
 
         public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken, string secret = "")
@@ -163,40 +170,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return resposne;
         }
 
-        private async Task<IServiceReport<string>> IsGitTrackerInstalled()
-        {
-            var isInstallReport = new ServiceReport<string>();
-#if WINDOWS
-            if (User.Installation == null)
-            {
-                // check if the app already authorized
-                var getAppRep = await InstallService.GetApp();
-                if (getAppRep.IsFailed)
-                {
-                    return isInstallReport.Merge(getAppRep);
-                }
-                else if (getAppRep.Model.installations_count == 0)
-                {
-                    // user has not installed the app.
-                    if (!await InstallService.RequestInstallingAsync())
-                    {
-                        isInstallReport.Failed("Failed to install the application");
-                        return isInstallReport;
-                    }
-                }
-
-                var getInsModelReport = await InstallService.GetInstallationAsync();
-                if (getInsModelReport.IsFailed)
-                {
-                    return isInstallReport.Merge(getInsModelReport);
-                }
-
-                User.Installation = getInsModelReport.Model;
-            }
-            User.UserAccount = User.Installation.account;
-#endif
-            return isInstallReport;
-        }
 
         #endregion Private Methods
     }

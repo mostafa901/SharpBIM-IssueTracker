@@ -6,6 +6,7 @@ using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.RpcContracts.ProgressReporting;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -23,7 +24,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected override void AddHeaders(HttpRequestMessage request)
         {
             base.AddHeaders(request);
-            
+
             request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, AppGlobals.SharpUser.Token.access_token);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
         }
@@ -55,7 +56,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return instReport;
         }
 
-    
+
 
 
         private string LimitURL = "https://api.github.com/rate_limit";
@@ -88,9 +89,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             repModel.Model = appModel;
             return repModel;
         }
-
-        public async Task<bool> RequestInstallingAsync()
+         
+        public async Task<IServiceReport<string>> RequestInstallingAsync()
         {
+            var report = new ServiceReport<string>();
 #if WINDOWS
             var brw = new SystemBrowser();
             var gitOps = new GitInstallOptions();
@@ -98,10 +100,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var res = await brw.InvokeAsync(gitOps);
             if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
             {
-                return !string.IsNullOrEmpty(gitOps.InstallationId);
+                if (string.IsNullOrEmpty(gitOps.InstallationId))
+                {
+                    report.Failed("Installation failed");
+                }
+                else report.Model = gitOps.InstallationId;
             }
 #endif
-            return false;
+            return report;
         }
     }
 }

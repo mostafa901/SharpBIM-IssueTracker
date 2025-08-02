@@ -120,9 +120,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             if (NeedAuthentication)
             {
-                if (string.IsNullOrEmpty(Owner ??= User?.Name))
-                    return false;
-
                 if (string.IsNullOrEmpty(AppGlobals.SharpUser.Token.access_token))
                 {
                     var report = await new GitAuth(AppGlobals).Login();

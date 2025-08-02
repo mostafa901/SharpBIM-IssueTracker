@@ -61,29 +61,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return accessCodeReport;
         }
 
-        protected override AuthenticationHeaderValue GetAuthentication()
-        {
-            if(false)
-            {
-                return base.GetAuthentication();
-            }
-            //return base.GetAuthentication();
-            var byteArray = Encoding.ASCII.GetBytes($"{Config.ClientId}:{Config.ClientSecret}");
-            var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BASIC, Convert.ToBase64String(byteArray));
-
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-             httpClient.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
-            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("YourAppName", "1.0")); // GitHub requires a User-Agent
-
-            return auth;
-        }
-
         public async Task<IServiceReport<string>> GetAppAccessToken()
         {
             NeedAuthentication = true;
             string url = $"https://api.github.com/applications/{Config.ClientId}/token";
 
-            var accessCodeReport = await POST(url,new {AppGlobals.SharpUser.Token.access_token});
+            var accessCodeReport = await POST(url, new { AppGlobals.SharpUser.Token.access_token });
             return accessCodeReport;
         }
 
@@ -94,7 +77,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return tokenReport;
         }
 
-        public async Task<IServiceReport<string>> RequestUserToken(string accessCode)
+        public async Task<IServiceReport<string>> RequestAppUserToken(string accessCode)
         {
             var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&code={accessCode}";
             return await RequestToken(url, null);
@@ -118,6 +101,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         #endregion Protected Methods
 
         #region Private Methods
+
         public async Task<IServiceReport<string>> RequestInstalltionToken()
         {
             var report = new ServiceReport<string>();
@@ -125,7 +109,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             NeedAuthentication = false;
             UseLocal = false;
             var jwt = await AuthService.GetGitInstallationTokenAsync();
-            AppGlobals.SharpUser.Token.access_token = jwt.Model;
+            if (jwt.IsFailed)
+            {
+                report.Failed("Can't get jwt Token");
+                return report;
+            }
+            User.Token.access_token = jwt.Model;
+            AppGlobals.SharpUser = User;
+
             var appModel = await InstallService.GetApp();
             if (appModel?.Model == null || appModel.IsFailed)
             {
@@ -133,21 +124,18 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 return report;
             }
 
-            if (jwt.IsFailed)
-            {
-                report.Failed("Can't get jwt Token");
-                return report;
-            }
-            AppGlobals.SharpUser.Token.access_token = jwt.Model;
+            
 
             var insReport = await InstallService.GetInstallationAsync();
-            if (!insReport.IsFailed && insReport.Model!=null)
+            if (insReport.IsFailed || insReport.Model == null)
             {
-
+                report.Failed("App is not installed");
+            }
+            else
+            {
                 var insModel = insReport.Model;
                 User.Installation = insModel;
                 User.UserAccount = insModel.account;
-
 
                 NeedAuthentication = false;
                 string url = insModel.access_tokens_url;
@@ -155,11 +143,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 var jdoc = JsonDocument.Parse(token.Model);
                 User.Token.access_token = jdoc.RootElement.GetProperty("token").GetString();
                 User.Token.ExpireTime = jdoc.RootElement.GetProperty("expires_at").GetDateTime().ToLocalTime();
-            }
-            else
-            {
-                var res = await GetAppAccessToken();
-                report.Failed("App is not installed");
             }
             return report;
         }

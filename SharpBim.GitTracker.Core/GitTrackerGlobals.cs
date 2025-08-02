@@ -68,7 +68,7 @@ namespace SharpBIM.GitTracker.Core
         public static GitRelease ReleaseService { get; internal set; }
         public static GitLabels LabelService { get; internal set; }
         public static GitIssueComments CommentService { get; internal set; }
-        internal GitUser User { get; set; }
+        internal GitUser User { get => base.SharpUser as GitUser; set => base.SharpUser = value; }
         static GitTrackerGlobals()
         {
             _ = new GitTrackerGlobals();
@@ -80,7 +80,7 @@ namespace SharpBIM.GitTracker.Core
             var resource = new SharedResourceDictionary() { Source = new Uri("pack://application:,,,/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml") };
             SharpBIM.WPF.Globals.StyleResources.MergedDictionaries.Add(resource);
             User = GitUser.Parse();
-
+            AuthService.LoadGitConfigAsync();
         }
 
         protected override void LoadServices()
@@ -97,6 +97,7 @@ namespace SharpBIM.GitTracker.Core
             LabelService = new(this);
             CommentService = new(this);
             InstallService = new(this);
+
         }
     }
 }

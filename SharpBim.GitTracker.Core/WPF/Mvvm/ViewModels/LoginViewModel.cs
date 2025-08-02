@@ -51,7 +51,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     // this is to rest the authentication and reautherize if needed
 
                     if (string.IsNullOrEmpty(StoredToken))
+         {
                         AppGlobals.User = new GitUser();
+                        AppGlobals.User.Save();
+                    }
                     var login = await AuthService.Login();
                     if (login.IsFailed)
                     {
@@ -81,7 +84,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 }
                 if (auth)
                 {
-                    AppGlobals.User.UserAccount = (await GitTrackerGlobals.AuthService.GetUserAccount()).Model;
+                    AppGlobals.User.UserAccount ??= (await GitTrackerGlobals.AuthService.GetUserAccount()).Model;
                     AppGlobals.User.RepoOwner = AppGlobals.User.UserAccount.login;
                     LoggedIn?.Invoke(this, null);
                 }
