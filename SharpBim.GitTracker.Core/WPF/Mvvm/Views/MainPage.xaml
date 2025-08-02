@@ -109,8 +109,6 @@
             </Grid>
             <Frame x:Name="SharpBIMViewer"
                    Grid.Row="1"
-                   IsEnabled="{Binding IsBusy,
-                                       Converter={Conv:ConvBoolToInverse}}"
                    JournalOwnership="OwnsJournal"
                    NavigationUIVisibility="Hidden" />
         </Grid>

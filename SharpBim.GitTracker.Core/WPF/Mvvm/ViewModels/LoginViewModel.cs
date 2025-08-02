@@ -9,7 +9,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), Statics.AUTHORIZE, Glyphs.empty, (x) => true);
             CancelCommand = new SharpBIMCommand(Cancel, Statics.CANCEL, Glyphs.empty, (x) => true);
-   
+
         }
 
         public event EventHandler LoggedIn;
@@ -69,16 +69,19 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     if (userAccountReport.IsFailed)
                     {
                         AppGlobals.MsgService.AlertUser(WindowHandle, Statics.INVALIDTOKEN, userAccountReport.ErrorMessage);
+                        auth = false;
                     }
                     else
                     {
                         auth = true;
+                        AppGlobals.User.UserAccount = userAccountReport.Model.JDeserialize<Account>();
                         AppGlobals.User.Token.access_token = StoredToken;
                         AppGlobals.User.IsPersonalToken = true;
                     }
                 }
                 if (auth)
                 {
+                    AppGlobals.User.UserAccount = (await GitTrackerGlobals.AuthService.GetUserAccount()).Model;
                     AppGlobals.User.RepoOwner = AppGlobals.User.UserAccount.login;
                     LoggedIn?.Invoke(this, null);
                 }

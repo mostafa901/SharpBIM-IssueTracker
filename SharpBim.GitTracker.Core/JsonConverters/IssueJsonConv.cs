@@ -13,21 +13,36 @@ namespace SharpBIM.GitTracker.Core.JsonConverters
     {
         public override IssueModel? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var obj = JsonSerializer.Deserialize<JsonElement>(ref reader, options);
-            var instance = new IssueModel();
+            // Parse the input as JsonDocument
+            using var jsonDoc = JsonDocument.ParseValue(ref reader);
+            var root = jsonDoc.RootElement;
 
-            if (obj.TryGetProperty(nameof(IssueModel.assignee), out var primaryValue))
+            // Create new JsonSerializerOptions without this converter
+            var defaultOptions = new JsonSerializerOptions(options);
+            var thisConverter = defaultOptions.Converters.FirstOrDefault(c => c is IssueJsonConv);
+            if (thisConverter is not null)
+                defaultOptions.Converters.Remove(thisConverter);
+
+            // Deserialize normally, avoiding infinite recursion
+            var instance = JsonSerializer.Deserialize<IssueModel>(root.GetRawText(), defaultOptions)
+                           ?? new IssueModel();
+
+            // Override logic for assignee/assignees
+            if (root.TryGetProperty(nameof(IssueModel.assignee), out var assigneeProp) &&
+                assigneeProp.ValueKind != JsonValueKind.Null)
             {
-                instance.assignee = primaryValue.GetString();
+                instance.assignee = assigneeProp.GetString();
             }
-            else if (obj.TryGetProperty(nameof(IssueModel.assignees), out var secondaryValue))
+            else if (root.TryGetProperty(nameof(IssueModel.assignees), out var assigneesProp) &&
+                     assigneesProp.ValueKind == JsonValueKind.Array)
             {
-                instance.assignees = JsonSerializer.Deserialize<Account[]>(secondaryValue.GetRawText(), options);
-                ;
+                instance.assignees = JsonSerializer.Deserialize<Account[]>(assigneesProp.GetRawText(), options);
             }
 
             return instance;
         }
+
+
 
         public override void Write(Utf8JsonWriter writer, IssueModel value, JsonSerializerOptions options)
         {

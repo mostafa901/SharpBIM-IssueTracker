@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.Services;
@@ -19,35 +20,42 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public GitUser()
         {
             Token = new SharpToken();
-            //string settingsPath = Path.Combine(AppGlobals.FileService.GetAssemblyDirectoryPath(), "appsettings.local.json");
-            //if (File.Exists(settingsPath))
-            //{
-            //    var json = File.ReadAllText(settingsPath);
-            //    var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            //    UserSecret  = config["UserSecret "];
-            //}
-                UserSecret  = "SharpBim@gmail.com";
+            ////string settingsPath = Path.Combine(AppGlobals.FileService.GetAssemblyDirectoryPath(), "appsettings.local.json");
+            ////if (File.Exists(settingsPath))
+            ////{
+            ////    var json = File.ReadAllText(settingsPath);
+            ////    var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            ////    UserSecret  = config["UserSecret "];
+            ////}
+            UserSecret = "Sharpbim@gmail.com";
         }
 
         private static string UserConfigPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SharpBIM", "GitTrackerConfig.json");
 
         public string LastRepoName { get; set; }
-        public string UserSecret  { get;  set; }
         public string RepoOwner { get; set; }
         public bool LoggedIn { get; set; }
 
         public static GitUser? Parse()
         {
-            var user = new GitUser();
+            GitUser user = null;
             try
             {
                 user = JsonSerializer.Deserialize<GitUser>(File.ReadAllText(UserConfigPath));
+                if(user.IsPersonalToken)
+                {
+                    user.Name = "Personal";
+                }
+                else
+                {
+                    user.Name = "";
+                }
             }
             catch (Exception)
             {
             }
 
-            return user;
+            return user ??= new GitUser();
         }
 
         public void Save()

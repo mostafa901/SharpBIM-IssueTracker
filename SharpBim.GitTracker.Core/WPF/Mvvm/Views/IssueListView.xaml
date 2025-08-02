@@ -3,6 +3,7 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:Conv="clr-namespace:SharpBIM.WPF.Helpers.Converters;assembly=SharpBIM"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:hl="clr-namespace:SharpBIM.WPF.Utilities;assembly=SharpBIM"
                         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:mv="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels"
@@ -16,7 +17,7 @@
                         mc:Ignorable="d">
     <Grid>
         <Grid.Resources>
-            <ResourceDictionary Source="/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml" />
+            <hl:SharedResourceDictionary SamoDesign="True" Source="/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml" />
         </Grid.Resources>
 
         <Grid.RowDefinitions>

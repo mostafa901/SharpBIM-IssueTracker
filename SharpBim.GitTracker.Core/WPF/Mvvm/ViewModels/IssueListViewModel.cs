@@ -12,7 +12,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string StringValue { get ; set ; }
     }
 
     public class IssueListViewModel : ModelViewBase<DummyListContext, IssueViewModel>
@@ -43,7 +43,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
             else
                 RepoOwner = AppGlobals.User.RepoOwner;
-            await ReloadRepos(null);
+      //      await ReloadRepos(null);
         }
 
         public string TextToFilter
@@ -308,7 +308,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                                   List<long> addedIds = [];
                                   foreach (var issue in issues)
                                   {
-                                      if (issue.labels.Any(o => o.name == "sub-issue"))
+                                      if (issue.labels!=null && issue.labels.Any(o => o.name == "sub-issue"))
                                           continue;
                                       if (addedIds.Any(o => o == issue.number))
                                           continue;

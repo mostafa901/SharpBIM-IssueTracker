@@ -22,6 +22,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
         public Reactions reactions { get; set; }
         public object performed_via_github_app { get; set; }
         public string Title { get; set; }
-        public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string StringValue { get ; set ; }
     }
 }

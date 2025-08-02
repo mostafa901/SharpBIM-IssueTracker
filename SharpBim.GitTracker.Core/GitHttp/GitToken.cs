@@ -48,7 +48,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             else
             {
                 report.Failed(res.Error);
-            } 
+            }
 #endif
             return report;
         }
@@ -58,6 +58,32 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             string url = $"https://github.com/login/oauth/authorize?client_id={Config.ClientId}&state=xxx";
 
             var accessCodeReport = await GET(url);
+            return accessCodeReport;
+        }
+
+        protected override AuthenticationHeaderValue GetAuthentication()
+        {
+            if(false)
+            {
+                return base.GetAuthentication();
+            }
+            //return base.GetAuthentication();
+            var byteArray = Encoding.ASCII.GetBytes($"{Config.ClientId}:{Config.ClientSecret}");
+            var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BASIC, Convert.ToBase64String(byteArray));
+
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+             httpClient.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("YourAppName", "1.0")); // GitHub requires a User-Agent
+
+            return auth;
+        }
+
+        public async Task<IServiceReport<string>> GetAppAccessToken()
+        {
+            NeedAuthentication = true;
+            string url = $"https://api.github.com/applications/{Config.ClientId}/token";
+
+            var accessCodeReport = await POST(url,new {AppGlobals.SharpUser.Token.access_token});
             return accessCodeReport;
         }
 
@@ -86,14 +112,57 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override async Task<bool> AreWeAuthorized()
         {
-            if (User.Name != null)
-                return true;
-            return !(await new GitAuth(AppGlobals).LoadGitConfigAsync()).IsFailed;
+            return await Task.FromResult(true);
         }
 
         #endregion Protected Methods
 
         #region Private Methods
+        public async Task<IServiceReport<string>> RequestInstalltionToken()
+        {
+            var report = new ServiceReport<string>();
+
+            NeedAuthentication = false;
+            UseLocal = false;
+            var jwt = await AuthService.GetGitInstallationTokenAsync();
+            AppGlobals.SharpUser.Token.access_token = jwt.Model;
+            var appModel = await InstallService.GetApp();
+            if (appModel?.Model == null || appModel.IsFailed)
+            {
+                report.Failed("App not installed");
+                return report;
+            }
+
+            if (jwt.IsFailed)
+            {
+                report.Failed("Can't get jwt Token");
+                return report;
+            }
+            AppGlobals.SharpUser.Token.access_token = jwt.Model;
+
+            var insReport = await InstallService.GetInstallationAsync();
+            if (!insReport.IsFailed && insReport.Model!=null)
+            {
+
+                var insModel = insReport.Model;
+                User.Installation = insModel;
+                User.UserAccount = insModel.account;
+
+
+                NeedAuthentication = false;
+                string url = insModel.access_tokens_url;
+                var token = await POST(url, null);
+                var jdoc = JsonDocument.Parse(token.Model);
+                User.Token.access_token = jdoc.RootElement.GetProperty("token").GetString();
+                User.Token.ExpireTime = jdoc.RootElement.GetProperty("expires_at").GetDateTime().ToLocalTime();
+            }
+            else
+            {
+                var res = await GetAppAccessToken();
+                report.Failed("App is not installed");
+            }
+            return report;
+        }
 
         private async Task<IServiceReport<string>> RequestToken(string url, object requestBody)
         {
@@ -105,7 +174,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             User.Token = ParseResponse<SharpToken>(responseJson).FirstOrDefault();
             User.Token.ExpireTime = DateTime.Now.AddSeconds(User.Token.expires_in);
             User.Token.RefreshExpireTime = DateTime.Now.AddSeconds(User.Token.refresh_token_expires_in);
-         //   User.Save();
+            //   User.Save();
             return report;
         }
 

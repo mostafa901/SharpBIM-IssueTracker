@@ -85,5 +85,5 @@ public class RepoModel : IModel
     public string default_branch { get; set; }
     public Permissions permissions { get; set; }
     public string Title { get; set; }
-    public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public string StringValue { get ; set ; }
 }

@@ -39,8 +39,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded -= MainPage_Loaded;
-
             AppGlobals.MainWindowHandle = ViewModel.WindowHandle = this.GetWindow().Handle();
+
+            
+
             await ViewModel.Login(null);
         }
 

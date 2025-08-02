@@ -114,17 +114,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             }
             return issueReport;
         }
-
-        
-        protected override JsonSerializerOptions GetJsonOptions(JsonSerializerOptions jop)
-        {
-            
-            var js = base.GetJsonOptions(jop);
-
-            js.Converters.Add(new IssueJsonConv());
-            return js;
-        }
-
+         
         //https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#update-an-issue
         // You cannot pass both `assignee` and `assignees`. Only one may be provided.
         public async Task<IServiceReport<IssueModel>> CreateIssue(string repoName, IssueModel issue)

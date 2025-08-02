@@ -14,7 +14,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public GitAuth(IConfig appGlobals) : base(appGlobals)
         {
-
         }
 
         #endregion Public Constructors
@@ -50,7 +49,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var configReport = new ServiceReport<string>();
             if (Config == null)
             {
-                var confReport = await GetGitConfigAsync(User.UserSecret);
+                AppGlobals.SharpUser = User;
+                NeedAuthentication = false;
+                UseLocal = false;
+
+
+                NeedAuthentication = false;
+                var confReport = await GetGitConfigAsync();
+
                 if (confReport.IsFailed)
                 {
                     Config = null;
@@ -59,10 +65,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 else
                 {
                     Config = confReport.Model;
-
-#if WINDOWS
-                    InstallService = new(AppGlobals); 
-#endif
                 }
             }
             return configReport;
@@ -72,24 +74,18 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             var report = new ServiceReport<string>();
 
-            if ((await LoadGitConfigAsync()).IsFailed)
-            {
-                return report.Failed("Application missing credentials");
-            }
+
             try
             {
-                if (User.Name == null)
+                await LoadGitConfigAsync();
+
+
+                if (string.IsNullOrEmpty(User.Name))
                 {
-                    var isInstalledRep = await IsGitTrackerInstalled();
-                    if (isInstalledRep.IsFailed)
+                    var tokenReport = await TokenService.RequestInstalltionToken();
+                    if (!tokenReport.IsFailed)
                     {
-                        return report.Merge(isInstalledRep);
-                    }
 
-                    if (RequiresToken)
-
-                    {
-                        var TokenService = new GitToken(AppGlobals);
                         var loginResult = false;
 
                         if (User.Token != null && User.Token.ExpireTime < DateTime.Now && User.Token.refresh_token != null && User.Token.RefreshExpireTime.Ticks > DateTime.Now.Ticks)
@@ -97,27 +93,31 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                             var refreshReport = await TokenService.RefreshToken();
                             loginResult = !refreshReport.IsFailed;
                         }
-                        if (!loginResult)
+                    }
+                    else
+                    {
+                        var accessCodeReport = await TokenService.AuthorizeApp();
+                        if (accessCodeReport.IsFailed)
                         {
-                            var accessCodeReport = await TokenService.AuthorizeApp();
-                            if (accessCodeReport.IsFailed)
-                            {
-                                // user did not authorize the app
-                                report.Merge(accessCodeReport);
-                                return report;
-                            }
+                            // user did not authorize the app
+                            report.Merge(accessCodeReport);
+                            return report;
+                        }
 
-                            var accesCode = accessCodeReport.Model;
-                            var userTokenReport = await TokenService.RequestUserToken(accesCode);
+                        var accesCode = accessCodeReport.Model;
+                        var userTokenReport = await TokenService.RequestUserToken(accesCode);
 
-                            loginResult = !userTokenReport.IsFailed;
-                            if (loginResult == false)
-                            {
-                                // user did not authorize the app
-                                report.Merge(userTokenReport);
-                            }
+                        var loginResult = !userTokenReport.IsFailed;
+                        if (loginResult == false)
+                        {
+                            // user did not authorize the app
+                            report.Merge(userTokenReport);
                         }
                     }
+
+                }
+                else
+                {
                 }
             }
             catch (Exception ex)
@@ -130,18 +130,23 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken, string secret = "")
         {
             var report = new ServiceReport<string>();
-      
+
             //User.IsPersonalToken = true;
             User.Token.access_token = userAccesToken;
             if (secret != string.Empty)
             {
-                User.UserSecret  = secret;
+                User.UserSecret = secret;
             }
-            if (User.Name == null)
+            if (string.IsNullOrEmpty(User.Name))
             {
                 var accountReport = await GetUserAccount();
-                report.Merge(accountReport);
-                User.Name = accountReport.Model.login;
+                if (!accountReport.IsFailed)
+                {
+                    report.Model = accountReport.Model.JSerialize();
+                    User.Name = accountReport.Model.login;
+                }
+                else
+                    report.Merge(accountReport);
             }
             return report;
         }
@@ -149,6 +154,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         #endregion Public Methods
 
         #region Private Methods
+
+        public async Task<IServiceReport<string>> GetJWTTokenAsync(string useremail)
+        {
+            var url = $"{endPoint}/auth/gettoken";
+            var resposne = await POST(url, useremail);
+
+            return resposne;
+        }
 
         private async Task<IServiceReport<string>> IsGitTrackerInstalled()
         {
@@ -180,7 +193,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
                 User.Installation = getInsModelReport.Model;
             }
-            User.UserAccount = User.Installation.account; 
+            User.UserAccount = User.Installation.account;
 #endif
             return isInstallReport;
         }

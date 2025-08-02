@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+
 using SharpBIM.GitTracker.Core.GitHttp.Models;
 using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
@@ -13,10 +14,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
         }
 
-        //  protected override string endPoint => $"{AppGlobals.User.Installation.account.repos_url}?type=private";
-        protected override string endPoint => $"https://api.github.com/user";
+        protected override string endPoint => $"https://api.github.com/";
 
-        
+
 
         protected override void AddHeaders(HttpRequestMessage request)
         {
@@ -45,18 +45,16 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             List<RepoModel> repos = new List<RepoModel>();
             int page = 1;
             int trials = 5;
-            
-            var baseurl = $"{endPoint}s/{Owner}/repo";
+
             while (true)
             {
                 string response = null;
                 IServiceReport<string> getReport = new ServiceReport<string>();
                 while (trials > 0)
                 {
-                    string url = $"{endPoint}s/{Owner}/repos?page={page}";
-                    if (Owner != User.Name)
-                        url = $"{baseurl}s?page={page}&sort=full_name";
-                     getReport = await GET(url);
+                    string url = $"{endPoint}user/repos?page={page}";
+
+                    getReport = await GET(url);
                     if (!getReport.IsFailed)
                     {
                         response = getReport.Model;
@@ -75,14 +73,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 repos.AddRange(importedRepos);
                 page++;
             }
-            //if (repos.Any())
-            //    if (User.IsPersonalToken)
-            //    {
-            //        if (User.UserAccount == null)
-            //        {
-            //            User.UserAccount = repos.First().owner;
-            //        }
-            //    }
+
             repoReport.Model = repos;
             return repoReport;
         }

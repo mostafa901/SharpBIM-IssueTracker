@@ -21,7 +21,7 @@ namespace SharpBIM.GitTracker.Core
             var report = new ServiceReport<string>();
             try
             {
-                GitAuth.Config = (await new SharpBIMHTTP(AppGlobals).GetGitConfigAsync("SharpBim@gmail.com")).Model;
+                GitAuth.Config = (await new SharpBIMHTTP(AppGlobals).GetGitConfigAsync()).Model;
 
 
                 AppGlobals.SharpUser.Token = new SharpToken { access_token = GitAuth.Config.PToken };
@@ -52,29 +52,6 @@ namespace SharpBIM.GitTracker.Core
             return report;
         }
 
-        public async Task<IServiceReport<string>> PublishFeedback2(string title, string body, string personalToken, string secret)
-        {
-            var report = new ServiceReport<string>();
-            var authService = new GitAuth(AppGlobals);
-            GitAuth.Config = (await (new SharpBIMHTTP(AppGlobals)).GetGitConfigAsync("SharpBim@gmail.com")).Model;
-            new GitRepos(AppGlobals).UpdateOwnerAccount("mostafa901");
-            var result = await authService.LoginByPersonalToken(personalToken, secret);
-
-            if (!result.IsFailed)
-            {
-                var git = await new GitIssues(AppGlobals).CreateIssue("SharpBIM.Invoice",
-                    new GitTracker.Core.GitHttp.Models.IssueModel
-                    {
-                        body = body,
-                        Title = title,
-                    });
-            }
-            if (result.IsFailed)
-            {
-                report.Merge(result.ErrorMessage);
-                return report;
-            }
-            return report;
-        }
+       
     }
 }

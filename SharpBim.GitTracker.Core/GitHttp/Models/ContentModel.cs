@@ -19,7 +19,7 @@ public class ContentModel : IModel
     public string content { get; set; }
     public string encoding { get; set; }
     public _Links _links { get; set; }
-    public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public string StringValue { get ; set ; }
 
     public class _Links
     {

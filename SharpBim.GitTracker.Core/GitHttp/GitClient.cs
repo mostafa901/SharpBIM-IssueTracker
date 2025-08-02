@@ -16,7 +16,11 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected virtual string GetEndPoint(params object[] repoName) => endPoint.Replace("REPO", repoName[0].ToString());
 
-        internal ISharpUser<SharpToken> User => AppGlobals.SharpUser;
+#if WINDOWS
+        internal GitUser User => GitTrackerGlobals.AppGlobals.User;
+#else
+        internal ISharpUser<SharpToken> User => AppGlobals.SharpUser; 
+#endif
         protected static string Owner { get; private set; }
 
         protected GitClient(IConfig appGlobals) : base(appGlobals)
@@ -64,6 +68,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 report.Failed(ex.Message);
             }
+            finally { NeedAuthentication = true; }
             return report;
         }
 
@@ -73,7 +78,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 //var auth = User.IsPersonalToken ? new AuthenticationHeaderValue("Token", User.Token.access_token) : new AuthenticationHeaderValue(QueryString.BEARER, User.Token.access_token);
 
-                var auth = new AuthenticationHeaderValue(QueryString.BEARER, User.Token.access_token);
+                var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BEARER, User.Token.access_token);
                 return auth;
             }
             return null;
@@ -82,7 +87,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         private void AddDefaultHeaders(HttpRequestMessage request)
         {
             request.Headers.Authorization = GetAuthentication();
-            request.Headers.UserAgent.ParseAdd(Config.AppName);
+             
+            request.Headers.UserAgent.ParseAdd(Config?.AppName??AppGlobals.CompanyName);
             AddHeaders(request);
         }
 
@@ -112,13 +118,16 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override async Task<bool> AreWeAuthorized()
         {
-            if (string.IsNullOrEmpty(Owner ??= User?.Name))
-                return false;
-
-            if (NeedAuthentication && string.IsNullOrEmpty(AppGlobals.SharpUser.Token.access_token))
+            if (NeedAuthentication)
             {
-                var report = await new GitAuth(AppGlobals).Login();
-                return !report.IsFailed;
+                if (string.IsNullOrEmpty(Owner ??= User?.Name))
+                    return false;
+
+                if (string.IsNullOrEmpty(AppGlobals.SharpUser.Token.access_token))
+                {
+                    var report = await new GitAuth(AppGlobals).Login();
+                    return !report.IsFailed;
+                }
             }
             return true;
         }

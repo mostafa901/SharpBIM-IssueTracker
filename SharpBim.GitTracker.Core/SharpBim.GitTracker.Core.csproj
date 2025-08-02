@@ -9,7 +9,7 @@
         <AssemblyVersion>0.768.0.0</AssemblyVersion>
     </PropertyGroup>
     <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
-        <TargetFrameworks>net47;net472;net48;net8.0-windows8</TargetFrameworks>
+        <TargetFrameworks>net472;net48;net8.0-windows8</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
         <UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
@@ -67,7 +67,7 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))" >
+    <ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))">
 
         <Reference Include="System.Net.Http">
           <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.Http.dll</HintPath>
@@ -87,25 +87,33 @@
     <ItemGroup>
         <VSCTInclude Remove="WPF\Mvvm\Views\Views\**" />
     </ItemGroup>
-
-    <ItemGroup Condition="!$(DefineConstants.Contains('DEBUG'))">
-        <PackageReference  Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.56" />
+    <PropertyGroup>
+        <UseBimPack>true</UseBimPack>
+    </PropertyGroup>
+    <ItemGroup Condition="$(UseBimPack)">
+        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.80" />
    
-        <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.50" />
+        <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.64" />
     </ItemGroup>
  
-    <ItemGroup Condition="$(DefineConstants.Contains('DEBUG'))">
+    <ItemGroup Condition="!$(UseBimPack)">
 
         <Reference Include="SharpBIM">
             <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
         </Reference>
+        <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
+        <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
+        <PackageReference Include="envdte100" Version="17.12.40391" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+        <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.12.40391" />
+        <PackageReference Include="System.Net.Http" Version="4.3.4" />
 
+        <Reference Include="System.Web" Condition="!$(TargetFramework.startswith('net8'))" />
     </ItemGroup>
  
-    <ItemGroup>
-      <PackageReference Include="System.Text.Json" Version="8.0.5" />
-    </ItemGroup>
-
+ 
     <ItemGroup>
       <None Update="appsettings.local.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

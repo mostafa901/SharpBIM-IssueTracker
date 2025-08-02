@@ -12,7 +12,7 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
         private static string _state = StringEx.RandomString(6);
 
         public GitLoginOptions()
-            : base($"https://github.com/login/oauth/authorize?client_id={AppGlobals.Config.ClientId}&state={_state}")
+            : base($"https://github.com/login/oauth/authorize?client_id={GitClient.Config.ClientId}&state={_state}")
         {
         }
 

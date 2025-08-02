@@ -16,18 +16,19 @@ namespace SharpBIM.GitTracker.Core.WPF.Helpers
     {
         public static string? GetGitRepositoryPath()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            DTE2 dte = Package.GetGlobalService(typeof(DTE)) as DTE2;
-            if (dte?.Solution == null || string.IsNullOrEmpty(dte.Solution.FullName))
-            {
-                return null;
-            }
+            //ThreadHelper.ThrowIfNotOnUIThread();
+            //DTE2 dte = Package.GetGlobalService(typeof(DTE)) as DTE2;
+            //if (dte?.Solution == null || string.IsNullOrEmpty(dte.Solution.FullName))
+            //{
+            //    return null;
+            //}
 
-            string solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
-            if (solutionDir == null)
-                return null;
+            //string solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
+            //if (solutionDir == null)
+            //    return null;
 
-            return solutionDir;
+            //return solutionDir;
+            return string.Empty;
         }
 
         public static string? FindGitRepositoryPath(string startDirectory)

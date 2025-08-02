@@ -38,7 +38,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             set { SetValue(value, nameof(ModifiedDate)); }
         }
 
-   async     public override Task Init(CommentModel dataModel)
+        async public override Task Init(CommentModel dataModel)
         {
             base.Init(dataModel);
             Title = dataModel.user.login;

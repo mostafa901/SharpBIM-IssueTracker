@@ -9,8 +9,7 @@ namespace SharpBIM.GitTracker.Core.Auth.BrowseOptions
 {
     public abstract class GitBrowserOptions : BrowserOptions
     {
-        protected IGitConfig Config => AppGlobals.Config;
-
+    
         protected GitBrowserOptions(string startUrl)
             : base(startUrl, "http://localhost:4567/github/callback")
         {

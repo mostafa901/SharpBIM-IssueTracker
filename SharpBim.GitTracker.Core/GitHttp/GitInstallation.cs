@@ -5,6 +5,7 @@ using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
+using System.Threading.Tasks;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -22,8 +23,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected override void AddHeaders(HttpRequestMessage request)
         {
             base.AddHeaders(request);
-            string jwtToken = Config.PrivateKey;
-            request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, jwtToken);
+            
+            request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, AppGlobals.SharpUser.Token.access_token);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
         }
 
@@ -54,6 +55,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return instReport;
         }
 
+    
+
+
         private string LimitURL = "https://api.github.com/rate_limit";
 
         public GitInstallation(IConfig appGlobals) : base(appGlobals)
@@ -67,7 +71,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override async Task<bool> AreWeAuthorized()
         {
-            return !(await new GitAuth(AppGlobals).LoadGitConfigAsync()).IsFailed;
+            return true;
         }
 
         public async Task<IServiceReport<AppModel>> GetApp()
@@ -80,7 +84,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 // something with my private key or JWT token is wrong.. app will not work
                 return repModel.Merge(rep);
             }
-            var appModel = ParseResponse<AppModel>(rep.Model).FirstOrDefault(o => o.client_id == Config.ClientId);
+            var appModel = ParseResponse<AppModel>(rep.Model).FirstOrDefault(o => o.name == AppGlobals.ApplicationName);
             repModel.Model = appModel;
             return repModel;
         }
@@ -95,7 +99,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
             {
                 return !string.IsNullOrEmpty(gitOps.InstallationId);
-            } 
+            }
 #endif
             return false;
         }

@@ -17,5 +17,5 @@ public class GitLabel : IModel
     public bool _default { get; set; }
     public string description { get; set; }
     public string Title { get; set; }
-    public string StringValue { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public string StringValue { get ; set ; }
 }
