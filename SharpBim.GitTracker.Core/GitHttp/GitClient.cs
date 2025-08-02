@@ -122,8 +122,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 if (string.IsNullOrEmpty(AppGlobals.SharpUser.Token.access_token))
                 {
-                    var report = await new GitAuth(AppGlobals).Login();
-                    return !report.IsFailed;
+                    return false;
                 }
             }
             return true;

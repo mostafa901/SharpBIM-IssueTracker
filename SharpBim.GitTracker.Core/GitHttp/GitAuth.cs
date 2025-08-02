@@ -1,6 +1,8 @@
 ﻿using System.Configuration;
 
-using IdentityModel.OidcClient;
+#if WINDOWS
+using IdentityModel.OidcClient; 
+#endif
 
 using Microsoft;
 
@@ -75,6 +77,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return configReport;
         }
 
+#if WINDOWS
         public async Task<IServiceReport<string>> Login()
         {
             IServiceReport<string> loginReport = new ServiceReport<string>();
@@ -102,11 +105,11 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                     loginReport = await AuthService.GetGitInstallationTokenAsync();
                     if (loginReport.IsFailed)
                     {
-                        
+
                         return loginReport;
                     }
                     User.Token.access_token = loginReport.Model;
-                    
+
                     var appReport = await InstallService.GetApp();
                     if (appReport.IsFailed)
                     {
@@ -121,9 +124,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                     loginReport = await TokenService.AuthorizeApp();
                     var accesCode = loginReport.Model;
                     loginReport = await TokenService.RequestAppUserToken(accesCode);
-                    User.UserAccount =appReport.Model.owner;
+                    User.UserAccount = appReport.Model.owner;
                     UpdateOwnerAccount(User.UserAccount.login);
-                    
+
                 }
 
             }
@@ -134,6 +137,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return loginReport;
         }
 
+#endif
         public async Task<IServiceReport<string>> LoginByPersonalToken(string userAccesToken, string secret = "")
         {
             var report = new ServiceReport<string>();

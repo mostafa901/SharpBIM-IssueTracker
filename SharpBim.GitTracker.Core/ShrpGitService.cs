@@ -21,8 +21,7 @@ namespace SharpBIM.GitTracker.Core
             var report = new ServiceReport<string>();
             try
             {
-                GitAuth.Config = (await new SharpBIMHTTP(AppGlobals).GetGitConfigAsync()).Model;
-
+                GitClient.Config =   (await new GitAuth(AppGlobals).GetGitConfigAsync()).Model;
 
                 AppGlobals.SharpUser.Token = new SharpToken { access_token = GitAuth.Config.PToken };
                 AppGlobals.SharpUser.Name = "mostafa901";
@@ -52,6 +51,6 @@ namespace SharpBIM.GitTracker.Core
             return report;
         }
 
-       
+
     }
 }

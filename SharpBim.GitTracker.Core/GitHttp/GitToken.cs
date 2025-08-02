@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿#if WINDOWS
+using System.Net.Http.Headers;
 using System.Net.Http;
 using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.ServiceContracts;
@@ -124,7 +125,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 return report;
             }
 
-            
+
 
             var insReport = await InstallService.GetInstallationAsync();
             if (insReport.IsFailed || insReport.Model == null)
@@ -163,4 +164,5 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         #endregion Private Methods
     }
-}
+} 
+#endif
