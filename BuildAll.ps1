@@ -290,7 +290,7 @@ if($CommmitImages -eq 1 -and $publish -eq 0 )
 if($publish -eq 1)
 {
     CommitImages
-    exit
+   
     Write-Host "Updating Release"
     & .\SharpBIM.GitTracker.Console\bin\Debug\net48\SharpBIM.GitTracker.Console.exe
     
