@@ -74,7 +74,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected override async Task<AuthenticationHeaderValue> GetAuthentication()
         {
             
-            var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BEARER, (await AuthService.GetGitInstallationTokenAsync()).Model);
+            var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BEARER, (await  new GitAuth(AppGlobals).GetGitInstallationTokenAsync()).Model);
 
             return auth;
 

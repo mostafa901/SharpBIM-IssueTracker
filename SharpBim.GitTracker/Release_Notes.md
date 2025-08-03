@@ -1,5 +1,5 @@
 
-## Version 0.762 - March 2025
+## Version 0.778 - March 2025
 ☑️ Fix Application Missing credential
 
 ## Version 0.762 - March 2025

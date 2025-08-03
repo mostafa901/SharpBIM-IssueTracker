@@ -182,7 +182,7 @@ if($build -eq 1)`
         $versionRegex = '" Version="(\d+\.\d+)"'
         Increment $versionRegex ".\SharpBim.GitTracker\source.extension.vsixmanifest" 1
         updateVersions $Global:newversion
-       # updateRelease
+        updateRelease
     }
 
 
@@ -290,7 +290,8 @@ if($CommmitImages -eq 1 -and $publish -eq 0 )
 if($publish -eq 1)
 {
     CommitImages
-   
+    
+    dotnet build .\SharpBIM.GitTracker.Console\SharpBIM.GitTracker.Console.csproj -c dnowin
     Write-Host "Updating Release"
     & .\SharpBIM.GitTracker.Console\bin\Debug\net48\SharpBIM.GitTracker.Console.exe
     
