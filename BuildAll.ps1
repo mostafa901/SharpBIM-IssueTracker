@@ -299,6 +299,6 @@ if($publish -eq 1)
 
     Write-Host "Publishing..."
     
-    & "C:\Program Files\Microsoft Visual Studio\2022\Professional\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload ".\SharpBim.GitTracker\GitPublish\SharpBim.GitTracker.vsix" -publishManifest ".\SharpBim.GitTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
+    & "C:\Program Files\Microsoft Visual Studio\2022\Community\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload ".\SharpBim.GitTracker\GitPublish\SharpBim.GitTracker.vsix" -publishManifest ".\SharpBim.GitTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
     Write-Host "Finished publish"
 }
