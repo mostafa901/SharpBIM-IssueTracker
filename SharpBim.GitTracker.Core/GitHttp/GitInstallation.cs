@@ -25,7 +25,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             base.AddHeaders(request);
 
-            request.Headers.Authorization = new AuthenticationHeaderValue(QueryString.BEARER, AppGlobals.SharpUser.Token.access_token);
+            request.Headers.Authorization ??= new AuthenticationHeaderValue(QueryString.BEARER, AppGlobals.SharpUser.Token.access_token);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.MACHINEMANPREVIEWJSON));
         }
 
@@ -70,6 +70,15 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var response = await GET(LimitURL);
         }
 
+        
+        protected override async Task<AuthenticationHeaderValue> GetAuthentication()
+        {
+            
+            var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BEARER, (await AuthService.GetGitInstallationTokenAsync()).Model);
+
+            return auth;
+
+        }
         protected override async Task<bool> AreWeAuthorized()
         {
             return true;

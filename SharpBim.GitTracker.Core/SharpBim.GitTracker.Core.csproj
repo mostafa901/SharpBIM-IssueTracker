@@ -6,7 +6,7 @@
        
         <LangVersion>latest</LangVersion>
         <UserSecretsId>b2fcdead-28ce-41dd-9cf5-ec9e67c5f44e</UserSecretsId>
-        <AssemblyVersion>0.768.0.0</AssemblyVersion>
+        <AssemblyVersion>0.777.0.0</AssemblyVersion>
     </PropertyGroup>
     <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
         <TargetFrameworks>net472;net48;net8.0-windows8</TargetFrameworks>
@@ -91,7 +91,7 @@
         <UseBimPack>true</UseBimPack>
     </PropertyGroup>
     <ItemGroup Condition="$(UseBimPack)">
-        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.80" />
+        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.94" />
    
         <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.80" />
     </ItemGroup>

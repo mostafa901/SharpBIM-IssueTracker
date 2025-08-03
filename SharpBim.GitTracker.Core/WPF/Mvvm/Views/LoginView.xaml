@@ -72,12 +72,14 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <ui:UIButton HorizontalAlignment="Stretch"
-                             Command="{Binding AuthorizeCommand}" />
+                             Command="{Binding AuthorizeCommand}"
+                             ShowIcon="False" />
 
                 <ui:UIButton Grid.Column="1"
                              Margin="10,0,0,0"
                              HorizontalAlignment="Stretch"
                              Command="{Binding CancelCommand}"
+                             ShowIcon="False"
                              Visibility="{Binding AlreadyLoggedIn,
                                                   Converter={Conv:ConvBoolToVisibility}}" />
             </Grid>

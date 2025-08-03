@@ -17,7 +17,8 @@
                         mc:Ignorable="d">
     <Grid>
         <Grid.Resources>
-            <hl:SharedResourceDictionary SamoDesign="True" Source="/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml" />
+            <hl:SharedResourceDictionary SamoDesign="True"
+                                         Source="/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml" />
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -26,14 +27,15 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Grid VerticalAlignment="Top">
+        <WrapPanel VerticalAlignment="Top"
+                   Orientation="Horizontal">
 
-            <Grid.ColumnDefinitions>
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>-->
 
             <Grid IsEnabled="{Binding LoggedIn}">
                 <Grid.ColumnDefinitions>
@@ -74,7 +76,7 @@
                               Text="{Binding RepoOwner}"
                               TextAlignment="Right"
                               UpdateOnEnter="True" />
-        </Grid>
+        </WrapPanel>
         <ui:SearchTextBox Grid.Row="1"
                           Width="auto"
                           HorizontalAlignment="Stretch"

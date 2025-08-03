@@ -7,6 +7,7 @@ using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
 using SharpBIM.Utility.Helpers;
 using SharpBIM.Utility.Helpers.Events;
+using System.Threading.Tasks;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -47,7 +48,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 {
                     Content = GetStringContent(requestBody),
                 };
-                AddDefaultHeaders(request);
+                await AddDefaultHeaders(request);
 
                 var response = await httpClient.SendAsync(request);
                 report = await EvaluateResponse(response);
@@ -72,7 +73,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        protected override AuthenticationHeaderValue GetAuthentication()
+        async protected override Task<AuthenticationHeaderValue> GetAuthentication()
         {
             if (!string.IsNullOrEmpty(User.Token.access_token))
             {
@@ -84,11 +85,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return null;
         }
 
-        private void AddDefaultHeaders(HttpRequestMessage request)
+        private async Task AddDefaultHeaders(HttpRequestMessage request)
         {
-            request.Headers.Authorization = GetAuthentication();
-             
-            request.Headers.UserAgent.ParseAdd(Config?.AppName??AppGlobals.CompanyName);
+            request.Headers.Authorization = await GetAuthentication();
+            request.Headers.UserAgent.ParseAdd(Config?.AppName ?? AppGlobals.CompanyName);
             AddHeaders(request);
         }
 

@@ -87,7 +87,7 @@ namespace SharpBIM.GitTracker.Core
         {
             base.LoadServices();
             ApplicationName = "SharpBIM.IssueTracker";
-            ApplicationDisplayName = "SharpBIM IssueTracker";
+            ApplicationDisplayName = "SharpBIM-IssueTracker";
             AuthService = new(this);
             ReposSerivce = new(this);
             IssuesService = new(this);

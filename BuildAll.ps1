@@ -25,9 +25,7 @@ Set-Location $PSScriptRoot
          Write-Output "[6]: publish: $publish"
          Write-Output "[7]: Update SharpBIM nuget: $updateNuget"
         exit
-    }
-
-$ErrorActionPreference = "Stop"
+    } 
 
 if($updateNuget -eq 1)
 {
@@ -39,16 +37,11 @@ if($updateNuget -eq 1)
 $originalCulture = [System.Globalization.CultureInfo]::CurrentCulture
 [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::InvariantCulture
 
-function Clean()
-{
-    Get-ChildItem -Path "." -Recurse -Directory | Where-Object { $_.Name -in @("obj","bin") } | Remove-Item -Recurse -Force -Confirm:$false
-    dotnet Clean
- #   dotnet restore
-}
+ 
 
 if($cleanOnly -eq 1 )
 {
-    Clean
+    clean
     if($build -eq 0)
     {
         Exit
@@ -184,34 +177,46 @@ function updateRelease()
 # Build Project
 if($build -eq 1)`
 {
-    $versionRegex = '" Version="(\d+\.\d+)"'
-    Increment $versionRegex ".\SharpBim.GitTracker\source.extension.vsixmanifest" 1
-   updateVersions $Global:newversion
-    updateRelease
-
-    #dotnet remove .\SharpBim.GitTracker.Core/SharpBIM.GitTracker.Core.csproj package SharpBIM-win
-    #dotnet add .\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj package SharpBIM-win --source .\nugets\
-
-  #  Clean
-
-    MSBuild.exe .\SharpBim.GitTracker.sln /p:Configuration=Rwin /t:ReBuild -clp:Summary`;ErrorsOnly
-
-    if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Build failed with exit code: $LASTEXITCODE" -ForegroundColor Red
-    exit $LASTEXITCODE
-    } else {
-        Write-Host "✅ Build succeeded" -ForegroundColor Green
+    if($justPack -eq 1)
+    {
+        $versionRegex = '" Version="(\d+\.\d+)"'
+        Increment $versionRegex ".\SharpBim.GitTracker\source.extension.vsixmanifest" 1
+        updateVersions $Global:newversion
+       # updateRelease
     }
+
+
+    #dotnet nuget remove .\SharpBim.GitTracker.Core/SharpBIM.GitTracker.Core.csproj package SharpBIM-win
+  #  dotnet nuget update .\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj package SharpBIM-win --source ..\..\SharpBIM\Sharp_Nugets\
+
+    clean
+
+  buildframework2 .\SharpBim.GitTracker.sln Rwin
+
+  IsAllGood "Building project"
 }
 
 if($Protect -eq 1)
 {
-    #& "D:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe" -project "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker.nrproj"
-    if((IsObfuscated .\SharpBim.GitTracker\GitPublish\SharpBIM.dll) -eq $false)
+    $TargetDir ="D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\bin\RWin"
+
+    if((IsObfuscated "$TargetDir\SharpBIM.dll") -eq $false)
     {
         write-host "Failed Obfuscating SharpBIM.dll"
         exit
     }
+    
+    $tempDir = [System.IO.Path]::GetTempPath()
+    $fileName ="SharpBIM.GitTracker.Core.dll"
+    $tempFile = "$tempDir\$fileName"
+    Delete $tempFile
+    
+    $targetPath = "$TargetDir\$fileName"
+
+    CopyData2 $targetPath $tempDir
+    note "protecting $targetPath"
+  
+    & "D:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe" -project "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker.nrproj"
 }
 
 if($justPack -eq 1)
@@ -255,6 +260,7 @@ foreach ($pdb in $pdbFiles) {
     Write-Host "Deleted: $($pdb.FullName)"
 }
 
+
 # Step 4: Sign the file
     cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
     IsAllGood
@@ -269,11 +275,11 @@ Write-Host "VSIX file modified and repacked successfully!"
 function CommitImages
 {
     Write-Host "Committing Images"
-       Copy-Item .\SharpBim.GitTracker\OverView.md ..\..\IssueTracker\SharpBIM-IssueTracker\README.md
-    Copy-Item .\SharpBim.GitTracker\Images\*.* ..\..\IssueTracker\SharpBIM-IssueTracker\Images -Force
-    git -C ..\..\IssueTracker\SharpBIM-IssueTracker add .
-    git -C ..\..\IssueTracker\SharpBIM-IssueTracker commit -m "Updated Images"
-    git -C ..\..\IssueTracker\SharpBIM-IssueTracker push origin main-code -f
+    Copy-Item .\SharpBim.GitTracker\OverView.md .\SharpBim.GitTracker\README.md
+   # Copy-Item .\SharpBim.GitTracker\Images\*.*  .\SharpBim.GitTracker\Images -Force
+    git -C .\ add .
+    git -C .\ commit -m "Updated Images"
+    git -C .\ push origin main-code -f
 }
 
 if($CommmitImages -eq 1 -and $publish -eq 0 )
@@ -284,15 +290,11 @@ if($CommmitImages -eq 1 -and $publish -eq 0 )
 if($publish -eq 1)
 {
     CommitImages
-
+    exit
     Write-Host "Updating Release"
     & .\SharpBIM.GitTracker.Console\bin\Debug\net48\SharpBIM.GitTracker.Console.exe
-    if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ update release with exit code: $LASTEXITCODE" -ForegroundColor Red
-    exit $LASTEXITCODE
-    } else {
-        Write-Host "✅ update Release succeeded" -ForegroundColor Green
-    }
+    
+    IsAllGood "update release"
 
     Write-Host "Publishing..."
     

@@ -162,6 +162,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             try
             {
+                var response2 = await ReposSerivce.IsRepoStared(AppGlobals.ApplicationName);
+
                 var response = await ReposSerivce.IsRepoStared(AppGlobals.User.Installation.app_slug);
                 if (response.IsFailed)
                 {
@@ -253,14 +255,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
 
             vm.Init(new DummyListContext());
-         //   await CheckForUpdates(null);
-
-            //var response = await ReposSerivce.IsRepoStared(AppGlobals.User.Installation.app_slug);
-            //if (!response.IsFailed)
-            //{
-            //    //StarRepoCommand.Icon = Glyphs.empty;
-            //    StarRepoCommand.IsVisible = false;
-            //}
+            await CheckForUpdates(null);
+            var repo = new ServiceReport<string>();
+            var response = await ReposSerivce.IsRepoStared(AppGlobals.ApplicationDisplayName);
+            if (!response.IsFailed)
+            {
+                //StarRepoCommand.Icon = Glyphs.empty;
+                StarRepoCommand.IsVisible = false;
+            }
         }
 
         public SharpBIMCommand NavigateForwardCommand { get; set; }
