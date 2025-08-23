@@ -21,13 +21,13 @@ namespace SharpBIM.GitTracker.Core
             var report = new ServiceReport<string>();
             try
             {
+                var gitService = new GitIssues(AppGlobals);
                 GitClient.Config =   (await new GitAuth(AppGlobals).GetGitConfigAsync()).Model;
 
-                AppGlobals.SharpUser.Token = new SharpToken { access_token = GitAuth.Config.PToken };
-                AppGlobals.SharpUser.Name = "mostafa901";
+                gitService.User.Token = new SharpToken { access_token = GitAuth.Config.PToken };
+                gitService.User.Name = "mostafa901";
+                gitService.UpdateOwnerAccount(gitService.User.Name);
 
-                var gitService = new GitIssues(AppGlobals);
-                gitService.UpdateOwnerAccount(AppGlobals.SharpUser.Name);
                 var response = await gitService.CreateIssue(repoName,
                     new SharpBIM.GitTracker.Core.GitHttp.Models.IssueModel
                     {

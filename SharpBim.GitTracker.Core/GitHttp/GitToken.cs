@@ -24,7 +24,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         #region Protected Properties
 
-        protected override string endPoint => $"https://github.com/login/oauth/access_token";
+        protected override string EndPoint => $"https://github.com/login/oauth/access_token";
 
         protected override bool NeedAuthentication => false;
 
@@ -73,14 +73,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<string>> RefreshToken()
         {
-            var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&grant_type={QueryString.REFRESHTOKEN}&refresh_token={User.Token.refresh_token}";
+            var url = $"{EndPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&grant_type={QueryString.REFRESHTOKEN}&refresh_token={User.Token.refresh_token}";
             var tokenReport = await RequestToken(url, null);
             return tokenReport;
         }
 
         public async Task<IServiceReport<string>> RequestAppUserToken(string accessCode)
         {
-            var url = $"{endPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&code={accessCode}";
+            var url = $"{EndPoint}?client_id={Config.ClientId}&client_secret={Config.ClientSecret}&code={accessCode}";
             return await RequestToken(url, null);
         }
 

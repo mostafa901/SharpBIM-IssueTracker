@@ -60,7 +60,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Helpers.MdPlugins
             var chk = sender as UICheckBox;
             chk.Loaded -= Chk_Loaded;
 
-            chk.Resources = Microsoft.VisualStudio.PlatformUI.ExtensionMethods.FindAncestor<MainPage>(chk)?.Resources;
+            chk.Resources  = chk.FindAncestor<MainPage>()?.Resources;
         }
 
         private void UpdateChkEnabled(UICheckBox chk, string text)

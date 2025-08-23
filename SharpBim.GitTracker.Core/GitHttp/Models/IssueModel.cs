@@ -38,5 +38,5 @@ public class IssueModel : IModel
     public string Title { get; set; }
     public string url { get; set; }
     public Sub_Issues_Summary sub_issues_summary { get; set; }
-    public string StringValue { get ; set ; }
+    public string Name { get ; set ; }
 }

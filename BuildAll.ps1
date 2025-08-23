@@ -6,7 +6,8 @@
     [int] $justPack = 0,
     [int] $CommmitImages = 0,
     [int] $publish = 0,
-    [int] $updateNuget = 0
+    [int] $updateNuget = 0,
+    [int] $NuNugetCore = 0
 
 )
 Set-Location $PSScriptRoot
@@ -185,10 +186,6 @@ if($build -eq 1)`
         updateRelease
     }
 
-
-    #dotnet nuget remove .\SharpBim.GitTracker.Core/SharpBIM.GitTracker.Core.csproj package SharpBIM-win
-  #  dotnet nuget update .\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj package SharpBIM-win --source ..\..\SharpBIM\Sharp_Nugets\
-
     clean
 
   buildframework2 .\SharpBim.GitTracker.sln Rwin
@@ -301,4 +298,39 @@ if($publish -eq 1)
     
     & "C:\Program Files\Microsoft Visual Studio\2022\Community\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload ".\SharpBim.GitTracker\GitPublish\SharpBim.GitTracker.vsix" -publishManifest ".\SharpBim.GitTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
     Write-Host "Finished publish"
+}
+
+if($NuNugetCore -eq 1)
+{ 
+    foreach($conf in $confs)
+    {
+        $confDir = $conf.Substring(1)
+
+        if($conf.ToString().StartsWith("R", [System.StringComparison]::OrdinalIgnoreCase))
+        {
+            if($Protect -eq 0)
+            {
+                IsObfuscated .\Publish\$conf\net47\SharpBIM.dll
+                IsObfuscated .\Publish\$conf\net472\SharpBIM.dll
+                IsObfuscated .\Publish\$conf\net48\SharpBIM.dll
+                if ($conf -eq "rwin")
+                {
+                    IsObfuscated .\Publish\$conf\net8.0-windows\SharpBIM.dll
+                    IsObfuscated .\Publish\$conf\net8.0-windows8\SharpBIM.dll
+                }
+            }
+        }
+        else
+        {
+            Copy-Item "D:\RevitApi\Shared\SharpBIM\Publish\$conf\*" "D:\RevitApi\Shared\SharpBIM\Publish\R$confDir\" -Force -Recurse
+        }
+
+        $version = (Get-Item "publish\$conf\net48\SharpBIM.dll").VersionInfo.FileVersion
+
+        $nuspecFileName = "R$($confDir)_SharpBIM.nuspec"
+        (Get-Content .\$($nuspecFileName)) -replace "<version>.*?</version>", "<version>$newversion</version>" | Set-Content .\$($nuspecFileName)
+        (Get-Content .\$($nuspecFileName)) -replace "<id>.*?</id>", "<id>SharpBIM-$confDir</id>" | Set-Content $($nuspecFileName)
+
+        & "D:\RevitApi\Shared\Lib\Compiled\nuget.exe" pack .\$nuspecFileName -OutputDirectory .\Sharp_Nugets
+    }
 }

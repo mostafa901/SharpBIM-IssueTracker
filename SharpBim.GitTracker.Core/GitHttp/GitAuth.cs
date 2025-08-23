@@ -168,7 +168,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<string>> GetJWTTokenAsync(string useremail)
         {
-            var url = $"{endPoint}/auth/gettoken";
+            var url = $"{EndPoint}/auth/gettoken";
             var resposne = await POST(url, useremail);
 
             return resposne;

@@ -12,7 +12,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitInstallation : GitClient
     {
-        protected override string endPoint => "https://api.github.com/app/installations";
+        protected override string EndPoint => "https://api.github.com/app/installations";
 
         protected override bool NeedAuthentication => false;
 
@@ -38,7 +38,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 trial--;
 
-                var report = await GET(endPoint);
+                var report = await GET(EndPoint);
 
                 if (!report.IsFailed)
                 {

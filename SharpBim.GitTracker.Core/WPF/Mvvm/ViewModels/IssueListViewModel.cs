@@ -12,7 +12,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public string StringValue { get ; set ; }
+        public string StringValue { get; set; }
+        public string Name { get => Title; set => Title = value; }
     }
 
     public class IssueListViewModel : ModelViewBase<DummyListContext, IssueViewModel>
@@ -43,7 +44,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
             else
                 RepoOwner = AppGlobals.User.RepoOwner;
-      //      await ReloadRepos(null);
+            //      await ReloadRepos(null);
         }
 
         public string TextToFilter
@@ -67,7 +68,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
             if ((issuemv.ContextData.number + issuemv.ContextData.body?.ToString() + issuemv.ContextData.Title).Contains(TextToFilter))
                 return true;
-            if (issuemv.ContextData.labels.Any(o => o.name.Contains(TextToFilter)))
+            if (issuemv.ContextData.labels.Any(o => o.Name.Contains(TextToFilter)))
                 return true;
 
             return false;
@@ -285,7 +286,9 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             Children.Clear();
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Fetching issues", true);
             List<IssueViewModel> issmvs = new();
-            await Task.Run(async () =>
+
+ 
+            await Task.Run((Func<Task>)(async () =>
           {
               try
               {
@@ -308,7 +311,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                                   List<long> addedIds = [];
                                   foreach (var issue in issues)
                                   {
-                                      if (issue.labels!=null && issue.labels.Any(o => o.name == "sub-issue"))
+                                      if (issue.labels != null && issue.labels.Any((Func<GitLabel, bool>)(o => o.Name == "sub-issue")))
                                           continue;
                                       if (addedIds.Any(o => o == issue.number))
                                           continue;
@@ -334,7 +337,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
               {
                   AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
               }
-          }
+          })
         );
         }
 

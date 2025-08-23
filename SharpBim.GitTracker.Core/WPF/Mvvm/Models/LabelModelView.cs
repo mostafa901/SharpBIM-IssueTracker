@@ -32,7 +32,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
         async public override Task Init(GitLabel dataModel)
         {
             base.Init(dataModel);
-            Title = dataModel.name;
+            Title = dataModel.Name;
             Description = Hint = dataModel.description;
             if (ContextData.color == null)
             {

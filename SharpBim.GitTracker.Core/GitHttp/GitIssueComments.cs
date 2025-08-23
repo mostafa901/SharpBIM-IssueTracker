@@ -11,7 +11,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         }
 
         // References: https://docs.github.com/en/rest/issues/comments?apiVersion=2022-11-28#list-issue-comments
-        protected override string endPoint => $"https://api.github.com/repos/{Owner}/REPO/issues/ISSUE_NUMBER/comments";
+        protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/issues/ISSUE_NUMBER/comments";
 
         protected override string GetEndPoint(params object[] values)
         {

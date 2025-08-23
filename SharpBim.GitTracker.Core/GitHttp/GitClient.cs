@@ -15,7 +15,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     {
         public static IGitConfig Config { get; set; }
 
-        protected virtual string GetEndPoint(params object[] repoName) => endPoint.Replace("REPO", repoName[0].ToString());
+        protected virtual string GetEndPoint(params object[] repoName) => EndPoint.Replace("REPO", repoName[0].ToString());
 
 #if WINDOWS
         internal GitUser User => GitTrackerGlobals.AppGlobals.User;

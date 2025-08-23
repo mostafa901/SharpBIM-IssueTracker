@@ -85,5 +85,5 @@ public class RepoModel : IModel
     public string default_branch { get; set; }
     public Permissions permissions { get; set; }
     public string Title { get; set; }
-    public string StringValue { get ; set ; }
+    public string Name { get ; set ; }
 }

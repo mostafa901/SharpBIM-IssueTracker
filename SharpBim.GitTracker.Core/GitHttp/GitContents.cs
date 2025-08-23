@@ -10,7 +10,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
         }
 
-        protected override string endPoint => $"https://api.github.com/repos/{Owner}/REPO/contents";
+        protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/contents";
 
         //either delete,or create or update, no concurrent actions
 

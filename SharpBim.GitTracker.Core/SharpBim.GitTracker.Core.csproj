@@ -9,7 +9,7 @@
         <AssemblyVersion>0.780.0.0</AssemblyVersion>
     </PropertyGroup>
     <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
-        <TargetFrameworks>net472;net48;net8.0-windows8</TargetFrameworks>
+        <TargetFrameworks>net47;net472;net48;net8.0-windows8</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
         <UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
@@ -88,13 +88,13 @@
         <VSCTInclude Remove="WPF\Mvvm\Views\Views\**" />
     </ItemGroup>
     <PropertyGroup>
-        <UseBimPack>true</UseBimPack>
+        <UseBimPack>false</UseBimPack>
     </PropertyGroup>
     <ItemGroup Condition="$(UseBimPack)">
-        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.94" />
-   
-        <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.94" />
-    </ItemGroup>
+        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.138.0" />
+
+      <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))"  Include="SharpBIM-nowin" Version="1.1.138.0" />
+</ItemGroup>
  
     <ItemGroup Condition="!$(UseBimPack)">
 
@@ -113,6 +113,9 @@
         <Reference Include="System.Web" Condition="!$(TargetFramework.startswith('net8'))" />
     </ItemGroup>
  
+    <ItemGroup>
+    </ItemGroup>
+ 
  
     <ItemGroup>
       <None Update="appsettings.local.json">
@@ -120,3 +123,67 @@
       </None>
     </ItemGroup>
 </Project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

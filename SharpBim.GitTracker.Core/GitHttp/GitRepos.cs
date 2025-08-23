@@ -14,7 +14,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
         }
 
-        protected override string endPoint => $"https://api.github.com/";
+        protected override string EndPoint => $"https://api.github.com/";
 
 
 
@@ -52,7 +52,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 IServiceReport<string> getReport = new ServiceReport<string>();
                 while (trials > 0)
                 {
-                    string url = $"{endPoint}user/repos?page={page}";
+                    string url = $"{EndPoint}user/repos?page={page}";
 
                     getReport = await GET(url);
                     if (!getReport.IsFailed)

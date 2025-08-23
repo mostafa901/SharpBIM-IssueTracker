@@ -5,9 +5,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     public class GitIssues : GitClient
     {
         // References: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
-        protected override string endPoint => $"https://api.github.com/repos/{Owner}/REPO/issues";
+        protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/issues";
 
-        private string GetEndPoint(string repoName) => endPoint.Replace("REPO", repoName);
+        private string GetEndPoint(string repoName) => EndPoint.Replace("REPO", repoName);
 
         public GitIssues(IConfig appGlobals) : base(appGlobals)
         {
@@ -130,7 +130,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 //assignee, // or Assignees or null
                 issue.state,
                 //milestone ,
-                labels = issue.labels?.Select(o => o.name).ToArray() ?? [],
+                labels = issue.labels?.Select(o => o.Name).ToArray() ?? [],
                 //state_reason , // Can be one of: completed, not_planned, reopened, null
             };
             IServiceReport<string> response = null;
@@ -160,7 +160,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 //assignee, // or Assignees or null
                 issue.state,
                 //milestone ,
-                labels = issue.labels?.Select(o => o.name).ToArray() ?? [],
+                labels = issue.labels?.Select(o => o.Name).ToArray() ?? [],
                 //state_reason , // Can be one of: completed, not_planned, reopened, null
             };
             IServiceReport<string> response = null;

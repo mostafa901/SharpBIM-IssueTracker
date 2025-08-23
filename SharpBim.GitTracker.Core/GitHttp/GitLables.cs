@@ -10,7 +10,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
         }
 
-        protected override string endPoint => @$"https://api.github.com/repos/{Owner}/REPO/labels";
+        protected override string EndPoint => @$"https://api.github.com/repos/{Owner}/REPO/labels";
 
         public async Task<IServiceReport<IEnumerable<GitLabel>>> GetLables(string repoName)
         {
@@ -31,7 +31,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             var url = GetEndPoint(repoName);
             var body = new
             {
-                newLable.name,
+                newLable.Name,
                 newLable.description,
                 newLable.color,
             };
@@ -48,10 +48,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<IEnumerable<GitLabel>>> UpdateLabel(string repoName, GitLabel newLable)
         {
-            var url = $"{GetEndPoint(repoName)}/{newLable.name}";
+            var url = $"{GetEndPoint(repoName)}/{newLable.Name}";
             var body = new
             {
-                newLable.name,
+                newLable.Name,
                 newLable.description,
                 newLable.color,
             };

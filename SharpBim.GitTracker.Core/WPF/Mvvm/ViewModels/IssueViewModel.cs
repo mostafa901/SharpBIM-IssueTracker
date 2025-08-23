@@ -177,7 +177,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                         }
                         else
                         {
-                            var newLabel = new GitLabel() { name = value };
+                            var newLabel = new GitLabel() { Name = value };
 
                             exisitingLabel = newLabel.ToModelView<LabelModelView>(this);
                             AllGitLabelsList.Add(newLabel);
@@ -216,7 +216,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             var labelmv = obj as LabelModelView;
             if (labelmv != null)
             {
-                if (labelmv.ContextData.name.Contains(TypedInLabelName, StringComparison.OrdinalIgnoreCase))
+                if (labelmv.ContextData.Name.Contains(TypedInLabelName, StringComparison.OrdinalIgnoreCase))
                     return true;
                 if (labelmv.ContextData.description.Contains(TypedInLabelName, StringComparison.OrdinalIgnoreCase))
                     return true;

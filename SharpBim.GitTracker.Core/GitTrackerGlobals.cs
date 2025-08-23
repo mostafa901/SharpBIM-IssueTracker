@@ -79,7 +79,7 @@ namespace SharpBIM.GitTracker.Core
             AppGlobals = this;
             var resource = new SharedResourceDictionary() { Source = new Uri("pack://application:,,,/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml") };
             SharpBIM.WPF.Globals.StyleResources.MergedDictionaries.Add(resource);
-            User = GitUser.Parse();
+            User ??= GitUser.Parse();
             AuthService.LoadGitConfigAsync();
         }
 

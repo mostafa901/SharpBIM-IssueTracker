@@ -7,7 +7,7 @@ public class GitLabel : IModel
     public long Id { get; set; }
     public string node_id { get; set; }
     public string url { get; set; }
-    public string name { get; set; }
+    //public string Name { get; set; }
 
     /// <summary>
     /// The hexadecimal color code for the label, without the leading #.
@@ -17,5 +17,5 @@ public class GitLabel : IModel
     public bool _default { get; set; }
     public string description { get; set; }
     public string Title { get; set; }
-    public string StringValue { get ; set ; }
+    public string Name { get ; set ; }
 }

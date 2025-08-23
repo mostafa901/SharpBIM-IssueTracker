@@ -15,6 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Console
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBim.GitTracker", "SharpBim.GitTracker\SharpBim.GitTracker.csproj", "{7C9DC9DE-0899-4E9E-A899-10945B57C48D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nugetspecs", "nugetspecs", "{35AEDC04-31B9-45A3-92E1-FD640400BF20}"
+	ProjectSection(SolutionItems) = preProject
+		License.md = License.md
+		RNowin.nuspec = RNowin.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		DNoWin|Any CPU = DNoWin|Any CPU
@@ -44,6 +50,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{35AEDC04-31B9-45A3-92E1-FD640400BF20} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78A88FC1-FF70-409A-8A90-0AB243BF70AD}
