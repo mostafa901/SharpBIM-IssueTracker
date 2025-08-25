@@ -77,8 +77,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             if (!string.IsNullOrEmpty(User.Token.access_token))
             {
-                //var auth = User.IsPersonalToken ? new AuthenticationHeaderValue("Token", User.Token.access_token) : new AuthenticationHeaderValue(QueryString.BEARER, User.Token.access_token);
-
                 var auth = new AuthenticationHeaderValue(SharpBIM.Statics.BEARER, User.Token.access_token);
                 return auth;
             }

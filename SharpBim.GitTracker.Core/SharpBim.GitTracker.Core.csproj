@@ -91,9 +91,9 @@
         <UseBimPack>false</UseBimPack>
     </PropertyGroup>
     <ItemGroup Condition="$(UseBimPack)">
-        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.138.0" />
+        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.161.0" />
 
-      <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))"  Include="SharpBIM-nowin" Version="1.1.138.0" />
+      <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))"  Include="SharpBIM-nowin" Version="1.1.161.0" />
 </ItemGroup>
  
     <ItemGroup Condition="!$(UseBimPack)">
@@ -123,6 +123,46 @@
       </None>
     </ItemGroup>
 </Project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
