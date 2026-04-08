@@ -89,7 +89,7 @@
         <VSCTInclude Remove="WPF\Mvvm\Views\Views\**" />
     </ItemGroup>
     <PropertyGroup>
-        <UseBimPack>true</UseBimPack>
+        <UseBimPack>false</UseBimPack>
     </PropertyGroup>
     <ItemGroup Condition="$(UseBimPack)">
         <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.198.0" />
@@ -99,9 +99,9 @@
  
     <ItemGroup Condition="!$(UseBimPack)">
 
-        <!--<Reference Include="SharpBIM">
+        <Reference Include="SharpBIM">
             <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
-        </Reference>-->
+        </Reference>
         <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="envdte100" Version="17.12.40391" />
