@@ -6,7 +6,7 @@
        
         <LangVersion>latest</LangVersion>
         <UserSecretsId>b2fcdead-28ce-41dd-9cf5-ec9e67c5f44e</UserSecretsId>
-        <AssemblyVersion>0.794.0.0</AssemblyVersion>
+        <AssemblyVersion>0.788.0.0</AssemblyVersion>
     </PropertyGroup>
     <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
         <TargetFrameworks>net47;net472;net48;net8.0-windows8</TargetFrameworks>
@@ -31,6 +31,7 @@
 
     <PropertyGroup Condition="$(Configuration.StartsWith('R'))">
         <DebugSymbols>false</DebugSymbols>
+		<Optimize>true</Optimize>
         <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
@@ -98,9 +99,9 @@
  
     <ItemGroup Condition="!$(UseBimPack)">
 
-        <Reference Include="SharpBIM">
+        <!--<Reference Include="SharpBIM">
             <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
-        </Reference>
+        </Reference>-->
         <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="envdte100" Version="17.12.40391" />
@@ -122,187 +123,3 @@
       </None>
     </ItemGroup>
 </Project>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

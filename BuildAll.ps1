@@ -269,7 +269,8 @@ foreach ($pdb in $pdbFiles) {
 
 
 # Step 4: Sign the file
-    cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
+ #   cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
+  & $env:Signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH $newFilePath
     IsAllGood
 
 # Step 5: Repack the VSIX
