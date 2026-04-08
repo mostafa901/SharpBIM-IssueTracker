@@ -1,5 +1,5 @@
 
-## Version 0.780 - March 2025
+## Version 0.788 - March 2025
 ☑️ Improved error pushing issues with different RepoOwner than the one used for login
 
 ## Version 0.780 - March 2025
