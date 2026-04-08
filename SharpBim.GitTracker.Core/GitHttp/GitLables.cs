@@ -9,16 +9,21 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public GitLabels(IConfig appGlobals) : base(appGlobals)
         {
         }
+        const string LABELS = "labels";
+        protected override string EndPoint => @$"https://api.github.com/repos/{Owner}/REPO/{LABELS}";
 
-        protected override string EndPoint => @$"https://api.github.com/repos/{Owner}/REPO/labels";
-
-        public async Task<IServiceReport<IEnumerable<GitLabel>>> GetLables(string repoName)
+        public async Task<IServiceReport<IEnumerable<GitLabel>>> GetLables(RepoModel repoModel)
         {
-            var url = GetEndPoint(repoName);
+            var labelReport = new ServiceReport<IEnumerable<GitLabel>>();
+            var url = $"{repoModel.url}/{LABELS}";
             var getReport = await GET(url);
-            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
-
-            if (!getReport.IsFailed)
+            if(getReport.IsFailed)
+            {
+                labelReport.Merge(getReport);
+                return labelReport;
+            }
+            labelReport.Merge(getReport);
+            if (!labelReport.IsFailed)
             {
                 labelReport.Model = ParseResponse<GitLabel>(getReport.Model);
             }
@@ -26,9 +31,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return labelReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<GitLabel>>> CreateLabel(string repoName, GitLabel newLable)
+        public async Task<IServiceReport<IEnumerable<GitLabel>>> CreateLabel(RepoModel repoModel, GitLabel newLable)
         {
-            var url = GetEndPoint(repoName);
+            var url = $"{repoModel.url}/{LABELS}";
+
             var body = new
             {
                 newLable.Name,
@@ -36,7 +42,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 newLable.color,
             };
             var getReport = await POST(url, body);
-            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
+            var labelReport = new ServiceReport<IEnumerable<GitLabel>>();
 
             if (!getReport.IsFailed)
             {
@@ -46,9 +52,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return labelReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<GitLabel>>> UpdateLabel(string repoName, GitLabel newLable)
+        public async Task<IServiceReport<IEnumerable<GitLabel>>> UpdateLabel(RepoModel repoModel, GitLabel newLable)
         {
-            var url = $"{GetEndPoint(repoName)}/{newLable.Name}";
+            var url = $"{repoModel.url}/{LABELS}/{newLable.Name}";
             var body = new
             {
                 newLable.Name,
@@ -56,7 +62,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 newLable.color,
             };
             var getReport = await PATCH(url, body);
-            var labelReport = new ServiceReport<IEnumerable<GitLabel>>(getReport);
+            var labelReport = new ServiceReport<IEnumerable<GitLabel>>();
 
             if (!getReport.IsFailed)
             {

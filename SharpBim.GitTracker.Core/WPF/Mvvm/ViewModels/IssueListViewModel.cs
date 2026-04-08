@@ -299,7 +299,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                           int pCount = FetchIssueCounts / 100;
                           for (int i = 0; i < pCount; i++)
                           {
-                              var issuesReport = await IssuesService.GetIssues(SelectedRepo.name, -1, CurrentState, i + ((PageNumber - 1) * pCount));
+                              var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1, CurrentState, i + ((PageNumber - 1) * pCount));
 
                               if (issuesReport.IsFailed)
                               {

@@ -14,19 +14,29 @@ Set-Location $PSScriptRoot
 
 . "..\..\visualstudio-settings\PowerShellLibrary.ps1"
 
- # Check if no parameters are provided (i.e., they are using the default values)
-    if ($justPack -eq 0 -and $cleanOnly -eq 0 -and $build -eq 0 -and $Protect -eq 0 -and $CommmitImages -eq 0 -and $publish -eq 0 -and $updateNuget -eq 0) {
-        Write-Output "No parameters were provided, using default values."
-         # Output the parameter values
-         Write-Output "[1]: cleanOnly: $cleanOnly"
-         Write-Output "[2]: build: $build"
-         Write-Output "[3]: Protect: $Protect"
-         Write-Output "[4]: JustPack: $justPack"
-         Write-Output "[5]: CommitImages: $CommmitImages"
-         Write-Output "[6]: publish: $publish"
-         Write-Output "[7]: Update SharpBIM nuget: $updateNuget"
-        exit
-    } 
+ # Get all bound parameters
+$boundParams = $PSBoundParameters
+
+# Check if no parameters are provided
+if ($boundParams.Count -eq 0) {
+    Write-Output "No parameters were provided, using default values."
+    Write-Output ""
+    
+    # Get all script parameters dynamically
+    $params = (Get-Command -Name $PSCommandPath).Parameters
+    
+    $index = 1
+    foreach ($paramName in $params.Keys) {
+        # Skip common parameters like Verbose, Debug, etc.
+        if ($paramName -notin @('Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction', 'ErrorVariable', 'WarningVariable', 'InformationVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable')) {
+            $value = Get-Variable -Name $paramName -ValueOnly -ErrorAction SilentlyContinue
+            Write-Output "[$index]: $paramName : $value"
+            $index++
+        }
+    }
+    
+    exit
+}
 
 if($updateNuget -eq 1)
 {

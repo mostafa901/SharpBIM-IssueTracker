@@ -144,8 +144,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+     
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj" Condition="$(Configuration.ToLower().StartsWith('d'))">
+      <Project>{9d036cec-3634-12d9-e782-2b0b217b9cef}</Project>
+      <Name>SharpBIM</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj">
       <Project>{77c21fb6-a74c-b4a2-4fd2-1931375d32ac}</Project>
       <Name>SharpBIM.GitTracker.Core</Name>

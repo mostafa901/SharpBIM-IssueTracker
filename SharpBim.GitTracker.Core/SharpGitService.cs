@@ -38,8 +38,7 @@ namespace SharpBIM.GitTracker.Core
                 return report;
             }
 
-            var gitService = new SharpBIM.GitTracker.Core.SharpGitService(AppGlobals);
-            report = await gitService.PublishFeedback(feedbackReport.Model.Item1,
+            report = await PublishFeedback(feedbackReport.Model.Item1,
                                                           feedbackReport.Model.Item2,
                                                           repoName);
 
@@ -53,6 +52,7 @@ namespace SharpBIM.GitTracker.Core
             var report = new ServiceReport<string>();
             try
             {
+                var gitRepoService = new GitRepos(AppGlobals);
                 var gitService = new GitIssues(AppGlobals);
                 GitClient.Config = (await new GitAuth(AppGlobals).GetGitConfigAsync()).Model;
 
@@ -60,7 +60,8 @@ namespace SharpBIM.GitTracker.Core
                 gitService.User.Name = "mostafa901";
                 gitService.UpdateOwnerAccount(gitService.User.Name);
 
-                var response = await gitService.CreateIssue(repoName,
+                var repoModel = (await gitRepoService.GetRepos()).Model.FirstOrDefault(x => x.name.EQ(repoName));
+                var response = await gitService.CreateIssue(repoModel,
                     new SharpBIM.GitTracker.Core.GitHttp.Models.IssueModel
                     {
                         Title = title,

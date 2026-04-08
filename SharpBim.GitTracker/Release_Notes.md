@@ -1,5 +1,8 @@
 
 ## Version 0.780 - March 2025
+☑️ Improved error pushing issues with different RepoOwner than the one used for login
+
+## Version 0.780 - March 2025
 ☑️ Fix Application Missing credential
 
 ## Version 0.762 - March 2025

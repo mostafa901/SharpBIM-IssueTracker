@@ -65,7 +65,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 if (response == null)
                 {
                     // refresh token is required.
-                    return repoReport.Merge(getReport);
+                    repoReport.Merge(getReport);
+                    return repoReport;
                 }
                 var importedRepos = JsonSerializer.Deserialize<IEnumerable<RepoModel>>(response);
                 if (importedRepos.Any() == false)

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\SolutionItems\SharpBIM.Identity.props" />
     <PropertyGroup>
         <Nullable>enable</Nullable>
@@ -88,12 +88,12 @@
         <VSCTInclude Remove="WPF\Mvvm\Views\Views\**" />
     </ItemGroup>
     <PropertyGroup>
-        <UseBimPack>false</UseBimPack>
+        <UseBimPack>true</UseBimPack>
     </PropertyGroup>
     <ItemGroup Condition="$(UseBimPack)">
-        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.189.0" />
+        <PackageReference Condition="$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-win" Version="1.1.198.0" />
 
-      <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.189.0" />
+      <PackageReference Condition="!$(DefineConstants.Contains('WINDOWS'))" Include="SharpBIM-nowin" Version="1.1.198.0" />
 </ItemGroup>
  
     <ItemGroup Condition="!$(UseBimPack)">
@@ -122,6 +122,30 @@
       </None>
     </ItemGroup>
 </Project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

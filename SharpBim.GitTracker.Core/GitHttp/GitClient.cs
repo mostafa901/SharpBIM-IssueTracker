@@ -36,12 +36,16 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected override async Task<IServiceReport<string>> SEND(HttpMethod method, string url, object requestBody)
         {
             if (!await AreWeAuthorized())
-                return new ServiceReport<string>().Failed("Not Authorized");
+            {
+                var authReport = new ServiceReport<string>();
+                authReport.Failed("Not Authorized");
+                return authReport;
+            }
             //if (RemaingCalls == 0)
             //{
             //    return new ServiceReport<string>().Failed($"Tokens credits depleted. Credits will be refilled with in {TimeToReset}");
             //}
-            var report = new ServiceReport<string>();
+            IServiceReport<string> report = new ServiceReport<string>();
             try
             {
                 var request = new HttpRequestMessage(method, url)
@@ -156,7 +160,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        protected override async Task<ServiceReport<string>> EvaluateResponse(HttpResponseMessage response)
+        protected override async Task<IServiceReport<string>> EvaluateResponse(HttpResponseMessage response)
         {
             var report = new ServiceReport<string>();
 

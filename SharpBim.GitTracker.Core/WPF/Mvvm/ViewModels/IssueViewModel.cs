@@ -241,7 +241,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
             if (!AllGitLabelsList.Any())
             {
-                var repoLabelsReport = await LabelService.GetLables(SelectedRepo.name);
+                var repoLabelsReport = await LabelService.GetLables(SelectedRepo);
                 if (!(repoLabelsReport.IsFailed))
                 {
                     AllGitLabelsList = repoLabelsReport.Model.ToList();
@@ -299,7 +299,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 Children.Clear();
                 IssueLables.Clear();
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Reloading issue", true);
-                var reloadedReport = await IssuesService.GetIssue(SelectedRepo.name, ContextData.number);
+                var reloadedReport = await IssuesService.GetIssue(SelectedRepo, ContextData.number);
                 if (!reloadedReport.IsFailed)
                 {
                     Init(reloadedReport.Model);
@@ -323,7 +323,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         private async Task<IServiceReport<IssueModel>> CreateIssueAsync()
         {
-            IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo.name, ContextData);
+            IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo, ContextData);
             if (!patchedReport.IsFailed)
             {
                 ContextData = patchedReport.Model;
@@ -436,7 +436,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         private async Task<IServiceReport<IssueModel>> PatchIssueAsync()
         {
-            IServiceReport<IssueModel> patchedReport = await IssuesService.PatchIssue(SelectedRepo.name, ContextData);
+            IServiceReport<IssueModel> patchedReport = await IssuesService.PatchIssue(SelectedRepo, ContextData);
             if (patchedReport.IsFailed)
             {
                 AppGlobals.MsgService.AlertUser(WindowHandle, "Patch Failed", patchedReport.ErrorMessage);
@@ -583,11 +583,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     labelModel.description = label.Description;
                     if (labelModel.Id == 0)
                     {
-                        await LabelService.CreateLabel(SelectedRepo.name, labelModel);
+                        await LabelService.CreateLabel(SelectedRepo, labelModel);
                     }
                     else
                     {
-                        await LabelService.UpdateLabel(SelectedRepo.name, labelModel);
+                        await LabelService.UpdateLabel(SelectedRepo, labelModel);
                     }
                 }
 

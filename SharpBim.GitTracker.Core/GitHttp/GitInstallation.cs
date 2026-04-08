@@ -92,7 +92,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             if (rep.IsFailed)
             {
                 // something with my private key or JWT token is wrong.. app will not work
-                return repModel.Merge(rep);
+                  repModel.Failed(rep.ErrorMessage);
+                  return repModel;
             }
             var appModel = ParseResponse<AppModel>(rep.Model).FirstOrDefault(o => o.name == AppGlobals.ApplicationName);
             repModel.Model = appModel;
