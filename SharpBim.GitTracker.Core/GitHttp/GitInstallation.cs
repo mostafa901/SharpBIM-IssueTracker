@@ -6,8 +6,7 @@ using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.GitTracker.Core.Auth;
 using SharpBIM.GitTracker.Core.Auth.BrowseOptions;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.RpcContracts.ProgressReporting;
-
+ 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
     public class GitInstallation : GitClient

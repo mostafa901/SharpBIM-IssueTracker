@@ -1,13 +1,6 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using SharpBIM.ServiceContracts;
+﻿using SharpBIM.Utility.Helpers.Events;
+
 using System.Web;
-using SharpBIM.GitTracker.Core.Auth;
-using SharpBIM.ServiceContracts.Interfaces.IGitTrackers;
-using SharpBIM.Utility.Helpers;
-using SharpBIM.Utility.Helpers.Events;
-using System.Threading.Tasks;
 
 namespace SharpBIM.GitTracker.Core.GitHttp
 {
@@ -15,7 +8,17 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     {
         public static IGitConfig Config { get; set; }
 
-        protected virtual string GetEndPoint(params object[] repoName) => EndPoint.Replace("REPO", repoName[0].ToString());
+        protected virtual string GetEndPoint(params object[] values)
+        {
+            RepoModel repoModel = values[0] as RepoModel;
+            var url = repoModel.url;
+            foreach (var item in values.Skip(1))
+            {
+                url += $"/{item}";
+            }
+            return url;
+        }
+
 
 #if WINDOWS
         internal GitUser User => GitTrackerGlobals.AppGlobals.User;

@@ -10,15 +10,22 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
         }
 
-        protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/contents";
+       // protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/contents";
 
+        protected override string GetEndPoint(params object[] values)
+        {
+            var vs = values.ToList();
+            vs.Insert(1, "contents");
+            var url = base.GetEndPoint(vs.ToArray());
+            return url;
+        }
         //either delete,or create or update, no concurrent actions
 
-        public async Task<IServiceReport<string>> DeleteFile(string repoName, ContentModel contentModel)
+        public async Task<IServiceReport<string>> DeleteFile(RepoModel repoModel, ContentModel contentModel)
         {
             IServiceReport<string> report = new ServiceReport<string>();
 
-            var url = $"{GetEndPoint(repoName)}";
+            string url = GetEndPoint(repoModel);
             var body = new
             {
                 message = "Delete file",
@@ -38,7 +45,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<ContentModel>> GetFile(string repoName, string filePath)
         {
-            var url = $"{GetEndPoint(repoName)}/{filePath}";
+            var url = GetEndPoint(repoName,filePath);
 
             var report = await base.GET(url);
             if (!report.IsFailed)

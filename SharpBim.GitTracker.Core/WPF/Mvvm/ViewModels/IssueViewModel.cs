@@ -262,7 +262,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             IssueModel parent = GetParentViewModel<IssueViewModel>().ContextData;
             IssueModel subIssue = this.ContextData;
 
-            var report = await IssuesService.AddSubIssue(SelectedRepo.name, parent, subIssue, force);
+            var report = await IssuesService.AddSubIssue(SelectedRepo, parent, subIssue, force);
             if (force == false && report.IsFailed)
             {
                 var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
@@ -469,7 +469,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                         finfo.MoveTo(Path.Combine(finfo.Directory.FullName, $"issue-{ContextData.number}-{DateTime.Now.Ticks}.png"));
                         var neName = finfo.FullName;
                         // this is a new image that needs uploading
-                        var report = await IssuesService.UploadImageAsync(SelectedRepo.name, neName, ContextData.number, SelectedRepo.default_branch);
+                        var report = await IssuesService.UploadImageAsync(SelectedRepo, neName, ContextData.number, SelectedRepo.default_branch);
                         if (report.IsFailed)
                         {
                             markdownreport.Failed(report.ErrorMessage);
@@ -487,7 +487,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     {
                         // img is deleted and to be removed from server, is it even possible... needs investigation?
 
-                        var report = await ContentService.DeleteFile(SelectedRepo.name, srvrToLocal[key]);
+                        var report = await ContentService.DeleteFile(SelectedRepo, srvrToLocal[key]);
                         if (report.IsFailed)
                         {
                             markdownreport.Failed(report.ErrorMessage);

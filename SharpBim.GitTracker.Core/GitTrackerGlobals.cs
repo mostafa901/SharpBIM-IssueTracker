@@ -58,8 +58,7 @@ namespace SharpBIM.GitTracker.Core
         //public string PrivateKey { get; set; }
         //public string ClientId { get; set; }
 
-
-        public static GitAuth AuthService { get; internal set; }
+         public static GitAuth AuthService { get; internal set; }
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }
         public static GitContents ContentService { get; internal set; }
@@ -86,7 +85,7 @@ namespace SharpBIM.GitTracker.Core
         protected override void LoadServices()
         {
             base.LoadServices();
-            ApplicationName = "SharpBIM.IssueTracker";
+             ApplicationName = "SharpBIM.IssueTracker";
             ApplicationDisplayName = "SharpBIM-IssueTracker";
             AuthService = new(this);
             ReposSerivce = new(this);

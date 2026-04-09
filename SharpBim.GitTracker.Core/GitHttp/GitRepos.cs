@@ -16,7 +16,13 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override string EndPoint => $"https://api.github.com/";
 
-
+        protected override string GetEndPoint(params object[] values)
+        {
+            var vs = values.ToList();
+ 
+            var url = base.GetEndPoint(vs.ToArray());
+            return url;
+        }
 
         protected override void AddHeaders(HttpRequestMessage request)
         {
@@ -24,16 +30,16 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
         }
 
-        public async Task<IServiceReport<string>> StarRepo(string repoName)
+        public async Task<IServiceReport<string>> StarRepo(RepoModel repoModel)
         {
-            string url = $"https://api.github.com/user/starred/{Owner}/{repoName}";
+            string url = $"https://api.github.com/user/starred/{Owner}/{repoModel.name}";
             var response = await PUT(url, null);
             return response;
         }
 
-        public async Task<IServiceReport<string>> IsRepoStared(string repoName)
+        public async Task<IServiceReport<string>> IsRepoStared(RepoModel repoModel)
         {
-            string url = $"https://api.github.com/user/starred/{Owner}/{repoName}";
+            string url = $"https://api.github.com/user/starred/{Owner}/{repoModel.name}";
             var response = await GET(url);
 
             return response;

@@ -59,7 +59,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                     var app = appReport.Model;
                     InstallService.UpdateOwnerAccount(app.owner.login);
                     string repoName = app.slug;
-                    var releaseReport = await ReleaseService.GetLatestRelease(repoName);
+                    var repoModel = await GetTrackerRepo();
+                    var releaseReport = await ReleaseService.GetLatestRelease(repoModel);
                     if (releaseReport.Model != null)
                     {
                         var releaseModel = releaseReport.Model;
@@ -121,7 +122,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
 
         public SharpBIMCommand FeedBackCommand { get; set; }
 
-        // Add this line to the constructor
 
         public async Task FeedBack(object x)
         {
@@ -135,15 +135,18 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                         Title = ans.Model.Item1,
                         body = ans.Model.Item2
                     };
-
-                    var respons = await IssuesService.CreateIssue(AppGlobals.User.Installation.app_slug, issuemodel);
-                    if (respons.IsFailed)
+                    var repoModel = await GetTrackerRepo();
+                    if (repoModel != null)
                     {
-                        AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to send feedback", respons.ErrorMessage);
-                    }
-                    else
-                    {
-                        AppGlobals.MsgService.AlertUser(WindowHandle, "Thanks", "Thanks for your feedback");
+                        var respons = await IssuesService.CreateIssue(repoModel, issuemodel);
+                        if (respons.IsFailed)
+                        {
+                            AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to send feedback", respons.ErrorMessage);
+                        }
+                        else
+                        {
+                            AppGlobals.MsgService.AlertUser(WindowHandle, "Thanks", "Thanks for your feedback");
+                        }
                     }
                 }
 
@@ -154,6 +157,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             }
         }
 
+        RepoModel trackerRepo = null;
+        private async Task<RepoModel> GetTrackerRepo()
+        {
+            return trackerRepo ?? (trackerRepo = (await new GitRepos(AppGlobals).GetRepos()).Model.FirstOrDefault(x => x.name.EQ(AppGlobals.ApplicationDisplayName)));
+        }
+
         public SharpBIMCommand StarRepoCommand { get; set; }
 
         // Add this line to the constructor
@@ -162,13 +171,13 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
         {
             try
             {
-                var response2 = await ReposSerivce.IsRepoStared(AppGlobals.ApplicationName);
+                var repoModel = await GetTrackerRepo();
+                var response  = await ReposSerivce.IsRepoStared(repoModel);
 
-                var response = await ReposSerivce.IsRepoStared(AppGlobals.User.Installation.app_slug);
                 if (response.IsFailed)
                 {
                     StarRepoCommand.Icon = Glyphs.star_outline;
-                    response = await ReposSerivce.StarRepo(AppGlobals.User.Installation.app_slug);
+                     response = await ReposSerivce.StarRepo(repoModel);
                     if (!response.IsFailed)
                         StarRepoCommand.Icon = Glyphs.star;
                 }
@@ -185,7 +194,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
 
-                  grantted = AppGlobals.User.LoggedIn;
+                grantted = AppGlobals.User.LoggedIn;
                 if (grantted)
                 {
                     var accessReport = await AuthService.Login();
@@ -257,7 +266,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             vm.Init(new DummyListContext());
             await CheckForUpdates(null);
             var repo = new ServiceReport<string>();
-            var response = await ReposSerivce.IsRepoStared(AppGlobals.ApplicationDisplayName);
+            var repoModel = await GetTrackerRepo();
+            var response = await ReposSerivce.IsRepoStared(repoModel);
             if (!response.IsFailed)
             {
                 //StarRepoCommand.Icon = Glyphs.empty;

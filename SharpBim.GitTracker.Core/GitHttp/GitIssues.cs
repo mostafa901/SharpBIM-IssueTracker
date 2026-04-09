@@ -7,10 +7,15 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     public class GitIssues : GitClient
     {
         // References: https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
-        protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/issues";
+        // protected override string EndPoint => $"https://api.github.com/repos/{Owner}/REPO/issues";
 
-        private string GetEndPoint(string repoName) => EndPoint.Replace("REPO", repoName);
-
+        protected override string GetEndPoint(params object[] values)
+        {
+            var vs = values.ToList();
+            vs.Insert(1, "issues");
+            var url = base.GetEndPoint(vs.ToArray());
+            return url;
+        }
         public GitIssues(IConfig appGlobals) : base(appGlobals)
         {
         }
@@ -63,7 +68,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<IEnumerable<IssueModel>>> GetSubIssues(RepoModel repoModel, int number, int page = 1)
         {
-            var url = $"{repoModel.url}/{number}/sub_issues";
+            var url = GetEndPoint(repoModel, number, "sub_issues");
 
             var bodyParams = new
             {
@@ -86,7 +91,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public async Task<IServiceReport<IEnumerable<IssueModel>>> GetIssues(RepoModel repoModel, int number, IssueState state, int page = 1)
         {
             //  https://api.github.com/repos/OWNER/REPO/issues/ISSUE_NUMBER
-            var url = $"{repoModel.url}/issues";
+            var url = GetEndPoint(repoModel);
             if (number > 0)
             {
                 url += $"/{number}";
@@ -122,40 +127,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return issueReport;
         }
 
-        //https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#update-an-issue
-        // You cannot pass both `assignee` and `assignees`. Only one may be provided.
-        public async Task<IServiceReport<IssueModel>> CreateIssue(string repoName, IssueModel issue)
-        {
-            var url = $"{GetEndPoint(repoName)}";
-
-            // Set the content type to JSON
-            //  var content = new StringContent(issue.JSerialize(), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
-            var paybody = new
-            {
-                issue.body,
-                title = issue.Title,
-                //assignee, // or Assignees or null
-                issue.state,
-                //milestone ,
-                labels = issue.labels?.Select(o => o.Name).ToArray() ?? [],
-                //state_reason , // Can be one of: completed, not_planned, reopened, null
-            };
-            IServiceReport<string> response = null;
-
-            response = await POST(url, paybody);
-            var report = new ServiceReport<IssueModel>();
-            report.Merge(response);
-            if (!report.IsFailed)
-            {
-                report.Model = ParseResponse<IssueModel>(response.Model)?.FirstOrDefault();
-            }
-            return report;
-        }
+         
         //https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#update-an-issue
         // You cannot pass both `assignee` and `assignees`. Only one may be provided.
         public async Task<IServiceReport<IssueModel>> CreateIssue(RepoModel repoModel, IssueModel issue)
         {
-            var url = $"{repoModel.url}/issues";
+            var url = $"{GetEndPoint(repoModel)}";
 
 
             // Set the content type to JSON
@@ -186,8 +163,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         // You cannot pass both `assignee` and `assignees`. Only one may be provided.
         public async Task<IServiceReport<IssueModel>> PatchIssue(RepoModel repoModel, IssueModel issue)
         {
-            var url = $"{repoModel.url}/issues";
-            url += $"/{issue.number}";
+            var url = $"{GetEndPoint(repoModel, issue.number)}";
 
             // Set the content type to JSON
             //  var content = new StringContent(issue.JSerialize(), Encoding.UTF8, MediaTypes.VNDGITHUBJSON);
@@ -215,10 +191,11 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         }
 
         // this requires contentsPErmisison Read and write
-        public async Task<IServiceReport<string>> UploadImageAsync(string repoName, string filePath, int issueNumber, string branch = "master")
+        public async Task<IServiceReport<string>> UploadImageAsync(RepoModel repoModel, string filePath, int issueNumber, string branch = "master")
         {
             string imageName = Path.GetFileName(filePath);
-            string url = $"https://api.github.com/repos/{Owner}/{repoName}/contents/issue-images/{issueNumber}/{imageName}";
+            //string url = $"https://api.github.com/repos/{Owner}/{repoName}/contents/issue-images/{issueNumber}/{imageName}";
+            string url = GetEndPoint(repoModel, "contents", "issue-images", issueNumber, imageName);
 
             // Convert image to Base64
             byte[] imageBytes = File.ReadAllBytes(filePath);
@@ -243,9 +220,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        public async Task<IServiceReport<IssueModel>> AddSubIssue(string repoName, IssueModel parent, IssueModel subIssue, bool forceChange)
+        public async Task<IServiceReport<IssueModel>> AddSubIssue(RepoModel repoModel, IssueModel parent, IssueModel subIssue, bool forceChange)
         {
-            var url = $"{GetEndPoint(repoName)}/{parent.number}/sub_issues";
+            var url = GetEndPoint(repoModel, parent.number, "sub_issues");
 
             var body = new
             {

@@ -10,10 +10,18 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
         }
 
-        protected override string EndPoint => $"https://api.github.com/repos/{User.Name}/REPO/releases";
+        //  protected override string EndPoint => $"https://api.github.com/repos/{User.Name}/REPO/releases";
+
+        protected override string GetEndPoint(params object[] values)
+        {
+            var vs = values.ToList();
+            vs.Insert(1, "releases");
+            var url = base.GetEndPoint(vs.ToArray());
+            return url;
+        }
 
 #if false
-        public async Task<IServiceReport<ReleaseNoteModel>> GenerateRelease(string repoName, string tag_name)
+        public async Task<IServiceReport<ReleaseNoteModel>> GenerateRelease(RepoModel repoModel, string tag_name)
         {
             var url = $"{GetEndPoint(repoName)}/generate-notes";
             var body = new
@@ -35,7 +43,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<ReleaseNoteModel>>> GetReleases(string repoName)
+        public async Task<IServiceReport<IEnumerable<ReleaseNoteModel>>> GetReleases(RepoModel repoModel)
         {
             var url = GetEndPoint(repoName);
             var releaseReport = new ServiceReport<IEnumerable<ReleaseNoteModel>>();
@@ -54,9 +62,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         }
 #endif
 
-        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> GetReleasesByTag(string repoName, string tag)
+        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> GetReleasesByTag(RepoModel repoModel, string tag)
         {
-            var url = $"{GetEndPoint(repoName)}/tags/{tag}";
+            var url = GetEndPoint(repoModel, "tags", tag);
             var releaseReport = new ServiceReport<IEnumerable<ReleaseModel>>();
             var response = await GET(url);
             if (response.IsFailed)
@@ -72,9 +80,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> CreateRelease(string repoName, ReleaseModel noteModel)
+        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> CreateRelease(RepoModel repoModel, ReleaseModel noteModel)
         {
-            var url = GetEndPoint(repoName);
+            var url = GetEndPoint(repoModel);
             var releaseReport = new ServiceReport<IEnumerable<ReleaseModel>>();
             var body = new
             {
@@ -98,9 +106,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> UpdateRelease(string repoName, ReleaseModel noteModel)
+        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> UpdateRelease(RepoModel repoModel, ReleaseModel noteModel)
         {
-            var url = $"{GetEndPoint(repoName)}/{noteModel.id}";
+            var url = GetEndPoint(repoModel, noteModel.id);
             var releaseReport = new ServiceReport<IEnumerable<ReleaseModel>>();
             var body = new
             {
@@ -124,9 +132,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
-        public async Task<IServiceReport<ReleaseModel>> GetLatestRelease(string repoName)
+        public async Task<IServiceReport<ReleaseModel>> GetLatestRelease(RepoModel repoModel)
         {
-            var url = $"{GetEndPoint(repoName)}/latest";
+            var url = GetEndPoint(repoModel, "latest");
             var releaseReport = new ServiceReport<ReleaseModel>();
 
             var response = await GET(url);
@@ -143,9 +151,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return releaseReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> GetAssets(string repoName, ReleaseModel releaseModel)
+        public async Task<IServiceReport<IEnumerable<ReleaseModel>>> GetAssets(RepoModel repoModel, ReleaseModel releaseModel)
         {
-            var url = $"{GetEndPoint(repoName)}/{releaseModel.id}/assets";
+            var url = GetEndPoint(repoModel, releaseModel.id, "assets");
             var releaseReport = new ServiceReport<IEnumerable<ReleaseModel>>();
             var body = new
             {
