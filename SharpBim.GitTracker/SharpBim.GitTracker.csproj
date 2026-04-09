@@ -114,6 +114,9 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SharpBIM" Condition="'$(Configuration.ToLower().StartsWith(dwin))' ">
+      <HintPath>..\..\..\SharpBIM\Publish\dwin\net48\SharpBIM.dll</HintPath>
+    </Reference>
     <!-- <Reference Include="SharpBIM.GitTracker.Core" Condition="'$(Configuration)' == 'Release'"> -->
     <!-- <HintPath>..\SharpBim.GitTracker.Core\bin\RWin\net48\SharpBIM.GitTracker.Core.dll</HintPath> -->
     <!-- </Reference> -->
@@ -143,6 +146,9 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.12.2069">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="SharpBIM-win" Condition="'$(Configuration.ToLower().StartsWith(rwin))' ">
+      <Version>1.1.198</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

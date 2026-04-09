@@ -15,14 +15,15 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         protected override string GetEndPoint(params object[] values)
         {
-            var url = base.GetEndPoint(values[0]);
-            url = url.Replace("ISSUE_NUMBER", values[1].ToString());
+            RepoModel repoModel = values[0] as RepoModel;
+            var issueNumber = (int)values[1];
+            var url = $"{repoModel.url}/issues/{issueNumber}/comments";
             return url;
         }
 
-        public async Task<IServiceReport<IEnumerable<CommentModel>>> GetCommentsForIssue(string repoName, int issueNumber)
+        public async Task<IServiceReport<IEnumerable<CommentModel>>> GetCommentsForIssue(RepoModel repoModel, int issueNumber)
         {
-            var url = GetEndPoint(repoName, issueNumber);
+            var url = GetEndPoint(repoModel, issueNumber);
             var reposne = await GET(url);
             var commentReport = new ServiceReport<IEnumerable<CommentModel>>();
             if (reposne.IsFailed)
@@ -36,10 +37,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return commentReport;
         }
 
-        public async Task<IServiceReport<CommentModel>> PushComment(string repoName, int issueNumber, CommentModel comment)
+        public async Task<IServiceReport<CommentModel>> PushComment(RepoModel repoModel, int issueNumber, CommentModel comment)
         {
             //  https://api.github.com/repos/OWNER/REPO/issues/ISSUE_NUMBER/comments \
-            var url = GetEndPoint(repoName, issueNumber);
+            var url = GetEndPoint(repoModel, issueNumber);
             var body = new
             {
                 comment.body

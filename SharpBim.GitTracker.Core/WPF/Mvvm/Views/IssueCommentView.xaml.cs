@@ -111,7 +111,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
                 }
 
                 var issueModel = GetParentViewModel<IssueViewModel>();
-                var pushReport = await CommentService.PushComment(issueModel.SelectedRepo.name, ContextData.number, new CommentModel { body = NewComment });
+                var pushReport = await CommentService.PushComment(issueModel.SelectedRepo, ContextData.number, new CommentModel { body = NewComment });
                 if (pushReport.IsFailed)
                 {
                     AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to push comment", pushReport.ErrorMessage);
@@ -147,7 +147,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
         {
             Children.Clear();
             var parernt = GetParentViewModel<IssueViewModel>();
-            var commentReport = await CommentService.GetCommentsForIssue(parernt.SelectedRepo.name, ContextData.number);
+            var commentReport = await CommentService.GetCommentsForIssue(parernt.SelectedRepo, ContextData.number);
             if (commentReport.IsFailed)
             {
                 AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't Retrieve Comments", commentReport.ErrorMessage);

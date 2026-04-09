@@ -61,9 +61,9 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return issueReport;
         }
 
-        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetSubIssues(string repoName, int number, int page = 1)
+        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetSubIssues(RepoModel repoModel, int number, int page = 1)
         {
-            var url = $"{GetEndPoint(repoName)}/{number}/sub_issues";
+            var url = $"{repoModel.url}/{number}/sub_issues";
 
             var bodyParams = new
             {

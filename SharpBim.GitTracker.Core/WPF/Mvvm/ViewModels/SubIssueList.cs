@@ -28,7 +28,7 @@
                 if (parentISsue.ContextData.sub_issues_summary.total > 0)
                 {
                     // this will get the only 100 sub issues
-                    var subIssues = await IssuesService.GetSubIssues(SelectedRepo.name, parentISsue.ContextData.number, 1);
+                    var subIssues = await IssuesService.GetSubIssues(SelectedRepo, parentISsue.ContextData.number, 1);
                     if (subIssues.IsFailed)
                     {
                     }
