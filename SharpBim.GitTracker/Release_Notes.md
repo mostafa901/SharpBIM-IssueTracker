@@ -1,5 +1,5 @@
 
-## Version 0.794 - March 2025
+## Version 0.795 - March 2025
 ☑️ fix Login buttons style is off. Code maintainability issue
 
 ## Version 0.791 - March 2025
