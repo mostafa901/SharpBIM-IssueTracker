@@ -19,7 +19,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected override string GetEndPoint(params object[] values)
         {
             var vs = values.ToList();
- 
+
             var url = base.GetEndPoint(vs.ToArray());
             return url;
         }
@@ -45,7 +45,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return response;
         }
 
-        public async Task<IServiceReport<IEnumerable<RepoModel>>> GetRepos()
+        public async Task<IServiceReport<IEnumerable<RepoModel>>> GetRepos(string repoFullName = null)
         {
             var repoReport = new ServiceReport<IEnumerable<RepoModel>>();
             List<RepoModel> repos = new List<RepoModel>();
@@ -59,6 +59,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 while (trials > 0)
                 {
                     string url = $"{EndPoint}user/repos?page={page}";
+                    if (!string.IsNullOrEmpty(repoFullName))
+                    {
+                        url = $"{EndPoint}repos/{repoFullName}";
+                    }
 
                     getReport = await GET(url);
                     if (!getReport.IsFailed)
@@ -74,11 +78,15 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                     repoReport.Merge(getReport);
                     return repoReport;
                 }
-                var importedRepos = JsonSerializer.Deserialize<IEnumerable<RepoModel>>(response);
+                var importedRepos = ParseResponse<RepoModel>(response);
                 if (importedRepos.Any() == false)
                     break;
                 repos.AddRange(importedRepos);
-                page++;
+                if (!string.IsNullOrEmpty(repoFullName))
+                {
+                    break;
+                }
+                    page++;
             }
 
             repoReport.Model = repos;

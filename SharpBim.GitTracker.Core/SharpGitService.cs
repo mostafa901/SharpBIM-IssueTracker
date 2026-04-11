@@ -10,15 +10,20 @@ using SharpBIM.ServiceContracts;
 using SharpBIM.ServiceContracts.Abstracts;
 using SharpBIM.ServiceContracts.Interfaces;
 #if WINDOWS
-using SharpBIM.WPF.Services; 
+using SharpBIM.WPF.Services;
 #endif
 
 namespace SharpBIM.GitTracker.Core
 {
     public class SharpGitService : Service, ISharpGitService
     {
-        public SharpGitService(IConfig config) : base(config)
+        GitTrackerGlobals gitGlobals = new GitTrackerGlobals();
+
+        public string PersonalAccessCode { get; }
+
+        public SharpGitService(string personalAccessCode, IConfig config) : base(config)
         {
+            PersonalAccessCode = personalAccessCode;
         }
 
 #if WINDOWS
@@ -44,9 +49,29 @@ namespace SharpBIM.GitTracker.Core
 
             AppGlobals.MsgService.AlertUser(AppGlobals.MainWindowHandle, "Feedback", report.ErrorMessage);
             return report;
-        } 
+        }
 #endif
 
+        public async Task<IServiceReport<IEnumerable<RepoModel>>> GetRepoModelsAsync(string repoFullName)
+        {
+            var report = new ServiceReport<IEnumerable<RepoModel>>();
+            var loginReport = await AuthService.LoginByPersonalToken(PersonalAccessCode);
+            if (loginReport.IsFailed)
+            {
+                report.Failed(loginReport.ErrorMessage);
+                return report;
+            }
+            var repoModelsReport = await ReposSerivce.GetRepos(repoFullName);
+            if (repoModelsReport.IsFailed)
+            {
+                report.Failed(repoModelsReport.ErrorMessage);
+                return report;
+            }
+            var models = repoModelsReport.Model.ToList();
+            report.Model = models;
+
+            return report;
+        }
         public async Task<IServiceReport<string>> PublishFeedback(string title, string body, string repoName)
         {
             var report = new ServiceReport<string>();
@@ -62,7 +87,7 @@ namespace SharpBIM.GitTracker.Core
 
                 var repoModel = (await gitRepoService.GetRepos()).Model.FirstOrDefault(x => x.name.EQ(repoName));
                 var response = await gitService.CreateIssue(repoModel,
-                    new SharpBIM.GitTracker.Core.GitHttp.Models.IssueModel
+                    new IssueModel
                     {
                         Title = title,
                         body = body,
@@ -84,6 +109,25 @@ namespace SharpBIM.GitTracker.Core
             return report;
         }
 
+        async public Task<IServiceReport<IEnumerable<IssueModel>>> GetIssueModelsAsync(RepoModel repoModel)
+        {
+            var report = new ServiceReport<IEnumerable<IssueModel>>();
+            var loginReport = await AuthService.LoginByPersonalToken(PersonalAccessCode);
+            if (loginReport.IsFailed)
+            {
+                report.Failed(loginReport.ErrorMessage);
+                return report;
+            }
+            var repoModelsReport = await IssuesService.GetIssues(repoModel, 0, IssueState.all);
+            if (repoModelsReport.IsFailed)
+            {
+                report.Failed(repoModelsReport.ErrorMessage);
+                return report;
+            }
+            var models = repoModelsReport.Model.ToList();
+            report.Model = models;
 
+            return report;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿global using System;
 
 global using Task = System.Threading.Tasks.Task;
+global using SharpBIM.UIContext.GitModels;
 
 global using System.Threading.Tasks;
 global using System.Linq;
@@ -40,17 +41,18 @@ global using SharpBIM.Utility.Helpers;
 global using SharpBIM.UIContext.Abstracts.Interfaces;
 
 
-#if WINDOWS
 global using static SharpBIM.GitTracker.Core.GitTrackerGlobals;
 
 using Config = SharpBIM.Services.Config;
 
-using SharpBIM.WPF.Utilities;
+#if WINDOWS
+using SharpBIM.WPF.Utilities; 
+#endif
 
 using Microsoft.ServiceHub.Resources;
 namespace SharpBIM.GitTracker.Core
 {
-    public class GitTrackerGlobals : Config
+    internal class GitTrackerGlobals : Config
     {
         internal static GitTrackerGlobals AppGlobals;
         //public string AppId { get; set; }
@@ -62,7 +64,9 @@ namespace SharpBIM.GitTracker.Core
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }
         public static GitContents ContentService { get; internal set; }
-        public static GitToken TokenService { get; internal set; }
+#if WINDOWS
+        public static GitToken TokenService { get; internal set; } 
+#endif
         public static GitInstallation InstallService { get; internal set; }
         public static GitRelease ReleaseService { get; internal set; }
         public static GitLabels LabelService { get; internal set; }
@@ -76,8 +80,10 @@ namespace SharpBIM.GitTracker.Core
         public GitTrackerGlobals()
         {
             AppGlobals = this;
+#if WINDOWS
             var resource = new SharedResourceDictionary() { Source = new Uri("pack://application:,,,/SharpBIM.GitTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml") };
             SharpBIM.WPF.Globals.StyleResources.MergedDictionaries.Add(resource);
+#endif
             User ??= GitUser.Parse();
             AuthService.LoadGitConfigAsync();
         }
@@ -91,7 +97,9 @@ namespace SharpBIM.GitTracker.Core
             ReposSerivce = new(this);
             IssuesService = new(this);
             ContentService = new(this);
-            TokenService = new(this);
+#if WINDOWS
+            TokenService = new(this); 
+#endif
             ReleaseService = new(this);
             LabelService = new(this);
             CommentService = new(this);
@@ -100,4 +108,3 @@ namespace SharpBIM.GitTracker.Core
         }
     }
 }
-#endif
