@@ -115,7 +115,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SharpBIM" Condition="'$(Configuration.ToLower().StartsWith(dwin))' ">
-      <HintPath>..\..\..\SharpBIM\Publish\dwin\net48\SharpBIM.dll</HintPath>
+      <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\net48\SharpBIM.dll</HintPath>
     </Reference>
     <!-- <Reference Include="SharpBIM.GitTracker.Core" Condition="'$(Configuration)' == 'Release'"> -->
     <!-- <HintPath>..\SharpBim.GitTracker.Core\bin\RWin\net48\SharpBIM.GitTracker.Core.dll</HintPath> -->
@@ -148,15 +148,15 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SharpBIM-win" Condition="'$(Configuration.ToLower().StartsWith(rwin))' ">
-      <Version>1.1.198</Version>
+      <Version>1.1.200</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj">
-      <Project>{77c21fb6-a74c-b4a2-4fd2-1931375d32ac}</Project>
-      <Name>SharpBIM.GitTracker.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
+   <!-- <ItemGroup Condition="'$(Configuration.ToLower().StartsWith(dwin))' "> -->
+    <!-- <ProjectReference Include="..\SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj"> -->
+      <!-- <Project>{77c21fb6-a74c-b4a2-4fd2-1931375d32ac}</Project> -->
+      <!-- <Name>SharpBIM.GitTracker.Core_Local</Name> -->
+    <!-- </ProjectReference> -->
+  <!-- </ItemGroup> -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup>

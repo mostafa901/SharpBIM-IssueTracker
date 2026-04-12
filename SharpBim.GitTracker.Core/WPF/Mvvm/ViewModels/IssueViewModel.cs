@@ -11,6 +11,7 @@ using SharpBIM.GitTracker.Core.WPF.Mvvm.Models;
 using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using System.ComponentModel;
 using System.Windows.Data;
+using System.Threading.Tasks;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
@@ -37,8 +38,41 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             LabelCollectionView = CollectionViewSource.GetDefaultView(AllLabelsList);
             OpenCommentsCommand = new SharpBIMCommand(OpenComments, "Open comments", Glyphs.comment, (x) => true);
             PastImageCommand = new SharpBIMCommand(PastImage, "Past Image", Glyphs.empty, (x) => true);
+            AssignMeCommand = new SharpBIMCommandAsync(AssignMe, "Assign Me", Glyphs.signature, (x) => true);
         }
+        public SharpBIMCommandAsync AssignMeCommand { get; set; }
 
+        public async Task AssignMe(object x)
+        {
+            try
+            {
+                if (Assignees.Any(o => o.ContextData.url.EQ(AppGlobals.User.UserAccount.url)))
+                {
+                    var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Unassign Myself?", "You are already an assignee, do you want to unassign yourself?", [SharpBIM.Statics.YES, SharpBIM.Statics.NO], SharpBIM.ServiceContracts.Enums.MessageType.Info);
+                    if (ans.Model == SharpBIM.Statics.YES)
+                    {
+                        var assignee = Assignees.FirstOrDefault(o => o.ContextData.url.EQ(AppGlobals.User.UserAccount.url));
+                        Assignees.Remove(assignee!);
+                        var cleaned = ContextData.assignees.ToList();
+                        cleaned.RemoveAll(x=>x.url.EQ(AppGlobals.User.UserAccount.url)) ;
+                        ContextData.assignees = cleaned.ToArray();
+                        await PatchIssueAsync();
+                    AssignMeCommand.IsVisible = true;
+                    }
+                }
+                else
+                {
+                    ContextData.assignees ??= new Account[1];
+                    await PatchIssueAsync();
+                    ContextData.assignees = ContextData.assignees.Concat([AppGlobals.User.UserAccount]).ToArray();
+                    Assignees.Add(AppGlobals.User.UserAccount.ToModelView<AssigneeModelView>(this));
+                    AssignMeCommand.IsVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
         #endregion Public Constructors
 
         public SharpBIMCommand OpenCommentsCommand { get; set; }
@@ -71,6 +105,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         public bool IsSubIssue => GetParentViewModel<IssueViewModel>() != null;
 
         public ObservableCollection<LabelModelView> IssueLables { get; set; } = [];
+        public ObservableCollection<AssigneeModelView> Assignees { get; set; } = [];
         public ObservableCollection<LabelModelView> AllLabelsList { get; set; } = [];
         public List<GitLabel> AllGitLabelsList { get; set; } = [];
 
@@ -135,10 +170,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
-        async public override Task Init(IssueModel dataModel)
+        public override async Task Init(IssueModel dataModel)
         {
             srvrToLocal.Clear();
             IssueLables.Clear();
+            Assignees.Clear();
 
             base.Init(dataModel);
             Title = dataModel.Title;
@@ -150,6 +186,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 Completed = dataModel.sub_issues_summary?.completed ?? 0;
                 TotalSubIssues = dataModel.sub_issues_summary?.total ?? 0;
+            }
+            foreach (var label in dataModel.labels)
+            {
+                IssueLables.Add(label.ToModelView<LabelModelView>(this));
+            }
+            foreach (var assignee in dataModel.assignees)
+            {
+                Assignees.Add(assignee.ToModelView<AssigneeModelView>(this));
             }
         }
 
@@ -226,16 +270,17 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public async Task LoadDetails()
         {
-            if (IssueLables.Any())
-                return;
-            detailsLoaded = true;
-            srvrToLocal.Clear();
-            IssueLables.Clear();
-            if (ContextData.labels != null)
+            if (!IssueLables.Any())
             {
-                foreach (var label in ContextData.labels)
+                detailsLoaded = true;
+                srvrToLocal.Clear();
+                IssueLables.Clear();
+                if (ContextData.labels != null)
                 {
-                    IssueLables.Add(label.ToModelView<LabelModelView>(this));
+                    foreach (var label in ContextData.labels)
+                    {
+                        IssueLables.Add(label.ToModelView<LabelModelView>(this));
+                    }
                 }
             }
 
@@ -246,14 +291,13 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 {
                     AllGitLabelsList = repoLabelsReport.Model.ToList();
                 }
+                AllLabelsList.Clear();
+                foreach (var label in AllGitLabelsList)
+                {
+                    var labelmv = label.ToModelView<LabelModelView>(this);
+                    AllLabelsList.Add(labelmv);
+                }
             }
-            AllLabelsList.Clear();
-            foreach (var label in AllGitLabelsList)
-            {
-                var labelmv = label.ToModelView<LabelModelView>(this);
-                AllLabelsList.Add(labelmv);
-            }
-
             Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
         }
 
@@ -549,7 +593,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
             try
             {
-                if (!VerifyIssueBoreISsue())
+                if (!VerifyIssueBoreIssue())
                 {
                     return;
                 }
@@ -623,7 +667,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             IOEx.OpenUrl(ContextData.html_url);
         }
 
-        private bool VerifyIssueBoreISsue()
+        private bool VerifyIssueBoreIssue()
         {
             if (string.IsNullOrEmpty(Title))
             {

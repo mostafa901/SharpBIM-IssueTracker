@@ -1,5 +1,9 @@
 
 ## Version 0.795 - March 2025
+☑️ Add feature to see Labels from list view #22
+☑️ Add feature Assign or unassign yourself to an issue #28
+
+## Version 0.795 - March 2025
 ☑️ fix Login buttons style is off. Code maintainability issue
 
 ## Version 0.791 - March 2025

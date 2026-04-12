@@ -4,12 +4,38 @@
     xmlns:Conv="clr-namespace:SharpBIM.WPF.Helpers.Converters;assembly=SharpBIM"
     xmlns:cmp="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Components"
     xmlns:hl="clr-namespace:SharpBIM.WPF.Utilities;assembly=SharpBIM"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mv="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Models"
     xmlns:mv1="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Views"
     xmlns:mvv="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels"
     xmlns:st="clr-namespace:SharpBIM.GitTracker.Core.Enums"
     xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM">
 
+    <DataTemplate x:Key="AssigneeTemplate" DataType="{x:Type mv:AssigneeModelView}">
+        <Grid>
+            <Ellipse
+                Width="25"
+                Height="25"
+                Margin="2"
+                Fill="White"
+                Stroke="DarkMagenta"
+                StrokeThickness="2" />
+
+            <Image
+                Width="15"
+                Height="15"
+                Margin="2"
+                Cursor="Hand"
+                Source="{Binding AvatarPath}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                        <i:InvokeCommandAction Command="{Binding ParentModelView.AssignMeCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
+
+        </Grid>
+    </DataTemplate>
     <DataTemplate x:Key="LabelDataTemplate" DataType="{x:Type mv:LabelModelView}">
         <Border
             Margin="2"
@@ -155,7 +181,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
-
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -243,6 +272,21 @@
                         Command="{Binding OpenCommentsCommand}"
                         ShowText="False" />
                 </StackPanel>
+
+                <Grid
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Right">
+
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding IssueLables.Count, Converter={Conv:ConvCountVisibility Min=0}}">
+                        <ItemsControl ItemTemplate="{StaticResource LabelDataTemplate}" ItemsSource="{Binding IssueLables}" />
+                        <ui:UIButton
+                            Appearance="Secondary"
+                            Command="{Binding AssignMeCommand}"
+                            Style="{StaticResource IconButtonStyle}" />
+                        <ItemsControl ItemTemplate="{StaticResource AssigneeTemplate}" ItemsSource="{Binding Assignees}" />
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Border>
     </DataTemplate>

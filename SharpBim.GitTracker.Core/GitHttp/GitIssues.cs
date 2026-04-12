@@ -171,7 +171,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 issue.body,
                 title = issue.Title,
-                //assignee, // or Assignees or null
+                assignees = issue.assignees?.Select(o => o.login).ToArray(),
                 issue.state,
                 //milestone ,
                 labels = issue.labels?.Select(o => o.Name).ToArray() ?? [],

@@ -2,6 +2,40 @@
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
 {
+    public class AssigneeModelView : ModelViewBase<Account>
+    {
+        public string AvatarPath
+        {
+            get
+            {
+                return GetValue<string>(nameof(AvatarPath));
+            }
+
+            set
+            {
+                SetValue(value, nameof(AvatarPath));
+            }
+        }
+
+        public override Task Init(Account dataModel)
+        {
+            AvatarPath = dataModel.avatar_url;
+            return base.Init(dataModel);
+        }
+
+
+
+        public override IServiceReport<bool> Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IServiceReport<bool> Validate()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
     public class LabelModelView : ModelViewBase<GitLabel>
     {
         public SolidColorBrush BackgroundBrush

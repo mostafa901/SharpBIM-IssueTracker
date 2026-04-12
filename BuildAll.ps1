@@ -199,7 +199,7 @@ if($build -eq 1)`
 
     clean
 
-  buildframework2 .\SharpBim.GitTracker.sln Rwin
+  buildframework2 .\SharpBim.GitTracker\SharpBim.GitTracker.csproj Rwin
 
   IsAllGood "Building project"
 }

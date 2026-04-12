@@ -31,7 +31,7 @@ namespace SharpBIM.GitTracker.Core.JsonConverters
             if (root.TryGetProperty(nameof(IssueModel.assignee), out var assigneeProp) &&
                 assigneeProp.ValueKind != JsonValueKind.Null)
             {
-                instance.assignee = assigneeProp.GetString();
+                instance.assignee = JsonSerializer.Deserialize<Account>(assigneeProp.GetRawText(), options);
             }
             else if (root.TryGetProperty(nameof(IssueModel.assignees), out var assigneesProp) &&
                      assigneesProp.ValueKind == JsonValueKind.Array)
