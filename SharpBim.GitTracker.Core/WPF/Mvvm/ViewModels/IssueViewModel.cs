@@ -18,14 +18,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
     public class IssueViewModel : ModelViewBase<IssueModel, IssueViewModel>
     {
         #region Private Fields
-
         private bool detailsLoaded;
         private Dictionary<string, ContentModel> srvrToLocal = new();
-
         #endregion Private Fields
-
         #region Public Constructors
-
         public IssueViewModel()
         {
             OpenSubIssueListCommand = new SharpBIMCommand(async (x) => await OpenSubIssueListAsync(x), "Load Sub Issues", Glyphs.empty, (x) => true);
@@ -39,8 +35,22 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             OpenCommentsCommand = new SharpBIMCommand(OpenComments, "Open comments", Glyphs.comment, (x) => true);
             PastImageCommand = new SharpBIMCommand(PastImage, "Past Image", Glyphs.empty, (x) => true);
             AssignMeCommand = new SharpBIMCommandAsync(AssignMe, "Assign Me", Glyphs.signature, (x) => true);
+            CopyTitleCommand = new SharpBIMCommand(CopyTitle, "Copy Title", Glyphs.empty, (x) => true);
         }
+
         public SharpBIMCommandAsync AssignMeCommand { get; set; }
+        public SharpBIMCommand CopyTitleCommand { get; set; }
+
+        public void CopyTitle(object x)
+        {
+            try
+            {
+                Clipboard.SetText($"#{Id} - {Title}");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
         public async Task AssignMe(object x)
         {
@@ -54,17 +64,32 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                         var assignee = Assignees.FirstOrDefault(o => o.ContextData.url.EQ(AppGlobals.User.UserAccount.url));
                         Assignees.Remove(assignee!);
                         var cleaned = ContextData.assignees.ToList();
-                        cleaned.RemoveAll(x=>x.url.EQ(AppGlobals.User.UserAccount.url)) ;
+                        cleaned.RemoveAll(x => x.url.EQ(AppGlobals.User.UserAccount.url));
                         ContextData.assignees = cleaned.ToArray();
-                        await PatchIssueAsync();
-                    AssignMeCommand.IsVisible = true;
+                        var report = await PatchIssueAsync();
+                        if (report.IsFailed)
+                        {
+                            AppGlobals.MsgService.AlertUser(WindowHandle, "Failed To Unassign", report.ErrorMessage);
+                            if(assignee != null)
+                            {
+                                Assignees.Add(assignee);
+                                cleaned.Add(assignee.ContextData);
+                                ContextData.assignees = cleaned.ToArray();
+                            }
+                        AssignMeCommand.IsVisible = true;
                     }
+					}
                 }
                 else
                 {
                     ContextData.assignees ??= new Account[1];
-                    await PatchIssueAsync();
                     ContextData.assignees = ContextData.assignees.Concat([AppGlobals.User.UserAccount]).ToArray();
+                    var report = await PatchIssueAsync();
+                    if (report.IsFailed)
+                    {
+                        AppGlobals.MsgService.AlertUser(WindowHandle, "Failed To Assign", report.ErrorMessage);
+                        return;
+                    }
                     Assignees.Add(AppGlobals.User.UserAccount.ToModelView<AssigneeModelView>(this));
                     AssignMeCommand.IsVisible = false;
                 }
@@ -73,37 +98,55 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
             }
         }
+
         #endregion Public Constructors
-
         public SharpBIMCommand OpenCommentsCommand { get; set; }
-
         #region Public Properties
-
         public SharpBIMCommand AddNewLableCommand { get; set; }
         public SharpBIMCommand CloseIssueCommand { get; set; }
 
         public int Completed
         {
-            get { return GetValue<int>(nameof(Completed)); }
-            set { SetValue(value, nameof(Completed)); }
+            get
+            {
+                return GetValue<int>(nameof(Completed));
+            }
+
+            set
+            {
+                SetValue(value, nameof(Completed));
+            }
         }
 
         public string Description
         {
-            get { return GetValue<string>(nameof(Description)); }
-            set { SetValue(value, nameof(Description)); }
+            get
+            {
+                return GetValue<string>(nameof(Description));
+            }
+
+            set
+            {
+                SetValue(value, nameof(Description));
+            }
         }
 
         public SharpBIMCommand EditIssueCommand { get; set; }
 
         public bool IsClosed
         {
-            get { return GetValue<bool>(nameof(IsClosed)); }
-            set { SetValue(value, nameof(IsClosed)); }
+            get
+            {
+                return GetValue<bool>(nameof(IsClosed));
+            }
+
+            set
+            {
+                SetValue(value, nameof(IsClosed));
+            }
         }
 
         public bool IsSubIssue => GetParentViewModel<IssueViewModel>() != null;
-
         public ObservableCollection<LabelModelView> IssueLables { get; set; } = [];
         public ObservableCollection<AssigneeModelView> Assignees { get; set; } = [];
         public ObservableCollection<LabelModelView> AllLabelsList { get; set; } = [];
@@ -111,36 +154,52 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public string MarkDown
         {
-            get { return GetValue<string>(nameof(MarkDown)); }
-            set { SetValue(value, nameof(MarkDown)); }
+            get
+            {
+                return GetValue<string>(nameof(MarkDown));
+            }
+
+            set
+            {
+                SetValue(value, nameof(MarkDown));
+            }
         }
 
         public SharpBIMCommand OpenSubIssueListCommand { get; set; }
-
         public SharpBIMCommand PushIssueCommand { get; set; }
-
         public SharpBIMCommand ReloadIssueCommand { get; set; }
-
         public RepoModel SelectedRepo => GetParentViewModel<IssueListViewModel>().SelectedRepo;
 
         public bool ShowLabelsList
         {
-            get { return GetValue<bool>(nameof(ShowLabelsList)); }
-            set { SetValue(value, nameof(ShowLabelsList)); }
+            get
+            {
+                return GetValue<bool>(nameof(ShowLabelsList));
+            }
+
+            set
+            {
+                SetValue(value, nameof(ShowLabelsList));
+            }
         }
 
         public SharpBIMCommand ShowOnWebCommand { get; set; }
 
         public int TotalSubIssues
         {
-            get { return GetValue<int>(nameof(TotalSubIssues)); }
-            set { SetValue(value, nameof(TotalSubIssues)); }
+            get
+            {
+                return GetValue<int>(nameof(TotalSubIssues));
+            }
+
+            set
+            {
+                SetValue(value, nameof(TotalSubIssues));
+            }
         }
 
         #endregion Public Properties
-
         #region Public Methods
-
         public void AddImage(string localUrl, ContentModel sithubUrl)
         {
             srvrToLocal.Add(localUrl, sithubUrl);
@@ -175,34 +234,36 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             srvrToLocal.Clear();
             IssueLables.Clear();
             Assignees.Clear();
-
             base.Init(dataModel);
             Title = dataModel.Title;
             Id = dataModel.number;
             Description = dataModel.body_text;
-
             IsClosed = dataModel.closed_at != null;
             if (dataModel.Id != -1)
             {
                 Completed = dataModel.sub_issues_summary?.completed ?? 0;
                 TotalSubIssues = dataModel.sub_issues_summary?.total ?? 0;
             }
-            foreach (var label in dataModel.labels)
-            {
-                IssueLables.Add(label.ToModelView<LabelModelView>(this));
-            }
-            foreach (var assignee in dataModel.assignees)
-            {
-                Assignees.Add(assignee.ToModelView<AssigneeModelView>(this));
-            }
+
+            if (dataModel.labels != null)
+                foreach (var label in dataModel.labels)
+                {
+                    IssueLables.Add(label.ToModelView<LabelModelView>(this));
+                }
+
+            if (dataModel.assignees != null)
+                foreach (var assignee in dataModel.assignees)
+                {
+                    Assignees.Add(assignee.ToModelView<AssigneeModelView>(this));
+                }
+
+            AssignMeCommand.IsVisible = !Assignees.Any(o => o.ContextData.url.EQ(AppGlobals.User.UserAccount.url));
         }
 
         public ICollectionView LabelCollectionView { get; set; }
-
         public SharpBIMCommand AddLabelTextChangedCommand { get; set; }
 
         // Add this line to the constructor
-
         public async Task AddLabelTextChanged(object x)
         {
             try
@@ -221,8 +282,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                         }
                         else
                         {
-                            var newLabel = new GitLabel() { Name = value };
-
+                            var newLabel = new GitLabel()
+                            {
+                                Name = value
+                            };
                             exisitingLabel = newLabel.ToModelView<LabelModelView>(this);
                             AllGitLabelsList.Add(newLabel);
                             AllLabelsList.Add(exisitingLabel);
@@ -240,7 +303,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public string TypedInLabelName
         {
-            get { return GetValue<string>(nameof(TypedInLabelName)); }
+            get
+            {
+                return GetValue<string>(nameof(TypedInLabelName));
+            }
+
             set
             {
                 if (value.Trim().Length == 0)
@@ -265,6 +332,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 if (labelmv.ContextData.description.Contains(TypedInLabelName, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
+
             return false;
         }
 
@@ -291,6 +359,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 {
                     AllGitLabelsList = repoLabelsReport.Model.ToList();
                 }
+
                 AllLabelsList.Clear();
                 foreach (var label in AllGitLabelsList)
                 {
@@ -298,6 +367,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     AllLabelsList.Add(labelmv);
                 }
             }
+
             Task.Run(async () => MarkDown = await ProcessImagesInMarkdownAsync());
         }
 
@@ -305,7 +375,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             IssueModel parent = GetParentViewModel<IssueViewModel>().ContextData;
             IssueModel subIssue = this.ContextData;
-
             var report = await IssuesService.AddSubIssue(SelectedRepo, parent, subIssue, force);
             if (force == false && report.IsFailed)
             {
@@ -320,6 +389,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Replace Parent", report.ErrorMessage, [Statics.REPLACE, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
             }
+
             return report;
         }
 
@@ -327,7 +397,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             try
             {
-                var sublist = new SubIssueListViewModel() { ParentModelView = this };
+                var sublist = new SubIssueListViewModel()
+                {
+                    ParentModelView = this
+                };
                 await sublist.LoadIssuesAsync(x);
                 AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), sublist);
             }
@@ -362,9 +435,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         }
 
         #endregion Public Methods
-
         #region Private Methods
-
         private async Task<IServiceReport<IssueModel>> CreateIssueAsync()
         {
             IServiceReport<IssueModel> patchedReport = await IssuesService.CreateIssue(SelectedRepo, ContextData);
@@ -386,6 +457,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
                 }
             }
+
             return patchedReport;
         }
 
@@ -397,7 +469,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 string imageUrl = match.Groups[1].Value;
                 string imgId = imageUrl.Split('/').Last().Replace("?raw=true", "");
-
                 var contentModel = (await ContentService.GetFile(GetParentViewModel<IssueListViewModel>().SelectedRepo.name, $"images/{imgId}"))?.Model;
                 string localImagePath = null;
                 if (contentModel != null)
@@ -405,7 +476,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     if (contentModel.type == "file" && contentModel.encoding == "base64")
                     {
                         var saveReport = await AppGlobals.FileService.SaveFile(new MemoryStream(Convert.FromBase64String(contentModel.content)), FileExtension.png);
-
                         if (saveReport.IsFailed)
                         {
                             AppGlobals.MsgService.AlertUser(WindowHandle, "Saving Image Failed", saveReport.ErrorMessage);
@@ -434,7 +504,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                             if (imgUrl.Contains(imgId))
                             {
                                 localImagePath = await FetchImageAndSaveLocallyAsync(imgUrl);
-                                contentModel = new ContentModel() { html_url = imgUrl };
+                                contentModel = new ContentModel()
+                                {
+                                    html_url = imgUrl
+                                };
                                 break;
                             }
                         }
@@ -447,6 +520,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     AddImage(localImagePath, contentModel);
                 }
             }
+
             return markdownText;
         }
 
@@ -457,7 +531,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 // Set the Authorization header with your token
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AppGlobals.User.Token.access_token);
-
                 // Make the request to fetch the image
                 var response = await client.GetAsync(imageUrl);
                 if (response.IsSuccessStatusCode)
@@ -465,7 +538,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     // Save the image locally (e.g., in a temp folder)
                     var stream = await response.Content.ReadAsStreamAsync();
                     var saveReport = await AppGlobals.FileService.SaveFile(stream, FileExtension.png);
-
                     if (saveReport.IsFailed)
                     {
                         AppGlobals.MsgService.AlertUser(WindowHandle, "Saving Image Failed", saveReport.ErrorMessage);
@@ -489,6 +561,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
                 }
             }
+
             return patchedReport;
         }
 
@@ -496,7 +569,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         private async Task<IServiceReport<string>> PrepareForPushAsync()
         {
             var markdownreport = new ServiceReport<string>();
-
             string markDown = MarkDown;
             foreach (var key in srvrToLocal.Keys)
             {
@@ -530,7 +602,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     if (contentModel.sha != null)
                     {
                         // img is deleted and to be removed from server, is it even possible... needs investigation?
-
                         var report = await ContentService.DeleteFile(SelectedRepo, srvrToLocal[key]);
                         if (report.IsFailed)
                         {
@@ -539,15 +610,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     }
                 }
             }
-            markdownreport.Model = markDown;
 
+            markdownreport.Model = markDown;
             return markdownreport;
         }
 
         public SharpBIMCommand PastImageCommand { get; set; }
 
         // Add this line to the constructor
-
         public void PastImage(object x)
         {
             try
@@ -566,19 +636,21 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 string markdownText = issueBody.Split('\\').LastOrDefault();
                 markdownText = await ExtractImagesAsync(markdownText);
-
                 return markdownText;
             }
+
             return issueBody;
         }
 
         // Add this line to the constructor
-
         public void OpenComments(object x)
         {
             try
             {
-                var mv = new IssueCommentViewModel() { ParentModelView = this };
+                var mv = new IssueCommentViewModel()
+                {
+                    ParentModelView = this
+                };
                 mv.Init(ContextData);
                 AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueCommentView), mv);
             }
@@ -590,7 +662,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         private async Task PushIssueAsync(object obj)
         {
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Pushing", true);
-
             try
             {
                 if (!VerifyIssueBoreIssue())
@@ -599,13 +670,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 }
 
                 ContextData.Title = Title;
-
                 IServiceReport<IssueModel> patchedReport = null;
                 if (Id <= 0)
                 {
                     patchedReport = await CreateIssueAsync();
                     if (patchedReport.IsFailed)
-                    { return; }
+                    {
+                        return;
+                    }
                 }
 
                 var markdownReport = await PrepareForPushAsync();
@@ -620,7 +692,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 ContextData.state = IsClosed ? IssueState.closed.ToString() : IssueState.open.ToString();
                 ContextData.labels = IssueLables.Select(o => o.ContextData).ToArray();
                 var newLabels = IssueLables.Where(o => o.Id == 0 || o.Description != o.ContextData.description);
-
                 foreach (var label in newLabels)
                 {
                     var labelModel = label.ContextData;
@@ -636,7 +707,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 }
 
                 patchedReport = await PatchIssueAsync();
-
                 if (patchedReport.IsFailed)
                 {
                     return;
@@ -687,7 +757,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             throw new NotImplementedException();
         }
-
         #endregion Private Methods
     }
 }

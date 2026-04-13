@@ -137,7 +137,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             get { return GetValue<RepoModel>(nameof(SelectedRepo)); }
             set
             {
+                if(value != null && value == SelectedRepo)
+                    return;
                 SetValue(value, nameof(SelectedRepo));
+                LoadIssuesAsync(null);
             }
         }
 
@@ -151,7 +154,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 {
                     AppGlobals.User.LastRepoName = SelectedRepo.name;
                     AppGlobals.User.Save();
-                    await LoadIssuesAsync(null);
                 }
             }
         }

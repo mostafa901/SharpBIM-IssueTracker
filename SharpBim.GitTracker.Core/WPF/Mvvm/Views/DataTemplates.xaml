@@ -43,6 +43,7 @@
             Background="{Binding BackgroundBrush, UpdateSourceTrigger=PropertyChanged}"
             CornerRadius="15"
             Cursor="Hand">
+
             <TextBlock
                 Width="auto"
                 MinWidth="25"
@@ -129,7 +130,11 @@
             Background="Transparent"
             BorderBrush="{DynamicResource ControlBorderBrush}"
             BorderThickness="0,0,0,1">
-
+            <Border.ContextMenu>
+                <ui:UiContextMenu>
+                    <ui:UiMenuItem Command="{Binding CopyTitleCommand}" Header="Copy Title" />
+                </ui:UiContextMenu>
+            </Border.ContextMenu>
             <Grid>
                 <Grid.Style>
                     <Style TargetType="{x:Type Grid}">
@@ -278,12 +283,15 @@
                     Grid.ColumnSpan="2"
                     HorizontalAlignment="Right">
 
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding IssueLables.Count, Converter={Conv:ConvCountVisibility Min=0}}">
-                        <ItemsControl ItemTemplate="{StaticResource LabelDataTemplate}" ItemsSource="{Binding IssueLables}" />
+                    <StackPanel Orientation="Horizontal">
+                        <ItemsControl
+                            ItemTemplate="{StaticResource LabelDataTemplate}"
+                            ItemsSource="{Binding IssueLables}"
+                            Visibility="{Binding IssueLables.Count, Converter={Conv:ConvCountVisibility Min=0}}" />
                         <ui:UIButton
                             Appearance="Secondary"
                             Command="{Binding AssignMeCommand}"
-                            Style="{StaticResource IconButtonStyle}" />
+                            Style="{DynamicResource IconButtonStyle}" />
                         <ItemsControl ItemTemplate="{StaticResource AssigneeTemplate}" ItemsSource="{Binding Assignees}" />
                     </StackPanel>
                 </Grid>

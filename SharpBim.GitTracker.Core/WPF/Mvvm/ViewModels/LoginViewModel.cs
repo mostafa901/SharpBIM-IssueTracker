@@ -51,7 +51,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     // this is to rest the authentication and reautherize if needed
 
                     if (string.IsNullOrEmpty(StoredToken))
-         {
+                    {
                         AppGlobals.User = new GitUser();
                         AppGlobals.User.Save();
                     }
@@ -63,6 +63,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     else
                     {
                         AppGlobals.User.IsPersonalToken = false;
+                         AppGlobals.User.UserAccount ??= (await GitTrackerGlobals.AuthService.GetUserAccount()).Model;
                         auth = true;
                     }
                 }
@@ -80,11 +81,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                         AppGlobals.User.UserAccount = userAccountReport.Model.JDeserialize<Account>();
                         AppGlobals.User.Token.access_token = StoredToken;
                         AppGlobals.User.IsPersonalToken = true;
+
                     }
                 }
+                AppGlobals.User.Save();
                 if (auth)
                 {
-                    AppGlobals.User.UserAccount ??= (await GitTrackerGlobals.AuthService.GetUserAccount()).Model;
                     AppGlobals.User.RepoOwner = AppGlobals.User.UserAccount.login;
                     LoggedIn?.Invoke(this, null);
                 }

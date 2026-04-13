@@ -42,14 +42,14 @@ namespace SharpBIM.GitTracker.Core.GitHttp.Models
             try
             {
                 user = JsonSerializer.Deserialize<GitUser>(File.ReadAllText(UserConfigPath));
-                if(user.IsPersonalToken)
-                {
-                    user.Name = "Personal";
-                }
-                else
-                {
+                //if(user.IsPersonalToken)
+                //{
+                //    //user.Name = "Personal";
+                //}
+                //else
+                //{
                     user.Name = user.UserAccount?.login??"";
-                }
+                //}
             }
             catch (Exception)
             {

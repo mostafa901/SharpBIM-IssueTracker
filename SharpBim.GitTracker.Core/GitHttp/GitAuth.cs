@@ -64,6 +64,8 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 NeedAuthentication = false;
                 var confReport = await GetGitConfigAsync();
 
+                //restore user logins
+                AppGlobals.SharpUser = GitUser.Parse();
                 if (confReport.IsFailed)
                 {
                     Config = null;
@@ -148,7 +150,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             {
                 User.UserSecret = secret;
             }
-            if (string.IsNullOrEmpty(User.Name))
+   //         if (string.IsNullOrEmpty(User.Name))
             {
                 var accountReport = await GetUserAccount();
                 if (!accountReport.IsFailed)

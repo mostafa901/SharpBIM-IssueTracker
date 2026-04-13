@@ -172,12 +172,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             try
             {
                 var repoModel = await GetTrackerRepo();
-                var response  = await ReposSerivce.IsRepoStared(repoModel);
+                var response = await ReposSerivce.IsRepoStared(repoModel);
 
                 if (response.IsFailed)
                 {
                     StarRepoCommand.Icon = Glyphs.star_outline;
-                     response = await ReposSerivce.StarRepo(repoModel);
+                    response = await ReposSerivce.StarRepo(repoModel);
                     if (!response.IsFailed)
                         StarRepoCommand.Icon = Glyphs.star;
                 }
@@ -186,7 +186,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             {
             }
         }
-
+        bool firstlogin = true;
         public async Task Login(object x)
         {
             bool grantted = false;
@@ -194,11 +194,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             {
                 AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
 
-                grantted = AppGlobals.User.LoggedIn;
-                if (grantted)
+                if (!firstlogin)
                 {
-                    var accessReport = await AuthService.Login();
-                    grantted = !(accessReport.IsFailed);
+                    grantted = AppGlobals.User.LoggedIn;
+                    if (grantted)
+                    {
+                        var accessReport = await AuthService.Login();
+                        grantted = !(accessReport.IsFailed);
+                    }
                 }
             }
             catch (Exception ex)
@@ -216,6 +219,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                 ShowLoginScreenCommand.Hint = "Login";
                 ShowLoginScreenCommand.Icon = Glyphs.login;
                 await ShowLoginScreen(grantted);
+
             }
             else
             {
@@ -256,6 +260,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             AppGlobals.User.LoggedIn = true;
             AppGlobals.User.Save();
             AuthService.UpdateOwnerAccount(AppGlobals.User.RepoOwner);
+            firstlogin = false;
             IsLoginScreen = false;
             CurrentView = null;
             ShowLoginScreenCommand.Icon = Glyphs.logout;

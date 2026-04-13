@@ -3,7 +3,7 @@
     [int] $cleanOnly = 0,
     [int] $build = 0,
     [int] $Protect = 0,
-    [int] $justPack = 0,
+    [int] $justPack = 1,
     [int] $CommmitImages = 0,
     [int] $publish = 0,
     [int] $updateNuget = 0,
@@ -14,7 +14,7 @@ Set-Location $PSScriptRoot
 
 . "..\..\visualstudio-settings\PowerShellLibrary.ps1"
 
- # Get all bound parameters
+# Get all bound parameters
 $boundParams = $PSBoundParameters
 
 # Check if no parameters are provided
@@ -38,8 +38,7 @@ if ($boundParams.Count -eq 0) {
     exit
 }
 
-if($updateNuget -eq 1)
-{
+if ($updateNuget -eq 1) {
     CopyData ..\..\SharpBIM\Sharp_Nugets\*-win* .\nugets\
     dotnet restore
 }
@@ -50,12 +49,10 @@ $originalCulture = [System.Globalization.CultureInfo]::CurrentCulture
 
  
 
-if($cleanOnly -eq 1 )
-{
+if ($cleanOnly -eq 1 ) {
     clean
-   & "msbuild" .\SharpBim.GitTracker\SharpBim.GitTracker.csproj /p:Configuration=dwin /t:Restore -clp:Summary`;ErrorsOnly
-    if($build -eq 0)
-    {
+    & "msbuild" .\SharpBim.GitTracker\SharpBim.GitTracker.csproj /p:Configuration=dwin /t:Restore -clp:Summary`;ErrorsOnly
+    if ($build -eq 0) {
         Exit
     }
 }
@@ -67,64 +64,64 @@ $Global:newversion = "0.0"
 
 function Increment ($versionRegex, $filePath, $verpos) {
     # Define the path to the file where the version needs to be updated
-#$filePath = ".\SharpBIM.GitTracker\source.extension.vsixmanifest"
+    #$filePath = ".\SharpBIM.GitTracker\source.extension.vsixmanifest"
 
-# Read the content of the file
-$fileContent = Get-Content -Path $filePath
+    # Read the content of the file
+    $fileContent = Get-Content -Path $filePath
 
-# Define a regular expression to match Version="x.xxx"
-#$versionRegex = '" Version="(\d+\.\d+)"'
+    # Define a regular expression to match Version="x.xxx"
+    #$versionRegex = '" Version="(\d+\.\d+)"'
 
     $was = 0
     $now = 0
-
+ $newVersion =""
     $updated = $false
     # Split the content into individual lines and process each line
     $newfileContent = $fileContent -Split "`r?`n" | ForEach-Object {
-    if ($_ -eq "") { return }  # Skips empty lines
+        if ($_ -eq "") { return }  # Skips empty lines
 
-    if ($_ -match $versionRegex) {
-        # Extract the current version
-        $currentVersion = $matches[1]
+        if ($_ -match $versionRegex) {
+            # Extract the current version
+            $currentVersion = $matches[1]
 
-        # Split the version into major and minor parts
-        $versionParts = $currentVersion -split '\.'
+            # Split the version into major and minor parts
+            $versionParts = $currentVersion -split '\.'
 
-        # Increment the last part of the version
-        $minorVersion = [decimal]::Parse($versionParts[$verpos])
-        $Global:oldversion="$($versionParts[0]).$($versionParts[1]).0.0"
-        $minorVersion += 1
-        $Global:newversion="$($versionParts[0]).$($minorVersion).0.0"
+            # Increment the last part of the version
+            $minorVersion = [decimal]::Parse($versionParts[$verpos])
+            $Global:oldversion = "$($versionParts[0]).$($versionParts[1]).0.0"
+            $minorVersion += 1
+            $Global:newversion = "$($versionParts[0]).$($minorVersion).0.0"
 
-        # Construct the new version
-        $newVersion = "$($versionParts[0]).$([math]::Round($minorVersion, 3))"
-        $was = $currentVersion
-        $now = $newVersion
-        # Replace the old version with the new version
-        $_ -replace $currentVersion, $newVersion
+            # Construct the new version
+            $newVersion = "$($versionParts[0]).$([math]::Round($minorVersion, 3))"
+            $was = $currentVersion
+            $now = $newVersion
+            # Replace the old version with the new version
+            $_ -replace $currentVersion, $newVersion
 
-    $updated = $true
-    } else {
-        # If no version is found, leave the line unchanged
-        $_
+            $updated = $true
+        }
+        else {
+            # If no version is found, leave the line unchanged
+            $_
+        }
+
+        return $newversion
     }
-}
 
-if ($updated -eq $true)
-{
-# Write the updated content back to the file
-$newfileContent | Set-Content -Path $filePath
+    if ($updated -eq $true) {
+        # Write the updated content back to the file
+        $newfileContent | Set-Content -Path $filePath
 
-Write-Host "Version updated successfully! from $was to $now"
-}
+        Write-Host "Version updated successfully! from $was to $now"
+    }
 }
 
 # update Versions
 
-function updateVersions ($newVersion)
-{
+function updateVersions ( $folderPath , $newVersion) {
     # Define variables
-    $folderPath = $PSScriptRoot  # Set the folder path
     #$newVersion = "1.2.3.5"  # Set the new version
     #$newPlatformValue = "NewPlatformValue"  # Set the new value to replace "SA" or "Rvt2024"
 
@@ -136,10 +133,9 @@ function updateVersions ($newVersion)
     $files = Get-ChildItem -Path $folderPath -Recurse -Include *.props, *.xaml, *.cs, *.csproj -File
 
     foreach ($file in $files) {
-    if($file.Directory.FullName -match "bin" -or $file.Directory.FullName -match "obj")
-    {
-        continue
-    }
+        if ($file.Directory.FullName -match "bin" -or $file.Directory.FullName -match "obj") {
+            continue
+        }
         # Read the content of the file
         $fileContent = Get-Content -Path $file.FullName -Raw -Encoding UTF8
 
@@ -150,15 +146,15 @@ function updateVersions ($newVersion)
         if ($fileContent -match $versionPattern -and $file.Basename -eq "AssemblyInfo") {
             $fileContent = $fileContent -replace $versionPattern, $newVersion
             Write-Output "Updated version in: $($file.FullName)"
-        $updated = $true
+            $updated = $true
         }
 
         # Replace in csproject
         if ($file.Extension -eq ".csproj" -or $file.Extension -eq ".props") {
             if ($fileContent -cmatch $csProjPattern) {
-                $fileContent = $fileContent -replace $csProjPattern, ("<AssemblyVersion>"+$newVersion)
+                $fileContent = $fileContent -replace $csProjPattern, ("<AssemblyVersion>" + $newVersion)
                 Write-Output "Updated platform value in: $($file.FullName)"
-        $updated = $true
+                $updated = $true
             }
         }
 
@@ -169,53 +165,60 @@ function updateVersions ($newVersion)
     }
 }
 
-function updateRelease()
-{
+function updateRelease() {
     $xmlFile = ".\SharpBim.GitTracker\source.extension.vsixmanifest"  # Update with the correct file path
-    $xmlContent = Get-Content -Path $xmlFile -Raw
+    # Read the file
+    $content = Get-Content $xmlFile -Raw
 
-    $pattern = '(?<=<ReleaseNotes>https:\/\/github\.com\/mostafa901\/SharpBIM-IssueTracker\/releases\/tag\/)([\d\.]+)(?=<\/ReleaseNotes>)'
-    $versionParts = $Global:newversion -split '\.'
-    $replacement = "$($versionParts[0]).$($versionParts[1])"
+    $vers = $NewVersion -split '\.'
+    $tagVersion = "$($vers[0]).$($vers[1])"
 
-    $updatedXmlContent = [regex]::Replace($xmlContent, $pattern, $replacement)
+    # Update Version attribute in Identity element
+    $versionPattern = '(<Identity\s+[^>]*Version=")[^"]+(")'
+    $content = $content -replace $versionPattern, "`${1}$tagVersion`$2"
 
-    # Save the updated content back to the file
-    $updatedXmlContent | Set-Content -Path $xmlFile -Encoding UTF8
+    # Update ReleaseNotes URL (assuming format: /releases/tag/X.X.X)
+    # Extract just the numeric part for the tag (0.8.5.0 -> 0.805)
+    $releaseNotesPattern = '(<ReleaseNotes>https://github\.com/[^/]+/[^/]+/releases/tag/)[^<]+(<)'
+    $content = $content -replace $releaseNotesPattern, "`${1}$tagVersion`$2"
 
-    Write-Output "Version updated to $replacement in $xmlFile"
+    # Write back
+    Set-Content -Path $xmlFile -Value $content -NoNewline
+
+    Write-Host "✓ Updated Version to: $NewVersion" -ForegroundColor Green
+    Write-Host "✓ Updated ReleaseNotes tag to: $tagVersion" -ForegroundColor Green
 }
 
+
 # Build Project
-if($build -eq 1)`
-{
-    if($justPack -eq 1)
-    {
-        $versionRegex = '" Version="(\d+\.\d+)"'
-        Increment $versionRegex ".\SharpBim.GitTracker\source.extension.vsixmanifest" 1
-        updateVersions $Global:newversion
+if ($build -eq 1) {
+    if ($justPack -eq 1) {
+        # $versionRegex = '" Version="(\d+\.\d+)"'
+        # Increment $versionRegex ".\SharpBim.GitTracker\source.extension.vsixmanifest" 1
+        $Global:newversion = (Get-Item "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\bin\RWin\SharpBIM.GitTracker.Core.dll").VersionInfo.FileVersion
+        $folderPath = $PSScriptRoot  # Set the folder path
+        updateVersions  $folderPath  $Global:newversion
+        
         updateRelease
     }
 
     clean
+    
+    buildframework2 .\SharpBim.GitTracker\SharpBim.GitTracker.csproj Rwin
 
-  buildframework2 .\SharpBim.GitTracker\SharpBim.GitTracker.csproj Rwin
-
-  IsAllGood "Building project"
+    IsAllGood "Building project"
 }
 
-if($Protect -eq 1)
-{
-    $TargetDir ="D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\bin\RWin"
+if ($Protect -eq 1) {
+    $TargetDir = "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\bin\RWin"
 
-    if((IsObfuscated "$TargetDir\SharpBIM.dll") -eq $false)
-    {
+    if ((IsObfuscated "$TargetDir\SharpBIM.dll") -eq $false) {
         write-host "Failed Obfuscating SharpBIM.dll"
         exit
     }
     
     $tempDir = [System.IO.Path]::GetTempPath()
-    $fileName ="SharpBIM.GitTracker.Core.dll"
+    $fileName = "SharpBIM.GitTracker.Core.dll"
     $tempFile = "$tempDir\$fileName"
     Delete $tempFile
     
@@ -225,10 +228,9 @@ if($Protect -eq 1)
     note "protecting $targetPath"
   
     & "D:\Program Files (x86)\Eziriz\.NET Reactor\dotNET_Reactor.Console.exe" -project "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker.nrproj"
-}
+}   
 
-if($justPack -eq 1)
-{
+if ($justPack -eq 1) {
     # Define paths
     $vsixPath = "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\bin\RWin\SharpBim.GitTracker.vsix"
     $extractPath = "C:\Temp\VSIX_Extracted"
@@ -240,64 +242,63 @@ if($justPack -eq 1)
     #$folderToAdd = "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\GitPublish\Resources"        # Folder to add
     #$destinationFolder = "$extractPath\Resources"  # Destination inside extracted VSIX
 
-# Step 1: Extract the VSIX using .NET's ZipFile class
-Delete $extractPath
+    # Step 1: Extract the VSIX using .NET's ZipFile class
+    Delete $extractPath
 
-if (Test-Path $extractPath) {
-    Remove-Item -Recurse -Force $extractPath
-}
-[System.IO.Compression.ZipFile]::ExtractToDirectory($vsixPath, $extractPath)
-
-# Step 2: Remove the files
-$filesToRemove = @()
-
-foreach ($file in $filesToRemove) {
-    $removeFilePath = Join-Path $extractPath $file
-    if (Test-Path $removeFilePath) {`
-        Remove-Item $removeFilePath -Force
-        Write-Host "Deleted: $file"
-    } else {
-        Write-Host "File not found: $file"
+    if (Test-Path $extractPath) {
+        Remove-Item -Recurse -Force $extractPath
     }
-}
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($vsixPath, $extractPath)
 
-# Step 3: Remove any .pdb files
-$pdbAndConfigFiles = Get-ChildItem -Path $extractPath -Recurse | Where-Object { $_.Extension -in ('.pdb', '.config') }
-foreach ($pdb in $pdbFiles) {
-    Remove-Item $pdb.FullName -Force
-    Write-Host "Deleted: $($pdb.FullName)"
-}
+    # Step 2: Remove the files
+    $filesToRemove = @()
+
+    foreach ($file in $filesToRemove) {
+        $removeFilePath = Join-Path $extractPath $file
+        if (Test-Path $removeFilePath) {
+`
+                Remove-Item $removeFilePath -Force
+            Write-Host "Deleted: $file"
+        }
+        else {
+            Write-Host "File not found: $file"
+        }
+    }
+
+    # Step 3: Remove any .pdb files
+    $pdbAndConfigFiles = Get-ChildItem -Path $extractPath -Recurse | Where-Object { $_.Extension -in ('.pdb', '.config') }
+    foreach ($pdb in $pdbFiles) {
+        Remove-Item $pdb.FullName -Force
+        Write-Host "Deleted: $($pdb.FullName)"
+    }
 
 
-# Step 4: Sign the file
- #   cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
-  & $env:Signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH $newFilePath
+    # Step 4: Sign the file
+    #   cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
+    & $env:Signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH $newFilePath
     IsAllGood
 
-# Step 5: Repack the VSIX
-Delete $newVsixPath
-[System.IO.Compression.ZipFile]::CreateFromDirectory($extractPath, $newVsixPath)
+    # Step 5: Repack the VSIX
+    Delete $newVsixPath
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($extractPath, $newVsixPath)
 
-Write-Host "VSIX file modified and repacked successfully!"
+    Write-Host "VSIX file modified and repacked successfully!"
 }
 
-function CommitImages
-{
+function CommitImages {
     Write-Host "Committing Images"
     Copy-Item .\SharpBim.GitTracker\OverView.md .\SharpBim.GitTracker\README.md
-   # Copy-Item .\SharpBim.GitTracker\Images\*.*  .\SharpBim.GitTracker\Images -Force
+    # Copy-Item .\SharpBim.GitTracker\Images\*.*  .\SharpBim.GitTracker\Images -Force
     git -C .\ add .
     git -C .\ commit -m "Updated Images"
     git -C .\ push origin main-code -f
 }
 
-if($CommmitImages -eq 1 -and $publish -eq 0 )
-{
+if ($CommmitImages -eq 1 -and $publish -eq 0 ) {
     CommitImages
 }
 
-if($publish -eq 1)
-{
+if ($publish -eq 1) {
     CommitImages
     
     dotnet build .\SharpBIM.GitTracker.Console\SharpBIM.GitTracker.Console.csproj -c dnowin
@@ -312,28 +313,22 @@ if($publish -eq 1)
     Write-Host "Finished publish"
 }
 
-if($NuNugetCore -eq 1)
-{ 
-    foreach($conf in $confs)
-    {
+if ($NuNugetCore -eq 1) { 
+    foreach ($conf in $confs) {
         $confDir = $conf.Substring(1)
 
-        if($conf.ToString().StartsWith("R", [System.StringComparison]::OrdinalIgnoreCase))
-        {
-            if($Protect -eq 0)
-            {
+        if ($conf.ToString().StartsWith("R", [System.StringComparison]::OrdinalIgnoreCase)) {
+            if ($Protect -eq 0) {
                 IsObfuscated .\Publish\$conf\net47\SharpBIM.dll
                 IsObfuscated .\Publish\$conf\net472\SharpBIM.dll
                 IsObfuscated .\Publish\$conf\net48\SharpBIM.dll
-                if ($conf -eq "rwin")
-                {
+                if ($conf -eq "rwin") {
                     IsObfuscated .\Publish\$conf\net8.0-windows\SharpBIM.dll
                     IsObfuscated .\Publish\$conf\net8.0-windows8\SharpBIM.dll
                 }
             }
         }
-        else
-        {
+        else {
             Copy-Item "D:\RevitApi\Shared\SharpBIM\Publish\$conf\*" "D:\RevitApi\Shared\SharpBIM\Publish\R$confDir\" -Force -Recurse
         }
 

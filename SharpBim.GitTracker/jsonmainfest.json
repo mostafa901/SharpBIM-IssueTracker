@@ -35,6 +35,10 @@
             "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\overview_subissue.png",
             "targetPath": "Images/overview_subissue.png"
         },
+      {
+        "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\Overview_MenuPosition.png.png",
+        "targetPath": "Images/Overview_MenuPosition.png.png"
+      },
         {
             "pathOnDisk": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBIM.GitTracker\\Images\\Overview_Labels.png",
             "targetPath": "Images/Overview_Labels.png"
