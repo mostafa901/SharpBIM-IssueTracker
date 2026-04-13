@@ -1,5 +1,5 @@
 
-## Version 0.803 - March 2025
+## Version 0.808 - March 2025
 ☑️ Add feature to see Labels from list view #22
 ☑️ Add feature Assign or unassign yourself to an issue #28
 
