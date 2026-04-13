@@ -148,7 +148,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SharpBIM-win" Condition="'$(Configuration.ToLower().StartsWith(rwin))' ">
-      <Version>1.1.201</Version>
+      <Version>1.1.203</Version>
     </PackageReference>
   </ItemGroup>
   <!-- <ItemGroup Condition="'$(Configuration.ToLower().StartsWith(dwin))' "> -->
