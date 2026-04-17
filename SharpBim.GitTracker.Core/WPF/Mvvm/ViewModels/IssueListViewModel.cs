@@ -180,6 +180,9 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
             catch (Exception ex)
             {
+                var report = new ServiceReport<string>("Failed to Edit Issue");
+                report.Failed(ex);
+                report.Show("Failed to Edit Issue");
             }
         }
 
@@ -252,11 +255,14 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public async Task CreateNewIssue(object x)
         {
-            try
-            {
                 string subissue = "Sub-Issue";
                 string newissue = "New Issue";
                 IServiceReport<string> ans = new ServiceReport<string>(newissue);
+                
+            try
+            {
+                if (SelectedRepo == null)
+                    return;
                 if (SelectedIssueModel != null)
                 {
                     ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Create New issue", $"Do you want to create a new Issue", [newissue, subissue, Statics.CANCEL], SharpBIM.ServiceContracts.Enums.MessageType.Info);
@@ -280,6 +286,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
             catch (Exception ex)
             {
+                ans.Failed(ex);
+                ans.Show("Failed to Create Issue");
             }
         }
 

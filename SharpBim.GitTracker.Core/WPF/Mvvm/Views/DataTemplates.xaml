@@ -285,14 +285,28 @@
 
                     <StackPanel Orientation="Horizontal">
                         <ItemsControl
+                            VerticalAlignment="Bottom"
                             ItemTemplate="{StaticResource LabelDataTemplate}"
                             ItemsSource="{Binding IssueLables}"
                             Visibility="{Binding IssueLables.Count, Converter={Conv:ConvCountVisibility Min=0}}" />
                         <ui:UIButton
+                            VerticalAlignment="Bottom"
                             Appearance="Secondary"
                             Command="{Binding AssignMeCommand}"
                             Style="{DynamicResource IconButtonStyle}" />
-                        <ItemsControl ItemTemplate="{StaticResource AssigneeTemplate}" ItemsSource="{Binding Assignees}" />
+                        <ItemsControl
+                            VerticalAlignment="Bottom"
+                            ItemTemplate="{StaticResource AssigneeTemplate}"
+                            ItemsSource="{Binding Assignees}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid
+                                        Width="auto"
+                                        Columns="2"
+                                        FlowDirection="RightToLeft" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </StackPanel>
                 </Grid>
             </Grid>

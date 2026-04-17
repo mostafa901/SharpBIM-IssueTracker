@@ -1,8 +1,12 @@
 
 ## Version 0.808 - March 2025
-☑️ Add feature #22 to see Labels from list view
-☑️ Add feature #28 Assign or unassign yourself to an issue
-☑️ Add feature #20 - Right click to copy issue title
+☑️ Fix #29 internal crach on creating issue  
+☑️ Enhanced #30 issue card look and feel  
+
+## Version 0.808 - March 2025
+☑️ Add feature #22 to see Labels from list view  
+☑️ Add feature #28 Assign or unassign yourself to an issue  
+☑️ Add feature #20 - Right click to copy issue title  
 
 ## Version 0.795 - March 2025
 ☑️ fix Login buttons style is off. Code maintainability issue

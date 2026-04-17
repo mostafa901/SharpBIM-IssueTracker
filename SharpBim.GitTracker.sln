@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nugetspecs", "nugetspecs", 
 		RNowin.nuspec = RNowin.nuspec
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM", "..\..\SharpBIM\src\SharpBIM.csproj", "{9D036CEC-3634-12D9-E782-2B0B217B9CEF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		DNoWin|Any CPU = DNoWin|Any CPU
@@ -49,14 +47,6 @@ Global
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RNoWin|Any CPU.ActiveCfg = DWin|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.Build.0 = RWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DNoWin|Any CPU.ActiveCfg = DNoWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DNoWin|Any CPU.Build.0 = DNoWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DWin|Any CPU.ActiveCfg = DWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DWin|Any CPU.Build.0 = DWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RNoWin|Any CPU.ActiveCfg = RNoWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RNoWin|Any CPU.Build.0 = RNoWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
-		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RWin|Any CPU.Build.0 = RWin|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,15 +56,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78A88FC1-FF70-409A-8A90-0AB243BF70AD}
-	EndGlobalSection
-	GlobalSection(AutomaticVersions) = postSolution
-		UpdateAssemblyVersion.RWin|Any CPU = True
-		UpdateAssemblyFileVersion.RWin|Any CPU = True
-		UpdateAssemblyInfoVersion.RWin|Any CPU = False
-		AssemblyVersionSettings.RWin|Any CPU = None.Increment.None.None
-		AssemblyFileVersionSettings.RWin|Any CPU = None.Increment.None.None
-		UpdatePackageVersion.RWin|Any CPU = False
-		AssemblyInfoVersionType.RWin|Any CPU = SettingsVersion
-		InheritWinAppVersionFrom.RWin|Any CPU = None
 	EndGlobalSection
 EndGlobal

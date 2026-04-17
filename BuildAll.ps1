@@ -52,6 +52,7 @@ $originalCulture = [System.Globalization.CultureInfo]::CurrentCulture
 if ($cleanOnly -eq 1 ) {
     clean
     & "msbuild" .\SharpBim.GitTracker\SharpBim.GitTracker.csproj /p:Configuration=dwin /t:Restore -clp:Summary`;ErrorsOnly
+    & dotnet restore
     if ($build -eq 0) {
         Exit
     }
