@@ -1,5 +1,8 @@
 
 ## Version 0.810 - March 2025
+☑️ Added Missing libraries from the final build  
+
+## Version 0.810 - March 2025
 ☑️ Fix #29 internal crach on creating issue  
 ☑️ Enhanced #30 issue card look and feel  
 
