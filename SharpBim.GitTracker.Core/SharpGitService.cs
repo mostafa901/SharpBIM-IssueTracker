@@ -129,5 +129,28 @@ namespace SharpBIM.GitTracker.Core
 
             return report;
         }
+
+        async public Task<IServiceReport<IEnumerable<IssueModel>>> GetSubIssueModelsAsync(RepoModel repoModel, int issueNumber)
+        {
+            var report = new ServiceReport<IEnumerable<IssueModel>>();
+            var loginReport = await AuthService.LoginByPersonalToken(PersonalAccessCode);
+            if (loginReport.IsFailed)
+            {
+                report.Failed(loginReport.ErrorMessage);
+                return report;
+            }
+            var repoModelsReport = await IssuesService.GetSubIssues(repoModel, issueNumber);
+            if (repoModelsReport.IsFailed)
+            {
+                report.Failed(repoModelsReport.ErrorMessage);
+                return report;
+            }
+            var models = repoModelsReport.Model.ToList();
+            report.Model = models;
+
+            return report;
+        }
+
+
     }
 }

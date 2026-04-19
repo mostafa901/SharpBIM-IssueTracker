@@ -52,10 +52,66 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
+        public async Task<IServiceReport<IEnumerable<AssigneeModelView>>> ShowAssignees()
+        {
+            IServiceReport<IEnumerable<AssigneeModelView>> report = new ServiceReport<IEnumerable<AssigneeModelView>>();
+            var accountsReport = await GitAssigneesService.GetAssigneesAsync(SelectedRepo);
+            if (accountsReport.IsFailed)
+            {
+                AppGlobals.MsgService.AlertUser(WindowHandle, "Failed To Load Assignees", accountsReport.ErrorMessage);
+                report.Merge(accountsReport);
+                return report;
+            }
+            var accounts = accountsReport.Model.ToModelViews<AssigneeModelView>(this);
+            foreach (var assignee in Assignees)
+            {
+                var account = accounts.FirstOrDefault(o => o.ContextData.url.EQ(assignee.ContextData.url));
+                if (account != null)
+                {
+                    account.IsSelected = true;
+                }
+            }
+            report = AppGlobals.MsgService.SelectElement<AssigneeModelView>(WindowHandle, "Select Assignees", "Select assignees to assign to this issue", accounts);
+            return report;
+        }
         public async Task AssignMe(object x)
         {
             try
             {
+                var selectedReport = await ShowAssignees();
+                if (selectedReport.IsFailed)
+                {
+                    return;
+                }
+                var selected = selectedReport.Model.ToList();
+                var accounts = selected.Select(o => o.ContextData).ToList();
+
+                ContextData.assignees = accounts.ToArray();
+                var report = await PatchIssueAsync();
+                if (report.IsFailed)
+                {
+                    AppGlobals.MsgService.AlertUser(WindowHandle, "Failed To Assign", report.ErrorMessage);
+                    return;
+                }
+                Assignees.Clear();
+                foreach (var assignee in selected)
+                {
+
+                    Assignees.Add(assignee );
+                }
+                AssignMeCommand.IsVisible = !Assignees.Any();
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        public async Task AssignMe2(object x)
+        {
+            try
+            {
+                var accounts = await ShowAssignees();
+
                 if (Assignees.Any(o => o.ContextData.url.EQ(AppGlobals.User.UserAccount.url)))
                 {
                     var ans = AppGlobals.MsgService.AlertUser(WindowHandle, "Unassign Myself?", "You are already an assignee, do you want to unassign yourself?", [SharpBIM.Statics.YES, SharpBIM.Statics.NO], SharpBIM.ServiceContracts.Enums.MessageType.Info);
@@ -70,15 +126,15 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                         if (report.IsFailed)
                         {
                             AppGlobals.MsgService.AlertUser(WindowHandle, "Failed To Unassign", report.ErrorMessage);
-                            if(assignee != null)
+                            if (assignee != null)
                             {
                                 Assignees.Add(assignee);
                                 cleaned.Add(assignee.ContextData);
                                 ContextData.assignees = cleaned.ToArray();
                             }
-                        AssignMeCommand.IsVisible = true;
+                            AssignMeCommand.IsVisible = true;
+                        }
                     }
-					}
                 }
                 else
                 {
@@ -469,7 +525,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 string imageUrl = match.Groups[1].Value;
                 string imgId = imageUrl.Split('/').Last().Replace("?raw=true", "");
-                var contentModel = (await ContentService.GetFile(GetParentViewModel<IssueListViewModel>().SelectedRepo.name, $"images/{imgId}"))?.Model;
+                var contentModel = (await ContentService.GetFile(GetParentViewModel<IssueListViewModel>().SelectedRepo, $"images/{imgId}"))?.Model;
                 string localImagePath = null;
                 if (contentModel != null)
                 {

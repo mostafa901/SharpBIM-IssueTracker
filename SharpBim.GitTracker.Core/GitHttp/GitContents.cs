@@ -43,9 +43,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypes.VNDGITHUBJSON));
         }
 
-        public async Task<IServiceReport<ContentModel>> GetFile(string repoName, string filePath)
+        public async Task<IServiceReport<ContentModel>> GetFile(RepoModel repoModel, string filePath)
         {
-            var url = GetEndPoint(repoName,filePath);
+
+            var url = GetEndPoint(repoModel,filePath);
 
             var report = await base.GET(url);
             if (!report.IsFailed)

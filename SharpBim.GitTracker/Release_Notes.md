@@ -1,5 +1,9 @@
 
-## Version 0.810 - March 2025
+## Version 0.811 - March 2025
+☑️ Fix uploading image to issue body  
+☑️ Add feature assign or unassign multiple assignees to an issue  
+
+## Version 0.811 - March 2025
 ☑️ Added Missing libraries from the final build  
 
 ## Version 0.810 - March 2025

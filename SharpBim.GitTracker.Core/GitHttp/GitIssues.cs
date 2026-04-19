@@ -132,7 +132,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         // You cannot pass both `assignee` and `assignees`. Only one may be provided.
         public async Task<IServiceReport<IssueModel>> CreateIssue(RepoModel repoModel, IssueModel issue)
         {
-            var url = $"{GetEndPoint(repoModel)}";
+            var url = GetEndPoint(repoModel);
 
 
             // Set the content type to JSON
@@ -196,6 +196,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             string imageName = Path.GetFileName(filePath);
             //string url = $"https://api.github.com/repos/{Owner}/{repoName}/contents/issue-images/{issueNumber}/{imageName}";
             string url = GetEndPoint(repoModel, "contents", "issue-images", issueNumber, imageName);
+            url = url.Replace("/Issues/", "/", StringComparison.OrdinalIgnoreCase);
 
             // Convert image to Base64
             byte[] imageBytes = File.ReadAllBytes(filePath);
@@ -223,7 +224,6 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         public async Task<IServiceReport<IssueModel>> AddSubIssue(RepoModel repoModel, IssueModel parent, IssueModel subIssue, bool forceChange)
         {
             var url = GetEndPoint(repoModel, parent.number, "sub_issues");
-
             var body = new
             {
                 sub_issue_id = subIssue.Id,

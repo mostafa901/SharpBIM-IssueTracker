@@ -64,6 +64,7 @@ namespace SharpBIM.GitTracker.Core
         public static GitRepos ReposSerivce { get; internal set; }
         public static GitIssues IssuesService { get; internal set; }
         public static GitContents ContentService { get; internal set; }
+        public static GitAssignees GitAssigneesService { get; internal set; }
 #if WINDOWS
         public static GitToken TokenService { get; internal set; } 
 #endif
@@ -96,6 +97,7 @@ namespace SharpBIM.GitTracker.Core
             AuthService = new(this);
             ReposSerivce = new(this);
             IssuesService = new(this);
+            GitAssigneesService = new(this);
             ContentService = new(this);
 #if WINDOWS
             TokenService = new(this); 

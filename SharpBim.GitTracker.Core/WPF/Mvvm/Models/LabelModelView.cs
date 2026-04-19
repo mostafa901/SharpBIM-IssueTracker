@@ -20,6 +20,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
         public override Task Init(Account dataModel)
         {
             AvatarPath = dataModel.avatar_url;
+            Title = dataModel.login;
             return base.Init(dataModel);
         }
 
