@@ -27,6 +27,11 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             InitializeComponent();
         }
 
+        protected override Task<bool> OnLoadedAsync()
+        {
+            ViewModel.ColView.Refresh();
+            return base.OnLoadedAsync();
+        }
         private IssueListViewModel ViewModel => DataContext as IssueListViewModel;
     }
 }

@@ -26,7 +26,8 @@
                 Height="15"
                 Margin="2"
                 Cursor="Hand"
-                Source="{Binding AvatarPath}">
+                Source="{Binding AvatarPath}"
+                ToolTip="{Binding Title}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
                         <i:InvokeCommandAction Command="{Binding ParentModelView.AssignMeCommand}" />
@@ -291,8 +292,9 @@
                             Visibility="{Binding IssueLables.Count, Converter={Conv:ConvCountVisibility Min=0}}" />
                         <ui:UIButton
                             VerticalAlignment="Bottom"
-                            Appearance="Secondary"
+                            Background="Transparent"
                             Command="{Binding AssignMeCommand}"
+                            ShowText="False"
                             Style="{DynamicResource IconButtonStyle}" />
                         <ItemsControl
                             VerticalAlignment="Bottom"

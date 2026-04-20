@@ -1,5 +1,11 @@
 
 ## Version 0.812 - March 2025
+☑️ Fix bug if image inside issue is removed from github  
+☑️ Fix #18 sorting issue after adding a new issue  
+☑️ Add tool-tip to user avatar shows user name  
+☑️ remove window controls close, restore, minimize from message windows  
+
+## Version 0.812 - March 2025
 ☑️ Fix uploading image to issue body  
 ☑️ Add feature assign or unassign multiple assignees to an issue  
 

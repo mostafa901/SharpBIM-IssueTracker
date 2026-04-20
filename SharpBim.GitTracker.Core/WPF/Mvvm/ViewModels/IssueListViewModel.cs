@@ -137,7 +137,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             get { return GetValue<RepoModel>(nameof(SelectedRepo)); }
             set
             {
-                if(value != null && value == SelectedRepo)
+                if (value != null && value == SelectedRepo)
                     return;
                 SetValue(value, nameof(SelectedRepo));
                 LoadIssuesAsync(null);
@@ -176,6 +176,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 if (issueVM == null)
                     return;
                 await issueVM.LoadDetails();
+
                 AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueView), issueVM);
             }
             catch (Exception ex)
@@ -255,10 +256,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public async Task CreateNewIssue(object x)
         {
-                string subissue = "Sub-Issue";
-                string newissue = "New Issue";
-                IServiceReport<string> ans = new ServiceReport<string>(newissue);
-                
+            string subissue = "Sub-Issue";
+            string newissue = "New Issue";
+            IServiceReport<string> ans = new ServiceReport<string>(newissue);
+
             try
             {
                 if (SelectedRepo == null)
@@ -282,7 +283,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     issuemv.ParentModelView = SelectedIssueModel;
                     await SelectedIssueModel.AddItemsAsync([issuemv], Token);
                 }
-                EditIssue(issuemv);
+                await EditIssue(issuemv);
             }
             catch (Exception ex)
             {
@@ -297,7 +298,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             AppGlobals.AppViewContext.UpdateProgress(0, 0, "Fetching issues", true);
             List<IssueViewModel> issmvs = new();
 
- 
+
             await Task.Run((Func<Task>)(async () =>
           {
               try

@@ -52,7 +52,7 @@
                 <ui:UIButton
                     Grid.Column="1"
                     Width="auto"
-                    Margin="8"
+                    Margin="0"
                     Command="{Binding ReloadReposCommand}"
                     GlyphSize="25"
                     ShowText="False" />
@@ -68,13 +68,14 @@
 
             <ui:UIButton
                 Grid.Column="2"
-                Margin="5"
+                Margin="0,0,0,0"
                 Command="{Binding LoadCurrentProjectCommand}"
                 IsEnabled="{Binding LoggedIn}"
                 ShowText="False" />
 
             <ui:TaggedTextBox
                 Grid.Column="3"
+                Margin="0,0,0,0"
                 HorizontalAlignment="Stretch"
                 PlaceHolder="Repo Owner name"
                 Text="{Binding RepoOwner}"

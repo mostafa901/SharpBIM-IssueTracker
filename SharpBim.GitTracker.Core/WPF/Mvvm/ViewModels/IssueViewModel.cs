@@ -97,7 +97,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 foreach (var assignee in selected)
                 {
 
-                    Assignees.Add(assignee );
+                    Assignees.Add(assignee);
                 }
                 AssignMeCommand.IsVisible = !Assignees.Any();
 
@@ -279,6 +279,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 IsClosed = !IsClosed;
                 await PushIssueAsync(null);
+                CloseIssueCommand.Icon = IsClosed ? Glyphs.kpi_status_open : Glyphs.close_circle;
             }
             catch (Exception ex)
             {
@@ -295,6 +296,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             Id = dataModel.number;
             Description = dataModel.body_text;
             IsClosed = dataModel.closed_at != null;
+            CloseIssueCommand.Icon = IsClosed ? Glyphs.kpi_status_open : Glyphs.close_circle;
+
             if (dataModel.Id != -1)
             {
                 Completed = dataModel.sub_issues_summary?.completed ?? 0;
@@ -499,9 +502,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             {
                 ContextData = patchedReport.Model;
                 if (!IsSubIssue)
-                    await GetParentViewModel<IssueListViewModel>().AddItemsAsync([this], Token);
+                    GetParentViewModel<IssueListViewModel>().Children.Insert(0, this);
                 else
                 {
+
                     patchedReport = await MakeSubIssue();
                 }
             }
@@ -513,6 +517,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
                 }
             }
+            await Init(patchedReport.Model);
 
             return patchedReport;
         }
@@ -655,7 +660,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 else
                 {
                     var contentModel = srvrToLocal[key];
-                    if (contentModel.sha != null)
+                    if (contentModel?.sha != null)
                     {
                         // img is deleted and to be removed from server, is it even possible... needs investigation?
                         var report = await ContentService.DeleteFile(SelectedRepo, srvrToLocal[key]);
