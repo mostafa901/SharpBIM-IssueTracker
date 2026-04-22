@@ -1,5 +1,5 @@
 
-## Version 0.812 - March 2025
+## Version 0.813 - March 2025
 ☑️ Fix bug if image inside issue is removed from github  
 ☑️ Fix #18 sorting issue after adding a new issue  
 ☑️ Add tool-tip to user avatar shows user name  
