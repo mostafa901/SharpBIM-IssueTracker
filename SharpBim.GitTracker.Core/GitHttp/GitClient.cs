@@ -8,17 +8,16 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     {
         public static IGitConfig Config { get; set; }
 
-        protected virtual string GetEndPoint(params object[] values)
+
+        protected override string GetEndPoint(params object[] values)
         {
             RepoModel repoModel = values[0] as RepoModel;
-            var url = repoModel.url;
-            foreach (var item in values.Skip(1))
-            {
-                url += $"/{item}";
-            }
+            var listValues = values.ToList();
+            listValues.Insert(0, repoModel.url);
+            var url = base.GetEndPoint(listValues.ToArray());
+             
             return url;
         }
-
 
 #if WINDOWS
         internal GitUser User => GitTrackerGlobals.AppGlobals.User;
@@ -35,7 +34,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             Owner = newOwner;
         }
-
+     
         protected override async Task<IServiceReport<string>> SEND(HttpMethod method, string url, object requestBody)
         {
             if (!await AreWeAuthorized())
@@ -44,7 +43,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 authReport.Failed("Not Authorized");
                 return authReport;
             }
-            //if (RemaingCalls == 0)
+            //if (RemainingCalls == 0)
             //{
             //    return new ServiceReport<string>().Failed($"Tokens credits depleted. Credits will be refilled with in {TimeToReset}");
             //}
@@ -63,10 +62,10 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                 var callev = new CallEventArgs(method, url, requestBody?.JSerialize() ?? "Null body", response, report.Model);
                 ExecuteOnRequestedEvent(callev);
 
-                if (response.Headers.TryGetValues("X-RateLimit-Remaining", out IEnumerable<string> remaingCallString))
+                if (response.Headers.TryGetValues("X-RateLimit-Remaining", out IEnumerable<string> RemainingCallstring))
                 {
-                    RemaingCalls = int.Parse(remaingCallString.First());
-                    if (RemaingCalls == 0)
+                    RemainingCalls = int.Parse(RemainingCallstring.First());
+                    if (RemainingCalls == 0)
                     {
                         TimeToReset = TimeSpan.FromSeconds(int.Parse(response.Headers.GetValues("X-RateLimit-Remaining").First()));
                     }

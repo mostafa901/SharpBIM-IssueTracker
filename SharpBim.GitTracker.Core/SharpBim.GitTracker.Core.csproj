@@ -6,10 +6,10 @@
        
         <LangVersion>latest</LangVersion>
         <UserSecretsId>b2fcdead-28ce-41dd-9cf5-ec9e67c5f44e</UserSecretsId>
-        <AssemblyVersion>0.813.0.0</AssemblyVersion>
+        <AssemblyVersion>0.818.0.0</AssemblyVersion>
     </PropertyGroup>
     <PropertyGroup Condition="(('$(Configuration)' == 'DWin' Or '$(Configuration)' == 'RWin'))">
-        <TargetFrameworks>net47;net472;net48;net8.0-windows8</TargetFrameworks>
+        <TargetFrameworks>net47;net472;net48;net8.0-windows8;net10.0-windows8</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
         <UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
@@ -63,9 +63,9 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))">
-        <Reference Include="System.Net.Http">
+        <!--<Reference Include="System.Net.Http">
           <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.Http.dll</HintPath>
-        </Reference>
+        </Reference>-->
         <Reference Include="System.Web" />
     </ItemGroup>
     <ItemGroup>
