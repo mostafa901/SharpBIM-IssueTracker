@@ -119,6 +119,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
                 else
                 {
                     FillModels([pushReport.Model]);
+                    NewComment = string.Empty;
                 }
             }
             catch (Exception ex)

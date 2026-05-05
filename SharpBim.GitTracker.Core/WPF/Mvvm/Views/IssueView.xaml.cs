@@ -22,7 +22,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
     using System.Windows.Media;
     using SharpBIM.WPF.Assets;
     using System.Collections.Generic;
-    using MdXaml.Highlighting;
+    //using MdXaml.Highlighting;
     using ICSharpCode.AvalonEdit.Document;
     using System.Windows.Documents;
 
@@ -38,6 +38,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
         public IssueView()
         {
             InitializeComponent();
+            
         }
 
         public new IssueViewModel ViewModel => DataContext as IssueViewModel;

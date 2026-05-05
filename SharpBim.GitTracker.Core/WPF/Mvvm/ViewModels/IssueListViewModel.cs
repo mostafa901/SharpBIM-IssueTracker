@@ -315,6 +315,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                               if (issuesReport.IsFailed)
                               {
                                   AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to Load", issuesReport.ErrorMessage);
+                                  break;
                               }
                               else
                               {

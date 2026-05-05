@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
         <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-        <AssemblyVersion>0.813.0.0</AssemblyVersion>
+        <AssemblyVersion>0.821.0.0</AssemblyVersion>
         <Authors>Moustafa K. Elsayed</Authors>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Company>https://github.com/mostafa901</Company>
@@ -18,7 +18,7 @@
         <Product>SharpBIM</Product>
         <PublishSingleFile>false</PublishSingleFile>
         <RestorePackages>false</RestorePackages>
-        <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+        <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
         <XamlDebuggingInformation>True</XamlDebuggingInformation>
     </PropertyGroup>
 </Project>

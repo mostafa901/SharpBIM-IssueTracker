@@ -12,7 +12,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         protected override string GetEndPoint(params object[] values)
         {
             RepoModel repoModel = values[0] as RepoModel;
-            var listValues = values.ToList();
+            var listValues = values.Skip(1).ToList();
             listValues.Insert(0, repoModel.url);
             var url = base.GetEndPoint(listValues.ToArray());
              

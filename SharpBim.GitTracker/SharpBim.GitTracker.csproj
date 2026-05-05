@@ -112,26 +112,26 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.12.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+    <Reference Include="HtmlAgilityPack">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SharpBim.GitTracker.Core\bin\rwin\net48\HtmlAgilityPack.dll</HintPath>
+      <HintPath>..\SharpBim.GitTracker.Core\bin\$(Configuration)\net48\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.AvalonEdit, Version=6.3.0.90, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+    <Reference Include="ICSharpCode.AvalonEdit">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SharpBim.GitTracker.Core\bin\rwin\net48\ICSharpCode.AvalonEdit.dll</HintPath>
+      <HintPath>..\SharpBim.GitTracker.Core\bin\$(Configuration)\net48\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
-    <Reference Include="MdXaml, Version=1.27.0.0, Culture=neutral, PublicKeyToken=9f8c7afb435b7edc, processorArchitecture=MSIL">
+    <Reference Include="MdXaml">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SharpBim.GitTracker.Core\bin\rwin\net48\MdXaml.dll</HintPath>
+      <HintPath>..\SharpBim.GitTracker.Core\bin\$(Configuration)\net48\MdXaml.dll</HintPath>
     </Reference>
-    <Reference Include="MdXaml.Plugins, Version=1.27.0.0, Culture=neutral, PublicKeyToken=9f8c7afb435b7edc, processorArchitecture=MSIL">
+    <Reference Include="MdXaml.Plugins">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SharpBim.GitTracker.Core\bin\rwin\net48\MdXaml.Plugins.dll</HintPath>
+      <HintPath>..\SharpBim.GitTracker.Core\bin\$(Configuration)\net48\MdXaml.Plugins.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SharpBIM" Condition="'$(Configuration.ToLower().StartsWith(dwin))' ">
-      <HintPath>..\..\..\SharpBIM\Publish\$(Configuration)\net48\SharpBIM.dll</HintPath>
+      <HintPath>..\SharpBim.GitTracker.Core\bin\$(Configuration)\net48\SharpBIM.dll</HintPath>
     </Reference>
     <!-- <Reference Include="SharpBIM.GitTracker.Core" Condition="'$(Configuration.ToLower().StartsWith(dwin))' "> -->
     <!-- <HintPath>..\SharpBim.GitTracker.Core\bin\DWin\net48\SharpBIM.GitTracker.Core.dll</HintPath> -->
@@ -161,7 +161,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SharpBIM-win" Condition="'$(Configuration.ToLower().StartsWith(rwin))' ">
-      <Version>1.1.239</Version>
+      <Version>1.1.249</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration.ToLower().StartsWith(dwin))' ">

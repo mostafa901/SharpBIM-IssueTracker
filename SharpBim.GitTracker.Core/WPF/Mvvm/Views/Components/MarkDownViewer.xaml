@@ -2,6 +2,7 @@
     x:Class="SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Components.MarkDownViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:SharpBIM.GitTracker.Core.WPF.Mvvm.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -31,7 +32,7 @@
                     </Style.Triggers>
                 </Style>
 
-                <Style xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit" TargetType="avalonEdit:TextEditor">
+                <Style TargetType="avalonEdit:TextEditor">
                     <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
                     <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
                     <Setter Property="VerticalScrollBarVisibility" Value="Auto" />

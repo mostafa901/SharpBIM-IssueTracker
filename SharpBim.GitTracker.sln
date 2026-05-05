@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11723.231 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.GitTracker.Core", "SharpBim.GitTracker.Core\SharpBIM.GitTracker.Core.csproj", "{77C21FB6-A74C-B4A2-4FD2-1931375D32AC}"
 EndProject
@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nugetspecs", "nugetspecs", 
 		License.md = License.md
 		RNowin.nuspec = RNowin.nuspec
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM", "..\..\SharpBIM\src\SharpBIM.csproj", "{9D036CEC-3634-12D9-E782-2B0B217B9CEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,14 @@ Global
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RNoWin|Any CPU.ActiveCfg = DWin|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
 		{7C9DC9DE-0899-4E9E-A899-10945B57C48D}.RWin|Any CPU.Build.0 = RWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DNoWin|Any CPU.ActiveCfg = DNoWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DNoWin|Any CPU.Build.0 = DNoWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DWin|Any CPU.ActiveCfg = DWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.DWin|Any CPU.Build.0 = DWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RNoWin|Any CPU.ActiveCfg = RNoWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RNoWin|Any CPU.Build.0 = RNoWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RWin|Any CPU.ActiveCfg = RWin|Any CPU
+		{9D036CEC-3634-12D9-E782-2B0B217B9CEF}.RWin|Any CPU.Build.0 = RWin|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

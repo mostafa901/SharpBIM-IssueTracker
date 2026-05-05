@@ -1,5 +1,10 @@
 
 ## Version 0.813 - March 2025
+☑️ Press CTRL + ENTER to push comments  
+☑️ Updated MD Library to fix the #16
+☑️ Add Spell check to comments and Issue detail #14
+
+## Version 0.813 - March 2025
 ☑️ Fix bug if image inside issue is removed from github  
 ☑️ Fix #18 sorting issue after adding a new issue  
 ☑️ Add tool-tip to user avatar shows user name  
@@ -13,7 +18,7 @@
 ☑️ Added Missing libraries from the final build  
 
 ## Version 0.810 - March 2025
-☑️ Fix #29 internal crach on creating issue  
+☑️ Fix #29 internal crash on creating issue  
 ☑️ Enhanced #30 issue card look and feel  
 
 ## Version 0.808 - March 2025

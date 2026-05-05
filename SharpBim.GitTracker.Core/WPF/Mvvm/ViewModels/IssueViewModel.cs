@@ -62,7 +62,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 report.Merge(accountsReport);
                 return report;
             }
-            var accounts = accountsReport.Model.ToModelViews<AssigneeModelView>(this);
+            var accounts = accountsReport.Model.ToModelViews<AssigneeModelView>(this).ToList();
+
             foreach (var assignee in Assignees)
             {
                 var account = accounts.FirstOrDefault(o => o.ContextData.url.EQ(assignee.ContextData.url));
@@ -71,7 +72,21 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                     account.IsSelected = true;
                 }
             }
-            report = AppGlobals.MsgService.SelectElement<AssigneeModelView>(WindowHandle, "Select Assignees", "Select assignees to assign to this issue", accounts);
+            var currentUser = accounts.FirstOrDefault(x => x.ContextData.url == AppGlobals.User.UserAccount.url);
+            if (currentUser != null)
+            {
+                accounts.Remove(currentUser);
+                accounts.Insert(0,currentUser);
+                currentUser.IsSelected = true;
+            }
+            if (accounts.Count == 1 && accounts.First() == currentUser)
+            {
+                report.Model = accounts;
+            }
+            else
+            {
+                report = AppGlobals.MsgService.SelectElement<AssigneeModelView>(WindowHandle, "Select Assignees", "Select assignees to assign to this issue", accounts);
+            }
             return report;
         }
         public async Task AssignMe(object x)

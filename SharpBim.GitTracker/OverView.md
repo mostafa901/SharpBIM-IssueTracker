@@ -4,7 +4,7 @@
 
 ![OverView_Header](Images/OverView_Header.png)`
 
-## :telescope: Open and run from Tools Menu
+## 🛼 Open and run from Tools Menu
 ![OverView_MenuPosition](Images/Overview_MenuPosition.png)
 
 
@@ -42,8 +42,8 @@ images are committed to the selected Repo's default branch under Images folder. 
 ### Label management feature:
 ☑️ Create new label  
 ☑️ Update description  
-☑️ Assigns or unassigns label to an issue  
-☐ Remove Label from Repo [not yet]  
+☑️ Assigns or un-assigns label to an issue  
+☐ Remove Label from a repo [not yet]  
 
 ### Label management feature:
 ☑️ Add comment  
