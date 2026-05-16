@@ -15,7 +15,7 @@
         <UseWindowsForms>true</UseWindowsForms>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Configuration)' == 'DNoWin' Or '$(Configuration)' == 'RNoWin')">
-        <TargetFrameworks>net47;net472;net48;net8.0</TargetFrameworks>
+        <TargetFrameworks>net47;net472;net48;net8.0;net10.0</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WEB</DefineConstants>
     </PropertyGroup>
 	<PropertyGroup Condition="$(TargetFramework.startswith('net8'))">
@@ -95,7 +95,7 @@
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-        <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.12.40391" />
+        <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.13.40008" />
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
         <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET'))" />
     </ItemGroup>

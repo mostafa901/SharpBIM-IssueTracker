@@ -64,7 +64,12 @@ namespace SharpBIM.GitTracker.Core.GitHttp
 
         public async Task<IServiceReport<IEnumerable<ReleaseModel>>> GetReleasesByTag(RepoModel repoModel, string tag)
         {
-            var url = GetEndPoint(repoModel, "tags", tag);
+            var url = string.Empty;
+            if (!string.IsNullOrEmpty(tag))
+                url = GetEndPoint(repoModel, "tags", tag);
+            else
+                url = GetEndPoint(repoModel);
+
             var releaseReport = new ServiceReport<IEnumerable<ReleaseModel>>();
             var response = await GET(url);
             if (response.IsFailed)
