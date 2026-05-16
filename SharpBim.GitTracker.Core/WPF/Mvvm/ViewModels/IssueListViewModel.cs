@@ -5,20 +5,18 @@ using SharpBIM.GitTracker.Core.WPF.Mvvm.Views;
 using SharpBIM.GitTracker.Core.WPF.Helpers;
 using System.Runtime.CompilerServices;
 using SharpBIM.UIContext.Abstracts.Interfaces;
+using SharpBIM.GitTracker.Core.WPF.Views;
 
 namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
-    public class DummyListContext : IModel
-    {
-        public long Id { get; set; }
-        public string Title { get; set; }
-        public string StringValue { get; set; }
-        public string Name { get => Title; set => Title = value; }
-    }
-
-    public class IssueListViewModel : ModelViewBase<DummyListContext, IssueViewModel>
+     
+    public class IssueListViewModel : ModelViewBase<ModelBase, IssueViewModel>
     {
         #region Public Constructors
+        protected override void FillContextCommands()
+        {
+            VisitRepoCommand = new SharpBIMCommand(VisitRepo, "Visit repo", Glyphs.link_vertical, (x) => true);
+        }
 
         public IssueListViewModel()
         {
@@ -31,9 +29,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             FetchIssueCounts = 200;
             PageNumber = 1;
             AutoFilterState = true;
+            ProgressActivity = new();
         }
 
-        public override async Task Init(DummyListContext dataModel)
+        public override async Task Init(ModelBase dataModel)
         {
             base.Init(dataModel);
 
@@ -215,7 +214,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             try
             {
-                PageNumber = Math.Min(FetchIssueCounts / 100, PageNumber++);
+
+                var pagen = Math.Max(1, PageNumber + 1);
+                if (pagen != PageNumber)
+                    LoadIssuesAsync(pagen);
             }
             catch (Exception ex)
             {
@@ -232,7 +234,10 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         {
             try
             {
-                PageNumber = Math.Max(1, --PageNumber);
+                var pagen = Math.Max(1, PageNumber - 1);
+                if (pagen != PageNumber)
+                    LoadIssuesAsync(pagen);
+
             }
             catch (Exception ex)
             {
@@ -245,8 +250,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             get { return GetValue<int>(nameof(FetchIssueCounts)); }
             set
             {
-                value = (int)((Math.Ceiling((double)value / 100) * 100));
-                SetValue(value, nameof(FetchIssueCounts));
+                value = Math.Min(value, 100);
+                if (value != FetchIssueCounts)
+                {
+                    SetValue(value, nameof(FetchIssueCounts));
+                    LoadIssuesAsync(null);
+                }
             }
         }
 
@@ -292,11 +301,44 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
+        public int TotalIssues
+        {
+            get { return GetValue<int>(nameof(TotalIssues)); }
+            set { SetValue(value, nameof(TotalIssues)); }
+        }
+
+
+
+        public int TotalClosed
+        {
+            get { return GetValue<int>(nameof(TotalClosed)); }
+            set { SetValue(value, nameof(TotalClosed)); }
+        }
+
+
+
+        public int TotalOpened
+        {
+            get { return GetValue<int>(nameof(TotalOpened)); }
+            set { SetValue(value, nameof(TotalOpened)); }
+        }
+
+        public override SharpProgress ProgressActivity => GetParentViewModel<MainPageViewModel>()?.ProgressActivity;
+
         public virtual async Task LoadIssuesAsync(object x)
         {
             Children.Clear();
-            AppGlobals.AppViewContext.UpdateProgress(0, 0, "Fetching issues", true);
+
+            if (ProgressActivity == null)
+                return;
+            ProgressActivity.Reset();
             List<IssueViewModel> issmvs = new();
+
+            var pagenumber = PageNumber;
+            if (x is int xx)
+            {
+                pagenumber = xx;
+            }
 
 
             await Task.Run((Func<Task>)(async () =>
@@ -305,49 +347,72 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
               {
                   if ((SelectedRepo != null))
                   {
+                      TotalOpened = SelectedRepo.open_issues_count;
                       if (SelectedRepo.has_issues)
                       {
-                          int pCount = FetchIssueCounts / 100;
-                          for (int i = 0; i < pCount; i++)
+                          await ProgressActivity.SetMessage("Fetching issues");
+
+
+                          var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1, CurrentState, pagenumber, FetchIssueCounts);
+
+                          if (issuesReport.IsFailed)
                           {
-                              var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1, CurrentState, i + ((PageNumber - 1) * pCount));
+                              AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to Load", issuesReport.ErrorMessage);
 
-                              if (issuesReport.IsFailed)
+                          }
+                          else
+                          {
+#if true
+                              var issues = issuesReport.Model;
+                              PageNumber = pagenumber;
+                              if (!issues.Any())
                               {
-                                  AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to Load", issuesReport.ErrorMessage);
-                                  break;
+                                  PageNumber = Math.Max(1, PageNumber - 1);
+
                               }
-                              else
+                              foreach (var issue in issues)
                               {
-                                  var issues = issuesReport.Model;
-                                  List<long> addedIds = [];
-                                  foreach (var issue in issues)
+                                  if (issue.labels != null && issue.labels.Any((Func<GitLabel, bool>)(o => o.Name == "sub-issue")))
+                                      continue;
+                                  if (issue.parent_issue_url != null)
                                   {
-                                      if (issue.labels != null && issue.labels.Any((Func<GitLabel, bool>)(o => o.Name == "sub-issue")))
-                                          continue;
-                                      if (addedIds.Any(o => o == issue.number))
-                                          continue;
-                                      var issueModel = Dispatcher.Invoke(() => issue.ToModelView<IssueViewModel>(this));
-
-                                      issmvs.Add(issueModel);
+                                      continue;
                                   }
+                                  var issueModel = Dispatcher.Invoke(() => issue.ToModelView<IssueViewModel>(this));
 
-                                  await AddItemsAsync(issmvs, Token);
-                                  if (!issues.Any() || issues.Count() < FetchIssueCounts)
-                                  {
-                                      break;
-                                  }
+                                  issmvs.Add(issueModel);
                               }
+#endif
+
+                          }
+
+                      }
+                  }
+                  foreach (var issueModel in issmvs.ToList())
+                  {
+                      if (issueModel.ContextData.sub_issues_summary.total != 0)
+                      {
+                          var subissues = (await IssuesService.GetSubIssues(SelectedRepo, issueModel.ContextData.number)).Model.Where(x => x.state == CurrentState.ToString());
+                          var subIssueModels = Dispatcher.Invoke(() => subissues.ToModelViews<IssueViewModel>(issueModel).OrderBy(x => x.ContextData.number).Reverse());
+                          var index = issmvs.IndexOf(issueModel);
+                          for (int i = 0; i < subIssueModels.Count(); i++)
+                          {
+                              var subIssueModel = subIssueModels.ElementAt(i);
+                              subIssueModel.PreFix = $"#{issueModel.ContextData.number} -> ";
+                              issmvs.Insert(index + 1, subIssueModels.ElementAt(i));
                           }
                       }
                   }
+
+                  await AddItemsAsync(issmvs, Token);
+
               }
               catch (Exception ex)
               {
               }
               finally
               {
-                  AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+                  ProgressActivity.Reset();
               }
           })
         );
@@ -412,37 +477,58 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
+
+        public SharpBIMCommand VisitRepoCommand { get; set; }
+
+
+
+
+
+        public void VisitRepo(object x)
+        {
+            try
+            {
+                if (SelectedRepo != null)
+                    IOEx.OpenUrl(SelectedRepo.html_url);
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
         public SharpBIMCommand ReloadReposCommand { get; set; }
 
         // Add this line to the constructor
 
         public async Task ReloadRepos(object x)
         {
-            AppGlobals.AppViewContext.UpdateProgress(1, 1, "Loading Repos", true);
+            ProgressActivity.Reset();
+            ProgressActivity.IsVisible = true;
+            await ProgressActivity.SetMessage("Loading Repos");
             RepoModels.Clear();
             Children.Clear();
             IEnumerable<RepoModel> repoModels = [];
             await Task.Run(async () =>
-                 {
-                     try
-                     {
-                         await Task.Delay(50);
-                         var getRepoReport = await ReposSerivce.GetRepos();
-                         if (getRepoReport.IsFailed)
-                         {
-                             AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't Get Repositories", getRepoReport.ErrorMessage);
-                             return;
-                         }
+               {
+                   try
+                   {
+                       await Task.Delay(50);
+                       var getRepoReport = await ReposSerivce.GetRepos();
+                       if (getRepoReport.IsFailed)
+                       {
+                           AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't Get Repositories", getRepoReport.ErrorMessage);
+                           return;
+                       }
 
-                         repoModels = getRepoReport.Model;
-                     }
-                     catch (Exception ex)
-                     {
-                     }
-                     finally
-                     {
-                     }
-                 });
+                       repoModels = getRepoReport.Model;
+                   }
+                   catch (Exception ex)
+                   {
+                   }
+                   finally
+                   {
+                   }
+               });
 
             foreach (var repo in repoModels)
             {
@@ -454,13 +540,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
                 ?? RepoModels.FirstOrDefault(o => o.has_issues)
                 ?? RepoModels.FirstOrDefault();
 
-            if (SelectedRepo == null)
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
         }
-
         public virtual async Task Reload(object x)
         {
-            AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
+            ProgressActivity.Reset();
+            ProgressActivity.IsVisible = true;
+            await ProgressActivity.SetMessage("Logging In");
             await Login();
             if (LoggedIn)
             {
@@ -469,7 +554,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
             else
             {
-                AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+                ProgressActivity.Reset();
             }
         }
 
@@ -481,6 +566,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
         public override IServiceReport<bool> Validate()
         {
             throw new NotImplementedException();
+        }
+
+        async internal Task ReloadCount()
+        {
+            var repo = await ReposSerivce.GetRepos(SelectedRepo.full_name);
+            TotalOpened = repo.Model.First().open_issues_count;
         }
 
         #endregion Public Methods

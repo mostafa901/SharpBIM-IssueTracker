@@ -1,4 +1,6 @@
-﻿namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
+﻿using SharpBIM.GitTracker.Core.WPF.Views;
+
+namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 {
     public class SubIssueListViewModel : IssueListViewModel
     {
@@ -12,6 +14,7 @@
         {
             Title = "List of all SUB - issues";
         }
+        public override SharpProgress ProgressActivity => GetParentViewModel<MainPageViewModel>()?.ProgressActivity;
 
         public override async Task LoadIssuesAsync(object x)
         {

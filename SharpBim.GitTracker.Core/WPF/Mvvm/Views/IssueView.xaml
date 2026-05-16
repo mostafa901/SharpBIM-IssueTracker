@@ -79,7 +79,7 @@
                     MaxHeight="200"
                     HorizontalAlignment="Left"
                     ItemTemplate="{StaticResource LabelDataTemplate}"
-                    ItemsSource="{Binding IssueLables}">
+                    ItemsSource="{Binding IssueLabels}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />

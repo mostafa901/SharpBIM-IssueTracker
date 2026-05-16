@@ -8,21 +8,20 @@ namespace SharpBIM.GitTracker.Core.GitHttp
     {
         public static IGitConfig Config { get; set; }
 
-
         protected override string GetEndPoint(params object[] values)
         {
             RepoModel repoModel = values[0] as RepoModel;
             var listValues = values.Skip(1).ToList();
             listValues.Insert(0, repoModel.url);
             var url = base.GetEndPoint(listValues.ToArray());
-             
+
             return url;
         }
 
 #if WINDOWS
         internal GitUser User => GitTrackerGlobals.AppGlobals.User;
 #else
-        internal ISharpUser<SharpToken> User => AppGlobals.SharpUser; 
+        internal ISharpUser<SharpToken> User => AppGlobals.SharpUser;
 #endif
         protected static string Owner { get; private set; }
 
@@ -34,7 +33,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         {
             Owner = newOwner;
         }
-     
+
         protected override async Task<IServiceReport<string>> SEND(HttpMethod method, string url, object requestBody)
         {
             if (!await AreWeAuthorized())
@@ -79,7 +78,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
             return report;
         }
 
-        async protected override Task<AuthenticationHeaderValue> GetAuthentication()
+        protected override async Task<AuthenticationHeaderValue> GetAuthentication()
         {
             if (!string.IsNullOrEmpty(User.Token.access_token))
             {
@@ -207,6 +206,10 @@ public static class ResponseMessages
     {
         try
         {
+            if (string.IsNullOrEmpty(responseJson))
+            {
+                return responseJson;
+            }
             using var doc = JsonDocument.Parse(responseJson);
             string msg = responseJson;
             if (doc.RootElement.TryGetProperty("message", out JsonElement jse))

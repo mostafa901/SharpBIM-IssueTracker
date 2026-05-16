@@ -197,7 +197,7 @@ if ($build -eq 1) {
     if ($justPack -eq 1) {
         # $versionRegex = '" Version="(\d+\.\d+)"'
         # Increment $versionRegex ".\SharpBim.GitTracker\source.extension.vsixmanifest" 1
-        $Global:newversion = (Get-Item "D:\RevitApi\Shared\Study\SharpBim.Git\SharpBim.GitTracker\bin\RWin\SharpBIM.GitTracker.Core.dll").VersionInfo.FileVersion
+        $Global:newversion = (Get-Content -Path .\VersionControl.txt)
         $folderPath = $PSScriptRoot  # Set the folder path
         updateVersions  $folderPath  $Global:newversion
         

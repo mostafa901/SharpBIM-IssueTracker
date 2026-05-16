@@ -205,6 +205,7 @@
                             FontSize="14"
                             FontWeight="Bold"
                             TextWrapping="Wrap">
+                            <Run Text="{Binding PreFix}" />
                             <Run Text="#" />
                             <Run Text="{Binding Id}" />
                             <Run Text="-" />
@@ -288,8 +289,8 @@
                         <ItemsControl
                             VerticalAlignment="Bottom"
                             ItemTemplate="{StaticResource LabelDataTemplate}"
-                            ItemsSource="{Binding IssueLables}"
-                            Visibility="{Binding IssueLables.Count, Converter={Conv:ConvCountVisibility Min=0}}" />
+                            ItemsSource="{Binding IssueLabels}"
+                            Visibility="{Binding IssueLabels.Count, Converter={Conv:ConvCountVisibility Min=0}}" />
                         <ui:UIButton
                             VerticalAlignment="Bottom"
                             Background="Transparent"

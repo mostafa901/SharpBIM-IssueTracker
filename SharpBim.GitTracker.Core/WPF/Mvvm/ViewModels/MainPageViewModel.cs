@@ -33,7 +33,12 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             IsLoginScreen = true;
             var ver = this.GetType().Assembly.GetName().Version;
             Version = $"{ver.Major}.{ver.Minor}";
+            ProgressActivity = new();
+            ProgressActivity.FillBrush = ResourceValues.SolidColorBrushs.ControlBlueThemeBrush;
         }
+
+
+     
 
         public bool IsCheckingForUpdate
         {
@@ -192,7 +197,9 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             bool grantted = false;
             try
             {
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, "Logging In", true);
+                ProgressActivity.Reset();
+                ProgressActivity.IsVisible = true;
+                ProgressActivity.Title = "Logging In";
 
                 if (!firstlogin)
                 {
@@ -209,7 +216,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             }
             finally
             {
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
+                ProgressActivity.Reset();
             }
 
             if (!grantted)
@@ -268,7 +275,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             var vm = new IssueListViewModel() { ParentModelView = this, LoggedIn = true };
             AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
 
-            vm.Init(new DummyListContext());
+            await vm.Init(new DummyModelBase());
             await CheckForUpdates(null);
             var repo = new ServiceReport<string>();
             var repoModel = await GetTrackerRepo();
@@ -290,7 +297,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             {
                 var frame = x as Frame;
 
-                frame.GoForward();
+                frame?.GoForward();
             }
             catch (Exception ex)
             {
@@ -302,7 +309,16 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             try
             {
                 var frame = x as Frame;
-                frame.GoBack();
+                var issueModel = ((frame?.Content as Page)?.Content as IssueView)?.DataContext as IssueViewModel;
+                if(issueModel!=null)
+                {
+                    if(issueModel.ParentModelView is IssueViewModel parent)
+                    {
+                        parent.ReloadIssue(null);
+                    }
+                }
+                frame?.GoBack();
+
             }
             catch (Exception ex)
             {

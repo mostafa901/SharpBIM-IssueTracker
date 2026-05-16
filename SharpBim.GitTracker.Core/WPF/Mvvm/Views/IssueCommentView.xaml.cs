@@ -103,7 +103,9 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
         {
             try
             {
-                AppGlobals.AppViewContext.UpdateProgress(0, 0, "Pushing comment", true);
+                ProgressActivity.Reset();
+                ProgressActivity.IsVisible = true;
+                ProgressActivity.Title = "Pushing comment";
                 if (string.IsNullOrEmpty(NewComment))
                 {
                     AppGlobals.MsgService.AlertUser(WindowHandle, "Push comment", "Nothing to push");
@@ -127,7 +129,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Views
             }
             finally
             {
-                AppGlobals.AppViewContext.UpdateProgress(0, 0, null, true);
+                ProgressActivity.Reset();
             }
         }
 

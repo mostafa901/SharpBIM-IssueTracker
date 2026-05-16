@@ -11,6 +11,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             CancelCommand = new SharpBIMCommand(Cancel, Statics.CANCEL, Glyphs.empty, (x) => true);
 
         }
+        public override SharpProgress ProgressActivity => GetParentViewModel<MainPageViewModel>()?.ProgressActivity;
+
 
         public event EventHandler LoggedIn;
 
@@ -44,7 +46,9 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             try
             {
                 bool auth = false;
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, Statics.AUTHORIZING, true);
+                ProgressActivity.Reset();
+                ProgressActivity.IsVisible = true;
+                ProgressActivity.Title = Statics.AUTHORIZING;
 
                 if (string.IsNullOrEmpty(StoredToken))
                 {
@@ -96,7 +100,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
             }
             finally
             {
-                AppGlobals.AppViewContext.UpdateProgress(1, 1, null, true);
+                ProgressActivity.Reset();
             }
         }
 

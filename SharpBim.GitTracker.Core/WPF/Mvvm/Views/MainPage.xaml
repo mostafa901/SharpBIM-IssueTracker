@@ -145,8 +145,16 @@
                     Width="100"
                     MinHeight="5"
                     Foreground="{DynamicResource ControlBlueThemeBrush}"
-                    IsIndeterminate="True" />
+                    IsIndeterminate="False" />
             </Grid>
         </Border>
+
+
+        <ui:SharpProgressView
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            DataContext="{Binding ProgressActivity}" />
+
+
     </Grid>
 </uc:SharpBIMUserControl>

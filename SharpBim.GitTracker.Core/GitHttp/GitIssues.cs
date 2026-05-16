@@ -88,7 +88,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
         }
 
 
-        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetIssues(RepoModel repoModel, int number, IssueState state, int page = 1)
+        public async Task<IServiceReport<IEnumerable<IssueModel>>> GetIssues(RepoModel repoModel, int number, IssueState state, int page = 1,int count =100)
         {
             //  https://api.github.com/repos/OWNER/REPO/issues/ISSUE_NUMBER
             var url = GetEndPoint(repoModel);
@@ -110,7 +110,7 @@ namespace SharpBIM.GitTracker.Core.GitHttp
                     //sort   ,
                     //direction    ,
                     //since     ,
-                    per_page = 100,
+                    per_page = count,
                 };
                 url = EmbedParams(url, bodyParams);
             }

@@ -197,7 +197,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.Models
                 var issuemv = GetParentViewModel<IssueViewModel>();
                 if (x == null)
                 {
-                    issuemv.IssueLables.Remove(this);
+                    issuemv.IssueLabels.Remove(this);
                 }
                 else
                 {

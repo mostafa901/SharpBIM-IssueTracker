@@ -21,7 +21,7 @@
 images are committed to the selected Repo's default branch under Images folder. Unfortunately, there is no API access to private user contents to have images embedded inside your issue. another work around is to link the image from any cloud.
 
 ## How it works
-![Overview_Login](Images/overview_login.png)
+![Overview_Login](Images/Overview_Login.png)
 - Simply use your personal token to gain direct access to all your repositories.
 - Alternatively, register the app to allow it access to your account.
 - Select the repository from the drop down list to view all issues related to the chosen repository.

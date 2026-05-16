@@ -1,5 +1,10 @@
 
 ## Version 0.821 - March 2025
+☑️ #42 - labels are missed on creating  
+☑️ Fix refresh list page upon adding issue.
+☑️ #21 - Total number of opened issues are displayed.
+☑️ #41 - Feature visit repo
+## Version 0.821 - March 2025
 ☑️ Press CTRL + ENTER to push comments  
 ☑️ Updated MD Library to fix the #16
 ☑️ Add Spell check to comments and Issue detail #14
