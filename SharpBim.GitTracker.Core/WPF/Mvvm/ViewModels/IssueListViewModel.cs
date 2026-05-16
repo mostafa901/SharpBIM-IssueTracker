@@ -20,7 +20,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
 
         public IssueListViewModel()
         {
-            Title = "List of all issues";
             LoadCommands();
             ColView.Filter = FilterIssues;
             ColView.SortDescriptions.Clear(); // Clear previous sorting
@@ -345,6 +344,8 @@ namespace SharpBIM.GitTracker.Core.WPF.Mvvm.ViewModels
           {
               try
               {
+                  Title = $"List of all {CurrentState} issues";
+
                   if ((SelectedRepo != null))
                   {
                       TotalOpened = SelectedRepo.open_issues_count;

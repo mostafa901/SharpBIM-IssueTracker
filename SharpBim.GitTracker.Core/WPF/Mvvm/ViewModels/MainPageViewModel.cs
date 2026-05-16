@@ -28,7 +28,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             NavigateForwardCommand = new SharpBIMCommand(NavigateForward, "Navigate Forward", Glyphs.empty, (x) => true);
             CheckForUpdatesCommand = new SharpBIMCommand(async (x) => await CheckForUpdates(x), "Check for updates", Glyphs.empty, (x) => true);
             ShowLoginScreenCommand = new SharpBIMCommand(async (x) => await ShowLoginScreen(null), "Login", Glyphs.login, (x) => true);
-            FeedBackCommand = new SharpBIMCommand(async (x) => await FeedBack(x), "Feedback", Glyphs.notification, (x) => true);
+            FeedBackCommand = new SharpBIMCommand(async (x) => await FeedBack(x), "Feedback", Glyphs.question, (x) => true);
             StarRepoCommand = new SharpBIMCommand(async (x) => await StarRepo(x), "Star me", Glyphs.star_outline, (x) => true);
             IsLoginScreen = true;
             var ver = this.GetType().Assembly.GetName().Version;
@@ -36,9 +36,6 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
             ProgressActivity = new();
             ProgressActivity.FillBrush = ResourceValues.SolidColorBrushs.ControlBlueThemeBrush;
         }
-
-
-     
 
         public bool IsCheckingForUpdate
         {
@@ -72,6 +69,7 @@ namespace SharpBIM.GitTracker.Core.WPF.Views
                         if (releaseModel.tag_name != Version)
                         {
                             NewVersionLink = new Uri("https://marketplace.visualstudio.com/items?itemName=SharpBIM.SharpBIMGitTracker");
+                            Version = releaseModel.tag_name;
                         }
                     }
                 }

@@ -1,53 +1,66 @@
 
-## Version 0.822 - March 2025
+## Version 0.822 - May 2026
+☑️ UI Alignments  
+☑️ MessageBox location is fixed to be centered on the main window instead of the screen.  
+
+## Version 0.822 - May 2026
 ☑️ #42 - labels are missed on creating  
 ☑️ Fix refresh list page upon adding issue.
 ☑️ #21 - Total number of opened issues are displayed.
 ☑️ #41 - Feature visit repo
-## Version 0.821 - March 2025
+## Version 0.821 - May 2026
 ☑️ Press CTRL + ENTER to push comments  
 ☑️ Updated MD Library to fix the #16
 ☑️ Add Spell check to comments and Issue detail #14
 
-## Version 0.813 - March 2025
+## Version 0.813 - April 2026
 ☑️ Fix bug if image inside issue is removed from github  
 ☑️ Fix #18 sorting issue after adding a new issue  
 ☑️ Add tool-tip to user avatar shows user name  
 ☑️ remove window controls close, restore, minimize from message windows  
 
-## Version 0.812 - March 2025
+## Version 0.812 - April 2026
 ☑️ Fix uploading image to issue body  
 ☑️ Add feature assign or unassign multiple assignees to an issue  
 
-## Version 0.811 - March 2025
+## Version 0.811 - April 2026
 ☑️ Added Missing libraries from the final build  
 
-## Version 0.810 - March 2025
+## Version 0.810 - April 2026
 ☑️ Fix #29 internal crash on creating issue  
 ☑️ Enhanced #30 issue card look and feel  
 
-## Version 0.808 - March 2025
+## Version 0.808 - April 2026
 ☑️ Add feature #22 to see Labels from list view  
 ☑️ Add feature #28 Assign or unassign yourself to an issue  
 ☑️ Add feature #20 - Right click to copy issue title  
 
-## Version 0.795 - March 2025
+## Version 0.803 - April 2026
+☑️ Add feature to see Labels from list view #22
+☑️ Add feature Assign or unassign yourself to an issue #28
+
+## Version 0.795 - April 2026
 ☑️ fix Login buttons style is off. Code maintainability issue
 
-## Version 0.791 - March 2025
+
+## Version 0.791 - April 2026
 ☑️ fix #27 issue with posting and retrieving comments
 
-## Version 0.788 - March 2025
+## Version 0.788 - April 2026
 ☑️ Improved error pushing issues with different RepoOwner than the one used for login
 
-## Version 0.780 - March 2025
+## Version 0.780 - August 2025
 ☑️ Fix Application Missing credential
 
-## Version 0.762 - March 2025
+## Version 0.762 - May 2025
 ☑️ Fix Rest credential
 
 ## Version 0.756 - March 2025
 ☑️ Fix invalid credential upon login  
+
+## Version 0.755 - March 2025
+☑️ Fix invalid credential upon login
+
 
 ## Version 0.753 - March 2025
 ☑️ Implemented Check for updates, just click on the version text  
@@ -73,7 +86,7 @@
 ☑️ Fix bad linked references  
 ☑️ Display app version on the interface  
 
-## Version 0.740 - March 2025
+## Version 0.742 - March 2025
 
 ☑️ Fix issue #4 Hitting push crash  
 ☑️ Fix issue #3 Authorizing failure  

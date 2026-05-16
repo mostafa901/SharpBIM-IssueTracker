@@ -23,14 +23,19 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <WrapPanel VerticalAlignment="Top" Orientation="Horizontal">
-
-
-
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <Grid IsEnabled="{Binding LoggedIn}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
@@ -39,13 +44,7 @@
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <ui:UIButton
-                    Grid.Column="0"
-                    Width="auto"
-                    Margin="0"
-                    Command="{Binding VisitRepoCommand}"
-                    GlyphSize="15"
-                    ShowText="False" />
+
                 <ui:UiComboBox
                     Grid.Column="1"
                     MinWidth="150"
@@ -62,19 +61,12 @@
                     ShowText="False" />
 
             </Grid>
-            <ui:TaggedTextBox
-                Grid.Column="1"
-                IsNumericOnly="True"
-                TaggedText="Issues / Page"
-                TaggedWidth="100"
-                Text="{Binding FetchIssueCounts}"
-                ToolTip="Number of issues to show/fetch"
-                UpdateOnEnter="True" />
 
             <ui:UIButton
                 Grid.Column="2"
-                Margin="0,0,0,0"
+                Margin="5,0,0,0"
                 Command="{Binding LoadCurrentProjectCommand}"
+                GlyphRotation="90"
                 IsEnabled="{Binding LoggedIn}"
                 ShowText="False" />
 
@@ -87,21 +79,31 @@
                 TextAlignment="Right"
                 UpdateOnEnter="True"
                 Visibility="Collapsed" />
-        </WrapPanel>
-        <ui:SearchTextBox
-            Grid.Row="1"
-            Width="auto"
-            HorizontalAlignment="Stretch"
-            PlaceHolder="Search within the current page"
-            Text="{Binding TextToFilter, Delay=600, UpdateSourceTrigger=PropertyChanged}"
-            UpdateOnEnter="true" />
 
-        <Grid Grid.Row="2" Margin="0,8,0,0">
+            <ui:SearchTextBox
+                Grid.Column="4"
+                Width="auto"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Stretch"
+                PlaceHolder="Search within the current page"
+                Text="{Binding TextToFilter, Delay=600, UpdateSourceTrigger=PropertyChanged}"
+                UpdateOnEnter="true" />
+        </Grid>
+        <Separator Grid.Row="1" Margin="0,5"/>
+        <Grid Grid.Row="2"  >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel MinWidth="30">
+                <ui:UIButton
+                    Grid.Column="0"
+                    Width="30"
+                    Margin="0"
+                    Command="{Binding VisitRepoCommand}"
+                    GlyphRotation="90"
+                    GlyphSize="15"
+                    ShowText="False" />
                 <ui:UIButton Command="{Binding ReloadCommand}" ShowText="False" />
                 <ui:UIButton Command="{Binding CreateNewIssueCommand}" ShowText="False" />
                 <ui:UIButton
@@ -135,17 +137,22 @@
                 </i:Interaction.Triggers>
             </ListView>
         </Grid>
-        <Grid Grid.Row="3" Margin="30,0">
+        <Separator Grid.Row="3" Margin="0,5" />
+
+        <Grid Grid.Row="4" Margin="0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto " />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="auto " />
 
             </Grid.ColumnDefinitions>
-            <!--<TextBlock>
-                <Run>Closed:</Run>
-                <Run Text="{Binding TotalClosedIssues}" />
-            </TextBlock>-->
+            <ui:TaggedTextBox
+                IsNumericOnly="True"
+                TaggedText="Issues / Page"
+                TaggedWidth="100"
+                Text="{Binding FetchIssueCounts}"
+                ToolTip="Number of issues to show/fetch"
+                UpdateOnEnter="True" />
             <Grid Grid.Column="1" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
