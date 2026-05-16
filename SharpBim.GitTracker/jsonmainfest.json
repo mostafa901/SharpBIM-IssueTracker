@@ -7,7 +7,7 @@
 
         "Icon": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker\\IssueTracker_128x128.png"
     },
-    "overview": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker\\OverView.md", // Path to the "readme" file that gets uploaded to the Marketplace. Required.
+    "overview": "D:\\RevitApi\\Shared\\Study\\SharpBim.Git\\SharpBim.GitTracker\\README.md", // Path to the "readme" file that gets uploaded to the Marketplace. Required.
     "priceCategory": "free", // Either "free", "trial", or "paid". Defaults to "free".
     "publisher": "SharpBIM", // The name of the publisher. Required.
     "private": false, // Specifies whether or not the extension should be public when uploaded. Defaults to false.

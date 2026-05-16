@@ -289,7 +289,7 @@ if ($justPack -eq 1) {
 
 function CommitImages {
     Write-Host "Committing Images"
-    Copy-Item .\SharpBim.GitTracker\OverView.md .\SharpBim.GitTracker\README.md
+    #Copy-Item .\SharpBim.GitTracker\OverView.md .\SharpBim.GitTracker\README.md
     # Copy-Item .\SharpBim.GitTracker\Images\*.*  .\SharpBim.GitTracker\Images -Force
     git -C .\ add .
     git -C .\ commit -m "Updated Images"
@@ -308,6 +308,10 @@ if ($publish -eq 1) {
     & .\SharpBIM.GitTracker.Console\bin\Debug\net48\SharpBIM.GitTracker.Console.exe
     
     IsAllGood "update release"
+    
+    git -C .\ add .
+    git -C .\ commit -m "Release $($(Get-Content -Path .\VersionControl.txt))"
+    git -C .\ push origin main-code -f
 
     Write-Host "Publishing..."
     
@@ -341,5 +345,7 @@ if ($NuNugetCore -eq 1) {
         (Get-Content .\$($nuspecFileName)) -replace "<id>.*?</id>", "<id>SharpBIM-$confDir</id>" | Set-Content $($nuspecFileName)
 
         & "D:\RevitApi\Shared\Lib\Compiled\nuget.exe" pack .\$nuspecFileName -OutputDirectory .\Sharp_Nugets
+
     }
+    
 }

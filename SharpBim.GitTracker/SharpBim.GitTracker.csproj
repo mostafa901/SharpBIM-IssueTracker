@@ -98,6 +98,7 @@
     <Content Include="tickets2_32.ico" />
     <None Include="jsonmainfest.json" />
     <None Include="OverView.md" />
+    <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>

@@ -1,5 +1,5 @@
 
-## Version 0.821 - March 2025
+## Version 0.822 - March 2025
 ☑️ #42 - labels are missed on creating  
 ☑️ Fix refresh list page upon adding issue.
 ☑️ #21 - Total number of opened issues are displayed.
