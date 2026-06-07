@@ -1,0 +1,35 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="DNoWin" />
+    <BuildType Name="DWin" />
+    <BuildType Name="RNoWin" />
+    <BuildType Name="RWin" />
+    <BuildType Name="SA" />
+  </Configurations>
+  <Folder Name="/SolutionItems/">
+    <File Path="BuildAll.ps1" />
+    <File Path="SolutionItems/SharpBIM.Defaults.props" />
+    <File Path="SolutionItems/SharpBIM.Identity.props" />
+  </Folder>
+  <Project Path="../../SharpBIM/src/SharpBIM.csproj">
+    <BuildType Solution="SA|*" Project="DWin" />
+  </Project>
+  <Project Path="SharpBIM.IssueTracker.Console/SharpBIM.IssueTracker.Console.csproj">
+    <BuildType Solution="DNoWin|*" Project="Debug" />
+    <BuildType Solution="DWin|*" Project="Release" />
+    <BuildType Solution="RNoWin|*" Project="Debug" />
+    <BuildType Solution="RWin|*" Project="Debug" />
+    <BuildType Solution="SA|*" Project="Debug" />
+  </Project>
+  <Project Path="SharpBIM.IssueTracker.Core/SharpBIM.IssueTracker.Core.csproj" />
+  <Project Path="SharpBIM.IssueTracker/SharpBIM.IssueTracker.csproj" Id="5fdb7201-ff23-4432-9610-9e46ec5f0485">
+    <BuildType Solution="DNoWin|*" Project="Debug" />
+    <BuildType Solution="DWin|*" Project="Debug" />
+    <BuildType Solution="RNoWin|*" Project="Debug" />
+    <BuildType Solution="RWin|*" Project="Release" />
+    <BuildType Solution="SA|*" Project="Debug" />
+    <Build Solution="DNoWin|*" Project="false" />
+    <Build Solution="RNoWin|*" Project="false" />
+    <Build Solution="SA|*" Project="false" />
+  </Project>
+</Solution>

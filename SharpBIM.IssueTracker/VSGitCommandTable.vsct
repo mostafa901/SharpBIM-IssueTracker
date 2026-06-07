@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable
+    xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<Extern href="stdidcmd.h" />
+	<Extern href="vsshlids.h" />
+
+	<Include href="KnownImageIds.vsct" />
+	<Include href="VSGlobals.vsct" />
+
+	<Commands package="SharpBIMTrackerPackage">
+
+		<Groups>
+
+			<!-- Group under Tools menu -->
+			<Group
+				guid="SharpBIMTrackerMainMenu"
+				id="MyMenuGroup"
+				priority="0x0600">
+
+				<Parent
+					guid="guidSHLMainMenu"
+					id="IDM_VS_MENU_TOOLS" />
+			</Group>
+		</Groups>
+
+		<Buttons>
+
+			<Button
+				guid="SharpBIMTrackerCommand"
+				id="MyCommand"
+				priority="0x0100"
+				type="Button">
+
+				<Parent
+					guid="SharpBIMTrackerMainMenu"
+					id="MyMenuGroup" />
+				<Icon guid="IconList" id="GitWindowImg" />
+				<Strings>
+					<ButtonText>Issue Tracker</ButtonText>
+				</Strings>
+			</Button>
+		</Buttons>
+		<Bitmaps>
+			<Bitmap guid="IconList" href="Resources\tickets2_16.ico" usedList="GitWindowImg" />
+		</Bitmaps>
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="IconList" value="{aef89497-74ab-4922-9c76-ddb24b8fdb21}">
+			<IDSymbol name="GitWindowImg" value="1" />
+		</GuidSymbol>
+		<!-- Menu Group GUID -->
+		<GuidSymbol
+			name="SharpBIMTrackerMainMenu"
+			value="{24e154c4-bab4-4467-9480-1ec41b2342dc}">
+
+			<IDSymbol
+				name="MyMenuGroup"
+				value="0x1020" />
+		</GuidSymbol>
+
+		<!-- Package GUID -->
+		<GuidSymbol
+			name="SharpBIMTrackerPackage"
+			value="{dc5502ec-39af-432d-b9be-1fa7b25054ac}" />
+
+		<!-- Command Set GUID -->
+		<GuidSymbol
+			name="SharpBIMTrackerCommand"
+			value="{b52a8b31-6237-4c5f-85f2-172bbd16ec91}">
+
+			<IDSymbol
+				name="MyCommand"
+				value="0x0100" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>

@@ -1,0 +1,6 @@
+<Application x:Class="SharpBIM.IssueTracker.Core.WPF.SA.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="WPF/SA/MainWindow.xaml">
+    <Application.Resources />
+</Application>

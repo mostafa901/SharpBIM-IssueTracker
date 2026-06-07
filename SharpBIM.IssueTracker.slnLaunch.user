@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "SA",
+    "Projects": [
+      {
+        "Path": "SharpBIM.IssueTracker.Core\\SharpBIM.IssueTracker.Core.csproj",
+        "Action": "Start",
+        "DebugTarget": "SharpBIM.IssueTracker.Core"
+      }
+    ]
+  },
+  {
+    "Name": "VS",
+    "Projects": [
+      {
+        "Path": "SharpBIM.IssueTracker\\SharpBIM.IssueTracker.csproj",
+        "Action": "Start",
+        "DebugTarget": "Current Instance [Visual Studio Community 2026]"
+      }
+    ]
+  }
+]

@@ -2,23 +2,36 @@
     <PropertyGroup>
         <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
         <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-        <AssemblyVersion>0.825.0.0</AssemblyVersion>
         <Authors>Moustafa K. Elsayed</Authors>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Company>https://github.com/mostafa901</Company>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+      
+        <Company>SharpBIM</Company>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
         <Copyright>(c) SharpBIM</Copyright>
+        <DebugSymbols>true</DebugSymbols>
         <Deterministic>false</Deterministic>
         <EnableTargetFrameworkAlias>true</EnableTargetFrameworkAlias>
-        <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-        <ImplicitUsings>disable</ImplicitUsings>
+        <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+        <ImplicitUsings>disabled</ImplicitUsings>
         <LangVersion>latest</LangVersion>
+        <NoWarn>*</NoWarn>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <NeutralLanguage>en</NeutralLanguage>
-        <OutputType>Library</OutputType>
+        <OutputType Condition="'$(OutputType)' == ''">Library</OutputType>
+        <GenerateSatelliteAssembliesForCore>false</GenerateSatelliteAssembliesForCore>
+        <GenerateAssemblyConfigurationAttribute>true</GenerateAssemblyConfigurationAttribute>
         <Product>SharpBIM</Product>
         <PublishSingleFile>false</PublishSingleFile>
         <RestorePackages>false</RestorePackages>
         <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
         <XamlDebuggingInformation>True</XamlDebuggingInformation>
+        <PackageId>$(AssemblyName)-$(Configuration)</PackageId>
+        <SatelliteResourceLanguages></SatelliteResourceLanguages>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+        <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+        <SignAssembly>False</SignAssembly>
+        <DefineConstants>$(DefineConstants);TxtJson</DefineConstants>
     </PropertyGroup>
 </Project>
