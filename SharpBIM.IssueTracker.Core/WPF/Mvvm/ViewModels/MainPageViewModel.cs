@@ -151,7 +151,8 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
         RepoModel trackerRepo = null;
         private async Task<RepoModel> GetTrackerRepo()
         {
-            return trackerRepo ?? (trackerRepo = (await new GitRepos(AppGlobals).GetRepos()).Model.FirstOrDefault(x => x.name.EQ(AppGlobals.ApplicationDisplayName)));
+            var repos = await IssueTrackerGlobals.ReposSerivce.GetRepos(null);
+            return trackerRepo ??=repos.Model.FirstOrDefault(x => x.name.EQ(AppGlobals.ApplicationDisplayName));
         }
 
         public SharpBIMCommand StarRepoCommand { get; set; }

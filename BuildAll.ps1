@@ -26,11 +26,11 @@ using module "D:\RevitAPI\Shared\visualstudio-settings\TypicalProps\ProjectBuild
 param (
     [string[]] $Configs = @("Dwin"),
     [bool] $Clean = 0,
-    [bool] $Build =  1   ,
+    [bool] $Build =  0   ,
     [bool] $Protect = 0,
     [bool] $All = 0,
     [bool] $IgnoreCheck = 0,
-    [bool] $IncrementGit = 0,
+    [bool] $IncrementGit = 1,
     [int] $PublishToServer = 0,
     [bool] $publish=$false
 ) 
@@ -57,7 +57,10 @@ if ($IncrementGit -eq 1) {
     $newGitVersion = "$($versionParts[0]).$($minorVersion).0.0"
     (Set-Content -Path $gitPathString -Value $newGitVersion)    
     
-    SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+\.)" $gitPathString.$FolderPath "*.props" $newGitVersion
+    SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.props" $newGitVersion
+    SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.cs" $newGitVersion
+    SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.csproj" $newGitVersion
+    SetVersionAllFiles """ Version=""(\d+\.\d+)""" $gitPathString.$FolderPath "*.vsixmanifest" $newGitVersion
    
     IsAllGood "Building IssueTracker $conf"
 }
