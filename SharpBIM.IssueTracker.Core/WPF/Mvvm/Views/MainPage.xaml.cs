@@ -43,7 +43,9 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
         {
             Loaded -= MainPage_Loaded;
             AppGlobals.MainWindowHandle = ViewModel.WindowHandle = this.GetWindow().Handle();
+            AppGlobals.MsgService.AlertUser(this.Handle(), "hi", "there");
             await ViewModel.Login(null);
+
         }
 
         public async void UpdateProgress(double value, double max, string message, bool isIndeterminate)

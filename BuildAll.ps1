@@ -31,7 +31,8 @@ param (
     [bool] $All = 0,
     [bool] $IgnoreCheck = 0,
     [bool] $IncrementGit = 0,
-    [int] $PublishToServer = 0
+    [int] $PublishToServer = 0,
+    [bool] $publish=$false
 ) 
 Set-Location $PSScriptRoot
 $options = [BuildOptions]::new($Configs, $PSBoundParameters)
@@ -56,10 +57,30 @@ if ($IncrementGit -eq 1) {
     $newGitVersion = "$($versionParts[0]).$($minorVersion).0.0"
     (Set-Content -Path $gitPathString -Value $newGitVersion)    
     
+    SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+\.)" $gitPathString.$FolderPath "*.props" $newGitVersion
    
     IsAllGood "Building IssueTracker $conf"
 }
 $options.InvokeBuild()
+
+if ($publish) {
+    CommitImages
+    
+    dotnet build .\SharpBIM.GitTracker.Console\SharpBIM.IssueTracker.Console.csproj -c dnowin
+    Write-Host "Updating Release"
+    & .\SharpBIM.GitTracker.Console\bin\Debug\net48\SharpBIM.IssueTracker.Console.exe
+    
+    IsAllGood "update release"
+    
+    git -C .\ add .
+    git -C .\ commit -m "Release $($(Get-Content -Path .\VersionControl.txt))"
+    git -C .\ push origin main-code -f
+
+    Write-Host "Publishing..."
+    
+    & "C:\Program Files\Microsoft Visual Studio\2022\Community\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload ".\SharpBim.IssueTracker\GitPublish\SharpBim.GitTracker.vsix" -publishManifest ".\SharpBim.IssueTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
+    Write-Host "Finished publish"
+}
 #################################################
 
   

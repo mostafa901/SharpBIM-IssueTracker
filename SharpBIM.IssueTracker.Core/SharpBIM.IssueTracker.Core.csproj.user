@@ -6,4 +6,7 @@
   <PropertyGroup>
     <ActiveDebugProfile>SharpBIM.IssueTracker.Core</ActiveDebugProfile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='SA|net47|AnyCPU'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

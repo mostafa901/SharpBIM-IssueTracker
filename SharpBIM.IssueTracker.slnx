@@ -20,6 +20,7 @@
     <BuildType Solution="RNoWin|*" Project="Debug" />
     <BuildType Solution="RWin|*" Project="Debug" />
     <BuildType Solution="SA|*" Project="Debug" />
+    <Build Solution="RWin|*" Project="false" />
   </Project>
   <Project Path="SharpBIM.IssueTracker.Core/SharpBIM.IssueTracker.Core.csproj" />
   <Project Path="SharpBIM.IssueTracker/SharpBIM.IssueTracker.csproj" Id="5fdb7201-ff23-4432-9610-9e46ec5f0485">

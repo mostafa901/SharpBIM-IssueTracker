@@ -522,9 +522,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
             if (!patchedReport.IsFailed)
             {
                 ContextData = patchedReport.Model;
-                if (!IsSubIssue)
-                    GetParentViewModel<IssueListViewModel>().Children.Insert(0, this);
-                else
+                if (IsSubIssue)
                 {
                     patchedReport = await MakeSubIssue();
                 }
@@ -537,8 +535,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                     parentismv.Dispatcher.Invoke(() => parentismv.Children.Remove(this));
                 }
             }
-            //    await Init(patchedReport.Model);
-
             return patchedReport;
         }
 
@@ -779,6 +775,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                     {
                         return;
                     }
+                    
                     parent.Children.Insert(0, this);
                 }
 
@@ -834,6 +831,10 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                     }
                 }
                 await parent.ReloadCount();
+                if (this.IsSubIssue)
+                {
+                    Title = $"{GetParentViewModel<IssueViewModel>().ContextData.number} => {Title}";
+                }
             }
             catch (Exception)
             {

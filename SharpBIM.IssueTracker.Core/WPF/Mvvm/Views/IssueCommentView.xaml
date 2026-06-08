@@ -51,6 +51,7 @@
             <ui:TaggedTextBox Height="auto"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
+                              VerticalContentAlignment="Top"
                               AcceptsReturn="True"
                               AcceptsTab="True"
                               PlaceHolder="Add comment here"
@@ -64,7 +65,7 @@
                 </ui:TaggedTextBox.InputBindings>
             </ui:TaggedTextBox>
             <StackPanel Grid.Column="1"
-                        Orientation="Horizontal">
+                        Orientation="Vertical">
                 <ui:UIButton Background="Transparent"
                              Command="{Binding ReloadIssueCommand}"
                              ShowText="False" />

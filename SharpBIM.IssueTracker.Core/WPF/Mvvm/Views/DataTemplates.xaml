@@ -108,7 +108,7 @@
 
                 <ui:MarkDownViewer x:Name="mk"
                                    Grid.Row="1"
-                                   DataContext="{Binding}" />
+                                   Markdown="{Binding MarkDown}" />
                 <TextBlock Grid.Row="2"
                            HorizontalAlignment="Right"
                            FontSize="11"
@@ -144,14 +144,14 @@
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Collapsed" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Margin" Value="0,0,15,0" />
+                                <Setter Property="Margin" Value="0,0,0,0" />
                             </MultiDataTrigger>
 
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding ComputedVerticalScrollBarVisibility, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="Visible" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Margin" Value="0,0,30,0" />
+                                <Setter Property="Margin" Value="0,0,0,0" />
                             </MultiDataTrigger>
 
                             <MultiDataTrigger>

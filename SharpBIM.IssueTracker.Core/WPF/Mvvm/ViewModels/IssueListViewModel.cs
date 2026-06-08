@@ -9,7 +9,7 @@ using SharpBIM.IssueTracker.Core.WPF.Views;
 
 namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
 {
-     
+
     public class IssueListViewModel : ModelViewBase<ModelBase, IssueViewModel>
     {
         #region Public Constructors
@@ -354,7 +354,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                           await ProgressActivity.SetMessage("Fetching issues");
 
 
-                          var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1, CurrentState, pagenumber, FetchIssueCounts);
+                          var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1,  CurrentState, pagenumber, FetchIssueCounts);
 
                           if (issuesReport.IsFailed)
                           {
@@ -544,19 +544,10 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
         }
         public virtual async Task Reload(object x)
         {
-            ProgressActivity.Reset();
-            ProgressActivity.IsVisible = true;
-            await ProgressActivity.SetMessage("Logging In");
-            await Login();
-            if (LoggedIn)
-            {
-                Children.Clear();
-                await LoadOpenIssuesAsync(null);
-            }
-            else
-            {
-                ProgressActivity.Reset();
-            }
+
+            Children.Clear();
+            await LoadOpenIssuesAsync(null);
+
         }
 
         public override IServiceReport<bool> Save()

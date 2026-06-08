@@ -26,7 +26,7 @@
         <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
         <XamlDebuggingInformation>True</XamlDebuggingInformation>
         <PackageId>$(AssemblyName)-$(Configuration)</PackageId>
-        <SatelliteResourceLanguages></SatelliteResourceLanguages>
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <PreserveCompilationContext>true</PreserveCompilationContext>
         <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
