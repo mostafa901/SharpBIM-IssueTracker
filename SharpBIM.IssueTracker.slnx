@@ -16,17 +16,18 @@
   </Project>
   <Project Path="SharpBIM.IssueTracker.Console/SharpBIM.IssueTracker.Console.csproj">
     <BuildType Solution="DNoWin|*" Project="Debug" />
-    <BuildType Solution="DWin|*" Project="Release" />
-    <BuildType Solution="RNoWin|*" Project="Debug" />
-    <BuildType Solution="RWin|*" Project="Debug" />
+    <BuildType Solution="DWin|*" Project="Debug" />
+    <BuildType Solution="RNoWin|*" Project="Release" />
+    <BuildType Solution="RWin|*" Project="Release" />
     <BuildType Solution="SA|*" Project="Debug" />
+    <Build Solution="DWin|*" Project="false" />
     <Build Solution="RWin|*" Project="false" />
   </Project>
   <Project Path="SharpBIM.IssueTracker.Core/SharpBIM.IssueTracker.Core.csproj" />
   <Project Path="SharpBIM.IssueTracker/SharpBIM.IssueTracker.csproj" Id="5fdb7201-ff23-4432-9610-9e46ec5f0485">
     <BuildType Solution="DNoWin|*" Project="Debug" />
     <BuildType Solution="DWin|*" Project="Debug" />
-    <BuildType Solution="RNoWin|*" Project="Debug" />
+    <BuildType Solution="RNoWin|*" Project="Release" />
     <BuildType Solution="RWin|*" Project="Release" />
     <BuildType Solution="SA|*" Project="Debug" />
     <Build Solution="DNoWin|*" Project="false" />

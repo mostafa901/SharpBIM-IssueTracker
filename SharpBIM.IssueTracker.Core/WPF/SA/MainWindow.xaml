@@ -5,9 +5,10 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM"
                  Padding="0"
+                 FrameBrush="{StaticResource ControlBackgroundHoverBrush}"
                  HeaderVisibitlity="Collapsed"
                  ShowHeaderControls="False"
-                 ThemeOuterBorderThickness="0"
+                 ThemeOuterBorderThickness="1"
                  ThemeOuterMargin="0 0 15 15"
                  Topmost="False"
                  mc:Ignorable="d">

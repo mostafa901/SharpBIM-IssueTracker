@@ -19,7 +19,6 @@ namespace SharpBIM.IssueTracker
 
         public override Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
         {
-            
             return Task.FromResult<FrameworkElement>(new MainPage());
         }
 

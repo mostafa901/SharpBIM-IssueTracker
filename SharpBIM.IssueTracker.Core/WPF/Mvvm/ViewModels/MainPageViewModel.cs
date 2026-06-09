@@ -19,8 +19,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
             FeedBackCommand = new SharpBIMCommand(async (x) => await FeedBack(x), "Feedback", Glyphs.question, (x) => true);
             StarRepoCommand = new SharpBIMCommand(async (x) => await StarRepo(x), "Star me", Glyphs.star_outline, (x) => true);
             IsLoginScreen = true;
-            var ver = this.GetType().Assembly.GetName().Version;
-            Version = $"{ver.Major}.{ver.Minor}";
+            Version = AppGlobals.ApplicationVersionString;
             ProgressActivity = new();
             ProgressActivity.FillBrush = ResourceValues.SolidColorBrushs.ControlBlueThemeBrush;
         }
@@ -152,7 +151,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
         private async Task<RepoModel> GetTrackerRepo()
         {
             var repos = await IssueTrackerGlobals.ReposSerivce.GetRepos(null);
-            return trackerRepo ??=repos.Model.FirstOrDefault(x => x.name.EQ(AppGlobals.ApplicationDisplayName));
+            return trackerRepo ??= repos.Model.FirstOrDefault(x => x.name.EQ(AppGlobals.ApplicationDisplayName));
         }
 
         public SharpBIMCommand StarRepoCommand { get; set; }
@@ -182,7 +181,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
         public async Task Login(object x)
         {
             bool grantted = false;
-              AuthService.LoadGitConfigAsync().DoNotAwait();
+            AuthService.LoadGitConfigAsync().DoNotAwait();
             try
             {
                 ProgressActivity.Reset();
@@ -209,6 +208,12 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
 
             if (!grantted)
             {
+                var key = Environment.GetEnvironmentVariable("GitKey");
+                if (!string.IsNullOrEmpty(key))
+                {
+                    AppGlobals.User.IsPersonalToken = true;
+                    AppGlobals.User.Token.access_token = key;
+                }
                 AppGlobals.User.LoggedIn = false;
                 AppGlobals.AppSettings.Save();
                 ShowLoginScreenCommand.Hint = "Login";
@@ -218,6 +223,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
             }
             else
             {
+
                 ViewModel_LoggedIn(null, null);
             }
         }

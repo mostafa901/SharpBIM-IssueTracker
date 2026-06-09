@@ -24,22 +24,27 @@ using module "D:\RevitAPI\Shared\visualstudio-settings\TypicalProps\ProjectBuild
  
 [CmdletBinding()]
 param (
-    [string[]] $Configs = @("Dwin"),
-    [bool] $Clean = 0,
-    [bool] $Build =  0   ,
+    [string[]] $Configs = @("Rwin"),
+    [bool] $Clean = 1,
+    [bool] $Build = 1,
     [bool] $Protect = 0,
     [bool] $All = 0,
     [bool] $IgnoreCheck = 0,
-    [bool] $IncrementGit = 1,
+    [bool] $IncrementGit = 0,
     [int] $PublishToServer = 0,
-    [bool] $publish=$false
+    [bool] $publish = $false
 ) 
 Set-Location $PSScriptRoot
 $options = [BuildOptions]::new($Configs, $PSBoundParameters)
 $options.IsDotNetBuild = $true
-& (Get-Item ..\..\SharpBIM\BuildAll.ps1).FullName -Clean 1 -Configs Dwin
-Set-Location $PSScriptRoot
 
+#& (Get-Item ..\..\SharpBIM\BuildAll.ps1).FullName -Clean 1 -Configs Rwin
+Set-Location $PSScriptRoot
+if($Clean)
+{
+    $options.Initialize(".\SharpBIM.IssueTracker\SharpBIM.IssueTracker.csproj")
+    $options.InvokeBuild()
+}
 $options.FilesForMerge += [DllPathsfor]::new(@("SharpBIM.dll"))
 $options.Initialize(".\SharpBIM.IssueTracker.Core\SharpBIM.IssueTracker.Core.csproj")
 
@@ -64,6 +69,7 @@ if ($IncrementGit -eq 1) {
    
     IsAllGood "Building IssueTracker $conf"
 }
+
 $options.InvokeBuild()
 
 if ($publish) {

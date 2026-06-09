@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project >
+	<ItemGroup Condition="false">
+		<PackageReference Include="SharpBIM-Rwin" Version="1.1.306" Condition="false" />
+	</ItemGroup>
+	<ItemGroup Condition="$(Configuration.ToLower().StartsWith('dwin'))">
+		<!--<ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj">
+			<Project>{9d036cec-3634-12d9-e782-2b0b217b9cef}</Project>
+			<Name>SharpBIM</Name>
+			<IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+			<IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+		</ProjectReference>-->
+		<Reference Include="SharpBIM" Condition="'$(Configuration.ToLower().StartsWith(dwin))' ">
+			<HintPath>..\..\SharpBIM\src\bin\$(Configuration)\net48\SharpBIM.dll</HintPath>
+		</Reference>
+		<ProjectReference Include="..\SharpBIM.IssueTracker.Core\SharpBIM.IssueTracker.Core.csproj">
+			<Project>{b4be424c-c841-c111-c6c1-d0ad80913902}</Project>
+			<Name>SharpBIM.IssueTracker.Core</Name>
+			<IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+			<IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+		</ProjectReference>
+	</ItemGroup>
+</Project>
