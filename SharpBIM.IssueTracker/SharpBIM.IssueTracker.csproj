@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<AssemblyVersion>0.843.1.0</AssemblyVersion>
+		<AssemblyVersion>0.844.10.0</AssemblyVersion>
 		<UseWPF>true</UseWPF>
 		<Configurations>DWin;RWin</Configurations>
 		<Platforms>x64</Platforms>
@@ -90,7 +90,7 @@
 		<PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.551" ExcludeAssets="Runtime">
 			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="SharpBIM-Rwin" Version="1.1.360.0" Condition="$(Configuration.ToLower().StartsWith('r'))" />
+		<PackageReference Include="SharpBIM-Rwin" Version="1.1.361.0" Condition="$(Configuration.ToLower().StartsWith('r'))" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\" />
@@ -104,6 +104,18 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <VSCTInclude Remove="Images\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="IssueTracker_128x128.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="IssueTracker_128x128.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="source.extension.vsixmanifest">
+	    <Generator>VsixManifestGenerator</Generator>
+	    <LastGenOutput>source.extension.cs</LastGenOutput>
+	  </None>
 	</ItemGroup>
 	 
 	 

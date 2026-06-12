@@ -1,9 +1,8 @@
-
-## Version 0.843.0.0 - June 2026
+## Version 0.844.0.0 - June 2026
 ☑️ UI Alignments  
 ☑️ MessageBox location is fixed to be centered on the main window instead of the screen.  
 
-## Version 0.822 - May 2026
+## Version 0.844.0.0 - June 2026
 ☑️ #42 - labels are missed on creating  
 ☑️ Fix refresh list page upon adding issue.
 ☑️ #21 - Total number of opened issues are displayed.
@@ -14,7 +13,7 @@
 ☑️ Add Spell check to comments and Issue detail #14
 
 ## Version 0.813 - April 2026
-☑️ Fix bug if image inside issue is removed from github  
+☑️ Fix bug if image inside issue is removed from IssueTrackerhub  
 ☑️ Fix #18 sorting issue after adding a new issue  
 ☑️ Add tool-tip to user avatar shows user name  
 ☑️ remove window controls close, restore, minimize from message windows  
@@ -95,10 +94,10 @@
 ☑️ After pushing issue, labels are duplicated  
 ☑️ Login access duplication  
 ☑️ Fix pushing Image to over an issue  
-☑️ View and track issues from your GitHub repository within Visual Studio  
+☑️ View and track issues from your IssueTrackerHub repository within Visual Studio  
 ☑️ Create new issues and sub-issues seamlessly  
 ☑️ Edit, label, and manage existing issues  
 ☑️ Close resolved issues efficiently  
-☑️ Supports with GitHub personal account  
+☑️ Supports with IssueTrackerHub personal account  
 ☑️ Free to use, with ongoing improvements  
 ☑️ Initial commit  

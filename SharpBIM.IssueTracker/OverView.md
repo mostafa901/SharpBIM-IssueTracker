@@ -1,4 +1,4 @@
-﻿![GitTracker_RepoCard](Images/GitTracker_RepoCard.png)
+﻿![IssueTracker_RepoCard](Images/IssueTracker_RepoCard.png)
 
 # 🚀 Issue Tracker
 
@@ -9,7 +9,7 @@
 
 
 ## 🔥 Features & Functionality  
-- 📌 **Issue Tracking** – View GitHub issues directly in Visual Studio  
+- 📌 **Issue Tracking** – View IssueTrackerHub issues directly in Visual Studio  
 - ➕ **Create New Issues & Sub-Issues** – Easily add and manage tasks  
 - ✏️ **Edit Issues** – Modify issue titles, descriptions, and labels  
 - ✅ **Close Issues** – Mark issues as resolved within the extension  
@@ -55,7 +55,7 @@ images are committed to the selected Repo's default branch under Images folder. 
 ![OverView_CreateIssue](Images/Overview_GoodFirstComment.png)  
 
 ## ⚠️ Limitations  
-- Currently supports **only personal GitHub accounts**  
+- Currently supports **only personal IssueTrackerHub accounts**  
 - Some UI elements are still **work in progress** (e.g., issue details page improvements)  
 
 ## 🛠️ What’s Next?  

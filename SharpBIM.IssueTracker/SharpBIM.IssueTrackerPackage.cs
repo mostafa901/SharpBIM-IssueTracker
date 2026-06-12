@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SharpBIMIssueTrackerTracker
+namespace SharpBIMIssueTracker
 {
     /// <summary>
     /// This is the class that implements the package exposed by this assembly.
@@ -25,11 +25,11 @@ namespace SharpBIMIssueTrackerTracker
     /// </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(SharpBIMIssueTrackerTrackerPackage.PackageGuidString)]
-    public sealed class SharpBIMIssueTrackerTrackerPackage : AsyncPackage
+    [Guid(SharpBIMIssueTrackerPackage.PackageGuidString)]
+    public sealed class SharpBIMIssueTrackerPackage : AsyncPackage
     {
          /// <summary>
-         /// SharpBIMIssueTrackerTrackerPackage GUID string.
+         /// SharpBIMIssueTrackerPackage GUID string.
          /// </summary>
         public const string PackageGuidString = "bc62560c-9e11-4aa7-a006-aadcf61866f5";
 

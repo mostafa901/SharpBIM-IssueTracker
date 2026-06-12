@@ -31,7 +31,7 @@ namespace SharpBIM.IssueTracker
     /// </summary>
     internal sealed partial class PackageIds
     {
-        public const int GitWindowImg = 0x0001;
+        public const int IssueTrackerWindowImg = 0x0001;
         public const int MyMenuGroup = 0x1020;
         public const int MyCommand = 0x0100;
     }

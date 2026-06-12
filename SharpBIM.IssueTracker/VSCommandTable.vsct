@@ -36,20 +36,20 @@
 				<Parent
 					guid="SharpBIMTrackerMainMenu"
 					id="MyMenuGroup" />
-				<Icon guid="IconList" id="GitWindowImg" />
+				<Icon guid="IconList" id="IssueTrackerWindowImg" />
 				<Strings>
 					<ButtonText>Issue Tracker</ButtonText>
 				</Strings>
 			</Button>
 		</Buttons>
 		<Bitmaps>
-			<Bitmap guid="IconList" href="Resources\tickets2_16.ico" usedList="GitWindowImg" />
+			<Bitmap guid="IconList" href="Resources\tickets2_16.ico" usedList="IssueTrackerWindowImg" />
 		</Bitmaps>
 	</Commands>
 
 	<Symbols>
 		<GuidSymbol name="IconList" value="{aef89497-74ab-4922-9c76-ddb24b8fdb21}">
-			<IDSymbol name="GitWindowImg" value="1" />
+			<IDSymbol name="IssueTrackerWindowImg" value="1" />
 		</GuidSymbol>
 		<!-- Menu Group GUID -->
 		<GuidSymbol

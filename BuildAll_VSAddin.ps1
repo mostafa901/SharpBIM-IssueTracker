@@ -30,6 +30,7 @@ param (
     [bool] $Protect = 0,
     [bool] $All = 1,
     [bool] $IgnoreCheck = 0,
+    [bool] $justPack = 0,
     [int] $PublishToServer = 0,
     [bool] $publishToVSMarket = $true
 ) 
@@ -53,29 +54,80 @@ if ($All) {
     $options.Dependants += $dep 
 }
 $options.Initialize(".\SharpBIM.IssueTracker\SharpBIM.IssueTracker.csproj")
-
-
 $options.InvokeBuild()
+
+if ($justPack -eq 1 -OR $publishToVSMarket) {
+    # Define paths
+    $vsixPath =  "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\SharpBIM.IssueTracker.vsix" 
+    $extractPath = "C:\Temp\VSIX_Extracted"
+    $newVsixPath = "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\vsix\SharpBIM.IssueTracker.vsix" 
+
+    # Step 1: Extract the VSIX using .NET's ZipFile class
+    Delete $extractPath
+
+    if (Test-Path $extractPath) {
+        Remove-Item -Recurse -Force $extractPath
+    }
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($vsixPath, $extractPath)
+
+    # Step 2: Remove the files
+    $filesToRemove = @()
+
+    foreach ($file in $filesToRemove) {
+        $removeFilePath = Join-Path $extractPath $file
+        if (Test-Path $removeFilePath) {
+`
+                Remove-Item $removeFilePath -Force
+                Log_Info "Deleted: $file"
+        }
+        else {
+            Log_Warning "File not found: $file"
+        }
+    }
+
+    # Step 3: Remove any .pdb files
+    $pdbAndConfigFiles = Get-ChildItem -Path $extractPath -Recurse | Where-Object { $_.Extension -in ('.pdb', '.config') }
+    foreach ($pdb in $pdbFiles) {
+        Remove-Item $pdb.FullName -Force
+        Write-Host "Deleted: $($pdb.FullName)"
+    }
+
+   # Step 2: Remove the files
+    $filesToSign = @(
+        Join-Path $extractPath "SharpBIM.IssueTracker.dll"
+    )
+    foreach ($file in $filesToSign)
+    {
+        # Step 4: Sign the file
+        #   cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
+        & $env:Signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH $file
+        IsAllGood "Signed file $file"
+    }
+
+    # Step 5: Repack the VSIX
+    Delete $newVsixPath
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($extractPath, $newVsixPath)
+
+    Write-Host "VSIX file modified and repacked successfully!"
+}
 
 if ($publishToVSMarket) {
     #  CommitImages
-    
     & "$env:msbuild10" .\SharpBIM.IssueTracker.Console\SharpBIM.IssueTracker.Console.csproj /p:Configuration=rnowin /t:Restore -clp:Summary`;ErrorsOnly
-    # dotnet restore .\SharpBIM.IssueTracker.Console\SharpBIM.IssueTracker.Console.csproj 
-    IsAllGood "update release"
     dotnet build .\SharpBIM.IssueTracker.Console\SharpBIM.IssueTracker.Console.csproj -c rnowin
-    IsAllGood "update release"
-    Write-Host "Updating Release"
+    IsAllGood "issue tracker console build"
+     
+    Log_Info "Updating Release"
     & .\SharpBIM.IssueTracker.Console\bin\rnowin\net48\SharpBIM.IssueTracker.Console.exe
     IsAllGood "update release"
-    
+    Clean
     git -C .\ add .
     git -C .\ commit -m "Release $($(Get-Content -Path .\VersionControl.txt))"
     git -C .\ push origin main-code -f
 
     Log_Warning  "Publishing..."
     
-   # & "C:\Program Files\Microsoft Visual Studio\18\Community\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload "$(RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\SharpBIM.IssueTracker.vsix" -publishManifest ".\SharpBim.IssueTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
+    & "C:\Program Files\Microsoft Visual Studio\18\Community\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\vsix\SharpBIM.IssueTracker.vsix" -publishManifest ".\SharpBim.IssueTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
     Write-Host "Finished publish"
 }
 #################################################
