@@ -339,7 +339,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                 pagenumber = xx;
             }
 
-
             await Task.Run((Func<Task>)(async () =>
           {
               try
@@ -348,13 +347,16 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
 
                   if ((SelectedRepo != null))
                   {
+                      AppGlobals.TrackerSettings.SelectedRepo = SelectedRepo.name;
+                      AppGlobals.TrackerSettings.Save();
+
                       TotalOpened = SelectedRepo.open_issues_count;
                       if (SelectedRepo.has_issues)
                       {
                           await ProgressActivity.SetMessage("Fetching issues");
 
 
-                          var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1,  CurrentState, pagenumber, FetchIssueCounts);
+                          var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1, CurrentState, pagenumber, FetchIssueCounts);
 
                           if (issuesReport.IsFailed)
                           {
@@ -536,7 +538,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                 RepoModels.Add(repo);
             }
 
-            string storedName = AppGlobals.User.LastRepoName;
+            string storedName = AppGlobals.TrackerSettings.SelectedRepo;
             SelectedRepo = RepoModels.FirstOrDefault(o => o.name.EQ(storedName))
                 ?? RepoModels.FirstOrDefault(o => o.has_issues)
                 ?? RepoModels.FirstOrDefault();

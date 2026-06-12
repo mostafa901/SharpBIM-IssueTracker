@@ -1,8 +1,8 @@
-## Version 0.844.0.0 - June 2026
+## Version 0.893 - June 2026
 ☑️ UI Alignments  
 ☑️ MessageBox location is fixed to be centered on the main window instead of the screen.  
 
-## Version 0.844.0.0 - June 2026
+## Version 0.896 - June 2026
 ☑️ #42 - labels are missed on creating  
 ☑️ Fix refresh list page upon adding issue.
 ☑️ #21 - Total number of opened issues are displayed.

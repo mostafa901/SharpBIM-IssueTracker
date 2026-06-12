@@ -11,3 +11,4 @@ PostBuild.ps1
 /appsettings.local.json
 SharpBIM.GitTracker.Console
 /nugets
+*.tmp

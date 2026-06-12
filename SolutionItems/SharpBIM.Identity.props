@@ -6,7 +6,7 @@
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
       
         <Company>SharpBIM</Company>
-        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>(c) SharpBIM</Copyright>
         <DebugSymbols>true</DebugSymbols>
         <Deterministic>false</Deterministic>

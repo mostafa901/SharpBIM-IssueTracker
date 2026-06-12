@@ -86,14 +86,12 @@
                                                      ElementName=SharpBIMViewer}"
                                  ShowText="False" />
                 </StackPanel>
-                <Grid Grid.Column="2">
+                <StackPanel Grid.Column="2">
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock HorizontalAlignment="Right"
                                    Cursor="Hand"
                                    Foreground="{DynamicResource ControlDisabledBrush}"
-                                   ToolTip="Check for updates"
-                                   Visibility="{Binding NewVersionLink,
-                                                        Converter={Conv:ConvNullVisibility Invert=True}}">
+                                   ToolTip="Check for updates">
                             <Run Text="Ver." />
                             <Run Text="{Binding Version}" />
                             <i:Interaction.Triggers>
@@ -106,15 +104,15 @@
                                      Visibility="{Binding IsCheckingForUpdate,
                                                           Converter={Conv:ConvBoolToVisibility}}" />
                     </StackPanel>
-                    <TextBlock Visibility="{Binding NewVersionLink, Converter={Conv:ConvNullVisibility Invert=False}}">
+                    <TextBlock HorizontalAlignment="Right"
+                               Visibility="{Binding NewVersionLink,
+                                                    Converter={Conv:ConvNullVisibility Invert=False}}">
                         <Hyperlink Command="{Binding VisitMarketPlaceCommand}"
                                    NavigateUri="{Binding NewVersionLink}">
-                            <Run Text="Download latest" />
-                            <Run Text=" " />
-                            <Run Text="{Binding Version}" />
+                            <Run Text="{Binding DownloadMessage}" />
                         </Hyperlink>
                     </TextBlock>
-                </Grid>
+                </StackPanel>
             </Grid>
             <Frame x:Name="SharpBIMViewer"
                    Grid.Row="1"

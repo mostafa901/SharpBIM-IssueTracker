@@ -29,10 +29,10 @@ param (
     [bool] $Build = 1,
     [bool] $Protect = 0,
     [bool] $All = 1,
-    [bool] $IgnoreCheck = 0,
-    [bool] $justPack = 0,
+    [bool] $IgnoreCheck = 1,
+    [bool] $justPack = 1,
     [int] $PublishToServer = 0,
-    [bool] $publishToVSMarket = $true
+    [bool] $publishToVSMarket = $false
 ) 
 Set-Location $PSScriptRoot
 $options = [BuildOptions]::new($Configs, $PSBoundParameters)
@@ -40,36 +40,41 @@ $options.BuildFrameworks = @($global:Framework48)
 $options.IsDotNetBuild = $false
 Set-Location $PSScriptRoot
 if ($All) {
-    $dep = [DependantProject]::new(
-        "SharpBIm",
-        "$env:RevitLibPath\ExternalLibraries\SharpBIM\|Config|\|Framework|\SharpBIM.dll",
-        "D:\RevitAPI\Shared\SharpBIM\BuildAll.ps1"
-    )
-    $dep.options = @{
-        Configs = "Rwin"
-        Build   = 1
-        Protect = 1
-        Pack    = 1
-    }
-    $options.Dependants += $dep 
+    $options.AddSharpBIM($true)
 }
 $options.Initialize(".\SharpBIM.IssueTracker\SharpBIM.IssueTracker.csproj")
+ 
 $options.InvokeBuild()
 
 if ($justPack -eq 1 -OR $publishToVSMarket) {
+
+   
     # Define paths
-    $vsixPath =  "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\SharpBIM.IssueTracker.vsix" 
+    $vsixPath = "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\SharpBIM.IssueTracker.vsix" 
     $extractPath = "C:\Temp\VSIX_Extracted"
     $newVsixPath = "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\vsix\SharpBIM.IssueTracker.vsix" 
-
     # Step 1: Extract the VSIX using .NET's ZipFile class
     Delete $extractPath
 
     if (Test-Path $extractPath) {
         Remove-Item -Recurse -Force $extractPath
     }
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($vsixPath, $extractPath)
 
+   # Delete "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\Sharpbim*.dll" 
+   # CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker.Core\Rwin\net48\*.*" "$($extractPath)"
+  #  CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\*.*" "$($extractPath)"
+    $filesToDelete = @("Microsoft.VisualStudio.Shell.15.0.dll",
+"Microsoft.VisualStudio.Threading.dll",
+"Microsoft.CodeAnalysis.dll")    
+
+foreach ($file in $filesToDelete)
+{
+  #  Delete "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\$file" 
+
+}
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($vsixPath, $extractPath, $true)
+    Delete "$($extractPath)\*.vsix" 
+        
     # Step 2: Remove the files
     $filesToRemove = @()
 
@@ -78,7 +83,7 @@ if ($justPack -eq 1 -OR $publishToVSMarket) {
         if (Test-Path $removeFilePath) {
 `
                 Remove-Item $removeFilePath -Force
-                Log_Info "Deleted: $file"
+            Log_Info "Deleted: $file"
         }
         else {
             Log_Warning "File not found: $file"
@@ -86,29 +91,43 @@ if ($justPack -eq 1 -OR $publishToVSMarket) {
     }
 
     # Step 3: Remove any .pdb files
-    $pdbAndConfigFiles = Get-ChildItem -Path $extractPath -Recurse | Where-Object { $_.Extension -in ('.pdb', '.config') }
-    foreach ($pdb in $pdbFiles) {
-        Remove-Item $pdb.FullName -Force
-        Write-Host "Deleted: $($pdb.FullName)"
-    }
+    Delete  $extractPath\*.pdb
 
-   # Step 2: Remove the files
+    # Step 4: Sign the file
     $filesToSign = @(
         Join-Path $extractPath "SharpBIM.IssueTracker.dll"
     )
-    foreach ($file in $filesToSign)
-    {
-        # Step 4: Sign the file
+    foreach ($file in $filesToSign) {
         #   cmd /c "`"$env:Signtool`" sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH `"$newFilePath`""
         & $env:Signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /sha1 $env:SIGN_CERT_HASH $file
         IsAllGood "Signed file $file"
     }
 
-    # Step 5: Repack the VSIX
-    Delete $newVsixPath
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($extractPath, $newVsixPath)
 
-    Write-Host "VSIX file modified and repacked successfully!"
+    # Step 5: Additional files to add
+    $filesToAdd = @(
+ 
+    )
+    #foreach ($file in $filesToAdd)
+    { 
+        #CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker.Core\Rwin\net48\*" "$($extractPath)\"
+    }   
+
+    # Step 6: Repack the VSIX
+    Delete $newVsixPath
+    try {
+        if (Test-Path $newVsixPath) { Remove-Item $newVsixPath -Force }
+        $dir = Split-Path $newVsixPath -Parent
+        if (-not (Test-Path $dir)) { mkdir $dir }
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($extractPath, $newVsixPath)
+        IsAllGood "Zip OK" "Failed to create zip file"
+    }
+    catch {
+        $global:LASTEXITCODE = -1
+        IsAllGood "" "Exception: $_"
+    }
+    IsAllGood "VSIX file modified and repacked "
+    PSModuleHelpers\Log_Note "Pack location: $newVsixPath"
 }
 
 if ($publishToVSMarket) {
@@ -119,11 +138,9 @@ if ($publishToVSMarket) {
      
     Log_Info "Updating Release"
     & .\SharpBIM.IssueTracker.Console\bin\rnowin\net48\SharpBIM.IssueTracker.Console.exe
-    IsAllGood "update release"
-    Clean
-    git -C .\ add .
-    git -C .\ commit -m "Release $($(Get-Content -Path .\VersionControl.txt))"
-    git -C .\ push origin main-code -f
+     
+    $version = (Get-Content -Path .\VersionControl.txt)
+    $options.CommitAndPush("main-code", "Release $version", $version)
 
     Log_Warning  "Publishing..."
     

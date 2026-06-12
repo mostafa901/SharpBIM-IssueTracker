@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
       <LangVersion>latest</LangVersion>
-      <AssemblyVersion>0.844.0.0</AssemblyVersion>
+      <AssemblyVersion>0.899.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj" />

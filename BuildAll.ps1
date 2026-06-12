@@ -25,12 +25,12 @@ using module "D:\RevitAPI\Shared\visualstudio-settings\TypicalProps\ProjectBuild
 [CmdletBinding()]
 param (
     [string[]] $Configs = @("Rwin"),
-    [bool] $Clean = 0,
+    [bool] $Clean = 1,
     [bool] $Build = 1,
     [bool] $Protect = 0,
     [bool] $All = 0,
     [bool] $IgnoreCheck = 0,
-    [bool] $IncrementGit = 0,
+    [bool] $IncrementGit = 1,
     [int] $PublishToServer = 0,
     [bool] $publish = $false
 ) 
@@ -41,8 +41,6 @@ $options.IsDotNetBuild = $true
 Set-Location $PSScriptRoot
 $options.Initialize(".\SharpBIM.IssueTracker.Core\SharpBIM.IssueTracker.Core.csproj")
     
-
-
 if ($IncrementGit -eq 1) {
     
     $gitPathString = (Get-Item ".\VersionControl.txt").FullName
@@ -60,8 +58,8 @@ if ($IncrementGit -eq 1) {
     SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.props" $newGitVersion
     SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.cs" $newGitVersion
     SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.csproj" $newGitVersion
-    SetVersionAllFiles """ Version=""(\d+\.\d+\.\d+\.\d+)""" $gitPathString.$FolderPath "*.vsixmanifest" $newGitVersion
-    
+    SetVersionAllFiles """ Version=""(\d+\.\d+)""" $gitPathString.$FolderPath "*.vsixmanifest" "$($versionParts[0]).$($minorVersion)"
+
     IsAllGood "Building IssueTracker $conf"
 }
 $options.InvokeBuild()

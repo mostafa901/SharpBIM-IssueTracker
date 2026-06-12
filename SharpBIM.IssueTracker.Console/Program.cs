@@ -41,7 +41,7 @@ var releasePath = "D:\\RevitApi\\Shared\\Study\\SharpBim.IssueTracker\\SharpBim.
 var releseNoteText = File.ReadAllText(releasePath);
 string releaseNote = "##" + releseNoteText.Split(new string[] { "##" }, StringSplitOptions.RemoveEmptyEntries)[1];
 
-var reg = new Regex(" Version=\"(\\d+\\.\\d+\\.\\d+\\.\\d+)\"");
+var reg = new Regex(" Version=\"(\\d+\\.\\d+)\"");
 var matches = reg.Match(File.ReadAllText(@"D:\RevitApi\Shared\Study\SharpBim.IssueTracker\SharpBim.IssueTracker\source.extension.vsixmanifest"));
 var match = matches.Groups[0].Value.Split('=')[1].Replace("\"", "");
 
@@ -87,6 +87,7 @@ if (releaseModel == null)
 
 releaseModel.name = title.Replace("## ", "");
 releaseModel.body = releaseNote + $"\r\n\r\n ## Download  \r\n [Market Place](https://marketplace.visualstudio.com/items?itemName=SharpBIM.SharpBIMGitTracker) \r\n [DirectDownload](https://marketplace.visualstudio.com/_apis/public/gallery/publishers/SharpBIM/vsextensions/SharpBIMGitTracker/{tag}/vspackage)";
+
 if (releaseModel.id == 0)
 {
     releaseModel.draft = false;

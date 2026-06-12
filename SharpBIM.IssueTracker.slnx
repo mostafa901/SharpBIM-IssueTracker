@@ -34,6 +34,8 @@
     <BuildType Solution="RNoWin|*" Project="DWin" />
     <BuildType Solution="SA|*" Project="DWin" />
     <Platform Project="x64" />
+    <Build Solution="DNoWin|*" Project="false" />
+    <Build Solution="RNoWin|*" Project="false" />
     <Deploy Solution="DWin|*" />
   </Project>
  

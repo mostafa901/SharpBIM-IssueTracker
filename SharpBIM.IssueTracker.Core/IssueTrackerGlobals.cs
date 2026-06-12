@@ -24,8 +24,8 @@ global using SharpBIM.IssueTracker.Core.Enums;
 global using SharpBIM.ServiceContracts;
 global using SharpBIM.ServiceContracts.Abstracts;
 
-
 #if WINDOWS
+
 global using System.Windows.Media;
 
 global using SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels;
@@ -33,27 +33,26 @@ global using SharpBIM.WPF.Assets;
 global using SharpBIM.WPF.Assets.Fonts;
 
 #endif
+
 global using SharpBIM.IssueTracker.Core.GitHttp;
 global using SharpBIM.Services;
 global using SharpBIM.ServiceContracts.Interfaces.IIssueTrackers;
 global using SharpBIM.Utility.Helpers;
 
-
 global using static SharpBIM.IssueTracker.Core.IssueTrackerGlobals;
 
 using Config = SharpBIM.Services.Config;
 
-
 #if WINDOWS
+
 using SharpBIM.WPF.Utilities;
+
 #endif
 
 namespace SharpBIM.IssueTracker.Core
 {
-
     internal class IssueTrackerGlobals : Config
     {
-  
         internal static IssueTrackerGlobals AppGlobals;
         //public string AppId { get; set; }
         //public string ClientSecret { get; set; }
@@ -73,7 +72,8 @@ namespace SharpBIM.IssueTracker.Core
         public static GitLabels LabelService { get; internal set; }
         public static GitIssueComments CommentService { get; internal set; }
         internal IssueTrackerUser User => TrackerSettings.IssueTrackerUser;
-        internal SharpBIMIssueTrackerSettings TrackerSettings   => AppSettings as SharpBIMIssueTrackerSettings;
+        internal SharpBIMIssueTrackerSettings TrackerSettings => AppSettings as SharpBIMIssueTrackerSettings;
+
         static IssueTrackerGlobals()
         {
             _ = new IssueTrackerGlobals();
@@ -86,8 +86,7 @@ namespace SharpBIM.IssueTracker.Core
             var resource = new SharedResourceDictionary() { Source = new Uri("pack://application:,,,/SharpBIM.IssueTracker.Core;component/WPF/Mvvm/Views/DataTemplates.xaml") };
             SharpBIM.WPF.Globals.StyleResources = resource;
 #endif
-             AppSettings = SharpBIMSettings.Load<SharpBIMIssueTrackerSettings>(AppGlobals);
-            SharpUser = TrackerSettings.IssueTrackerUser;
+            AppSettings = SharpBIMSettings.Load<SharpBIMIssueTrackerSettings>(AppGlobals);
         }
 
         protected override void LoadSettings()
@@ -112,14 +111,13 @@ namespace SharpBIM.IssueTracker.Core
             LabelService = new(this);
             CommentService = new(this);
             InstallService = new(this);
-
         }
     }
 
     internal class SharpBIMIssueTrackerSettings : SharpBIMSettings
     {
-
-        public IssueTrackerUser IssueTrackerUser { get; set; }
+        public IssueTrackerUser IssueTrackerUser { get => (IssueTrackerUser)AppGlobals.SharpUser; set => AppGlobals.SharpUser = value; }
+        public string SelectedRepo { get; set; }
 
         public SharpBIMIssueTrackerSettings()
         {

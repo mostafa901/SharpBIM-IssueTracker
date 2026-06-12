@@ -8,5 +8,6 @@
         public const string AUTHORIZE = "Authorize";
         public const string CANCEL = "Cancel";
         public const string REPLACE = "Replace";
+        public const string ISSUETRACKERKEY = "GitKey";
     }
 }

@@ -9,10 +9,9 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
         {
             AuthorizeCommand = new SharpBIMCommand(async (x) => await Authorize(x), Statics.AUTHORIZE, Glyphs.empty, (x) => true);
             CancelCommand = new SharpBIMCommand(Cancel, Statics.CANCEL, Glyphs.empty, (x) => true);
-
         }
-        public override SharpProgress ProgressActivity => GetParentViewModel<MainPageViewModel>()?.ProgressActivity;
 
+        public override SharpProgress ProgressActivity => GetParentViewModel<MainPageViewModel>()?.ProgressActivity;
 
         public event EventHandler LoggedIn;
 
@@ -67,7 +66,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                     else
                     {
                         AppGlobals.User.IsPersonalToken = false;
-                         AppGlobals.User.UserAccount ??= (await IssueTrackerGlobals.AuthService.GetUserAccount()).Model;
+                        AppGlobals.User.UserAccount ??= (await IssueTrackerGlobals.AuthService.GetUserAccount()).Model;
                         auth = true;
                     }
                 }
@@ -84,8 +83,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                         auth = true;
                         AppGlobals.User.UserAccount = userAccountReport.Model.JDeserialize<Account>();
                         AppGlobals.User.Token.access_token = StoredToken;
-                        AppGlobals.User.IsPersonalToken = true;
-
+                        AppGlobals.User.IsPersonalToken = true; 
                     }
                 }
                 AppGlobals.AppSettings.Save();

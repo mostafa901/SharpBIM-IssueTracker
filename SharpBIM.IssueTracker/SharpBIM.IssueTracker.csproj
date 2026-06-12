@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\SolutionItems\SharpBIM.Identity.props" />
 	<PropertyGroup>
 		<VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">18.0</VisualStudioVersion>
 		<VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -8,7 +9,7 @@
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<AssemblyVersion>0.844.10.0</AssemblyVersion>
+		<AssemblyVersion>0.899.2.0</AssemblyVersion>
 		<UseWPF>true</UseWPF>
 		<Configurations>DWin;RWin</Configurations>
 		<Platforms>x64</Platforms>
@@ -82,15 +83,21 @@
 		</VSCTCompile>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Community.VisualStudio.VSCT" Version="16.0.29.14" PrivateAssets="all" />
+		<PackageReference Include="Community.VisualStudio.VSCT" Version="16.0.29.14" PrivateAssets="all">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="18.5.40034">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<IncludeAssets>all</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.551" ExcludeAssets="Runtime">
-			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<IncludeAssets>all</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="SharpBIM-Rwin" Version="1.1.361.0" Condition="$(Configuration.ToLower().StartsWith('r'))" />
+		<PackageReference Include="SharpBIM-Rwin" Version="1.1.394" Condition="$(Configuration.ToLower().StartsWith('r'))">
+			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+			<IncludeOutputGroupsInVSIX>true</IncludeOutputGroupsInVSIX>
+			<IncludeAssets>all</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\" />
@@ -116,7 +123,60 @@
 	    <Generator>VsixManifestGenerator</Generator>
 	    <LastGenOutput>source.extension.cs</LastGenOutput>
 	  </None>
+		<PackageReference Include="AvalonEdit" Version="6.3.1.120">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="MdXaml" Version="2.0.0-pre202603081301">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.14.40264">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0-beta.98">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="envdte100" Version="17.14.40260">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Markdig" Version="1.2.0">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Bcl.Memory" Version="9.0.14">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Text.Json" Version="10.0.4">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Net.Http" Version="4.3.4">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<Reference Include="System.Web" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="PresentationFramework.Aero2" Version="1.0.1">
+			<IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.4">
+		 	<IncludeAssets>all</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
-	 
-	 
  </Project>

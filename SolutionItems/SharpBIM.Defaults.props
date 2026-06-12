@@ -95,5 +95,30 @@
         <PackageReference  Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
         <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.14.40264" />
         <PackageReference Condition="!$(DefineConstants.Contains('DOTNET'))" Include="PresentationFramework.Aero2" Version="1.0.1" />
-    </ItemGroup>
+        <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
+        <PackageReference Include="MdXaml" Version="2.0.0-pre202603081301" />
+        <PackageReference Include="HtmlAgilityPack" Version ="1.12.4"/>
+    <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
+</ItemGroup>
+<ItemGroup Condition="!$(DefineConstants.Contains('WINDOWS'))">
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+</ItemGroup>
+<ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0-beta.98" />
+    <PackageReference Include="envdte100" Version="17.14.40260" />
+    <PackageReference Include="Markdig" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Bcl.Memory" Version="9.0.14" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.Text.Json" Version="10.0.4" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
+    <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET'))" />
+</ItemGroup>
+<ItemGroup>
+    <None Update="Services\DataBaseService\Database\sqlite3.dll" TargetPath="sqlite3.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+</ItemGroup>
 </Project>

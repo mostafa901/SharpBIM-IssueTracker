@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup Condition="'$(Configuration)' == 'SA'">
-		<AssemblyVersion>0.844.1.0</AssemblyVersion>
+		<AssemblyVersion>0.899.1.0</AssemblyVersion>
 		<StartupObject>SharpBIM.IssueTracker.Core.WPF.SA.App</StartupObject>
 		<RuntimeIdentifiers>win</RuntimeIdentifiers>
 		<OutputType>WinExe</OutputType>
@@ -21,12 +21,7 @@
 		<None Remove="WPF\**" />
 		<Page Remove="WPF\**" />
 	</ItemGroup>
-	
-	<ItemGroup Condition="($(DefineConstants.Contains('WINDOWS')))">
-		<PackageReference Include="HtmlAgilityPack">
-			<Version>1.12.4</Version>
-		</PackageReference>
-	</ItemGroup>
+ 
 	<ItemGroup>
 		<Resource Include="Resources\tickets_Login.png" />
 	</ItemGroup>
@@ -41,18 +36,8 @@
 		<ApplicationDefinition Include="WPF/SA/App.xaml" />
 	</ItemGroup>
 	<ItemGroup Condition="($(Configuration.ToLower().StartsWith('d')) OR $(Configuration.ToLower().StartsWith('sa')))">
-		<PackageReference Include="AvalonEdit" Version="6.3.1.120" />
-		<PackageReference Include="MdXaml">
-			<Version>2.0.0-pre202603081301</Version>
-		</PackageReference>
-		<PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
-		<PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0-beta.98" />
-		<PackageReference Include="envdte100" Version="17.14.40260" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.14.40264" />
-		<PackageReference Include="System.Net.Http" Version="4.3.4" />
-		<Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET'))" />
+		 
+ 
 		<ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -66,12 +51,8 @@
 	    <HintPath>$(RevitlibPath)\ExternalLibraries\SharpBIM\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
-	  <PackageReference Include="IdentityModel.OidcClient" Version="5.2.1" />
-	  <PackageReference Include="System.Text.Json" Version="10.0.4" />
-	</ItemGroup>
-	<ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))" >
+ 
+	<ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))">
 	  <Reference Include="System.Web" />
 	</ItemGroup>
 </Project>

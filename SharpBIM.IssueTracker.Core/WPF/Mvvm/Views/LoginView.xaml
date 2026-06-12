@@ -6,6 +6,7 @@
                         xmlns:hl="clr-namespace:SharpBIM.WPF.Utilities;assembly=SharpBIM"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:mv="clr-namespace:SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels"
+                        xmlns:st="clr-namespace:SharpBIM.IssueTracker.Core"
                         xmlns:uc="clr-namespace:SharpBIM.WPF.Controls.UserControls;assembly=SharpBIM"
                         xmlns:ui="clr-namespace:SharpBIM.WPF.Controls;assembly=SharpBIM"
                         d:DataContext="{d:DesignInstance Type={x:Type mv:LoginViewModel}}"
@@ -58,25 +59,41 @@
                            Foreground="{DynamicResource ControlFontBrush}"
                            Text="Type your personal token, or Authorize Issue Tracker"
                            TextWrapping="Wrap" />
-                <Border Grid.Row="1"
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        BorderBrush="{DynamicResource ControlBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="10">
-                    <PasswordBox x:Name="pasBox"
-                                 HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Background="{DynamicResource ControlBackground}"
-                                 BorderThickness="0"
-                                 FontSize="18"
-                                 FontStretch="UltraExpanded"
-                                 Foreground="{DynamicResource ControlFontBrush}"
-                                 PasswordChanged="PasswordBox_PasswordChanged"
-                                 PasswordChar="x" />
-                </Border>
+                <StackPanel Grid.Row="1">
+                    <Border Margin="0,0,0,10"
+                            Padding="10"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            BorderBrush="{DynamicResource ControlBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <PasswordBox x:Name="pasBox"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     Background="{DynamicResource ControlBackground}"
+                                     BorderThickness="0"
+                                     FontSize="18"
+                                     FontStretch="UltraExpanded"
+                                     Foreground="{DynamicResource ControlFontBrush}"
+                                     PasswordChanged="PasswordBox_PasswordChanged"
+                                     PasswordChar="x" />
+                    </Border>
+                    <Grid Margin="20,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock VerticalAlignment="Top"
+                                   Text="ℹ " />
+                        <TextBlock Grid.Column="1"
+                                   Foreground="{StaticResource ControlFontDisabledBrush}">
+                            <Run>To avoid entering your secret key every time, it can be stored as the environment variable '</Run>
+                            <Run Text="{x:Static st:Statics.ISSUETRACKERKEY}" />
+                            <Run>'</Run>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Row="2"

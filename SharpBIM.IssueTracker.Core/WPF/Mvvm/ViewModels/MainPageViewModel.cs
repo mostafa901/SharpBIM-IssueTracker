@@ -34,6 +34,15 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
 
         // Add this line to the constructor
 
+
+        public string DownloadMessage
+        {
+            get { return GetValue<string>(nameof(DownloadMessage)); }
+            set { SetValue(value, nameof(DownloadMessage)); }
+        }
+
+
+
         public async Task CheckForUpdates(object x)
         {
             try
@@ -55,8 +64,8 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
                         var releaseModel = releaseReport.Model;
                         if (releaseModel.tag_name != Version)
                         {
-                            NewVersionLink = new Uri("https://marketplace.visualstudio.com/items?itemName=SharpBIM.SharpBIMIssueTracker");
-                            Version = releaseModel.tag_name;
+                            NewVersionLink = new Uri("https://marketplace.visualstudio.com/items?itemName=SharpBIM.SharpBIMGitTracker");
+                            DownloadMessage = $"Download latest {releaseModel.tag_name}";
                         }
                     }
                 }
@@ -208,7 +217,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
 
             if (!grantted)
             {
-                var key = Environment.GetEnvironmentVariable("GitKey");
+                var key = Environment.GetEnvironmentVariable(Statics.ISSUETRACKERKEY);
                 if (!string.IsNullOrEmpty(key))
                 {
                     AppGlobals.User.IsPersonalToken = true;
