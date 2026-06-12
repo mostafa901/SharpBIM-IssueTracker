@@ -2,13 +2,15 @@
 	<PropertyGroup>
 		<VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">18.0</VisualStudioVersion>
 		<VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+
 	</PropertyGroup>
 	<Target Name="GenerateTemplatesManifest" />
 	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<AssemblyVersion>0.842.1.0</AssemblyVersion>
+		<AssemblyVersion>0.842.0.0</AssemblyVersion>
 		<UseWPF>true</UseWPF>
 		<Configurations>DWin;RWin</Configurations>
 		<Platforms>x64</Platforms>
@@ -23,16 +25,19 @@
 		<StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
 		<StartArguments>/rootsuffix Exp</StartArguments>
 		<XamlDebuggingInformation>True</XamlDebuggingInformation>
+
 		<IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
 		<IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
 		<IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
 		<CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
 		<CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
+
 		<GenerateTemplateManifests>false</GenerateTemplateManifests>
 		<ExcludeFromVsixSources>true</ExcludeFromVsixSources>
 		<VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
 		<VsixDeployOnDebug>true</VsixDeployOnDebug>
 	</PropertyGroup>
+
 	<ItemGroup>
 	  <Compile Remove="Images\**" />
 	  <EmbeddedResource Remove="Images\**" />
@@ -56,12 +61,14 @@
 		<DeployExtension>true</DeployExtension>
 		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
+
 	<PropertyGroup Condition="$(Configuration.ToLower().StartsWith('r'))">
 		<DebugType>pdbonly</DebugType>
 		<OutputPath>bin\RWin\</OutputPath>
 		<DeployExtension>false</DeployExtension>
 		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<Compile Update="source.extension.cs">
 			<AutoGen>True</AutoGen>

@@ -1,7 +1,7 @@
 ﻿global using System.Windows;
 global using System.Windows.Controls;
 global using System.Windows.Navigation;
-
+using Microsoft.VisualStudio.Telemetry.Metrics.Events;
 using SharpBIM.ServiceContracts.QAQC;
 using SharpBIM.WPF.Controls.UserControls;
 using SharpBIM.WPF.Utilities;
@@ -28,7 +28,8 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
         }
         public MainPage()
         {
-            AppGlobals.ApplicationVersion = AppDomain.CurrentDomain.GetAssemblies().First(x=>x.FullName.ToLower().Contains("sharpbim.issuetracker") && !x.FullName.ToLower().Contains("sharpbim.issuetracker.core")).GetName().Version;
+            AppGlobals.ApplicationVersion = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x=>x.FullName.ToLower().Contains("sharpbim.issuetracker") && !x.FullName.ToLower().Contains("sharpbim.issuetracker.core"))?.GetName().Version;
+            AppGlobals.ApplicationVersion ??= GetType().Assembly.GetName().Version;
             AppGlobals.AppViewContext = this;
             ResourceEx.ChangeTheme(true);
             CQC.BreakOnUnObserved = false;

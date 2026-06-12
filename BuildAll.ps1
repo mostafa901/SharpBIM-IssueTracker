@@ -25,7 +25,7 @@ using module "D:\RevitAPI\Shared\visualstudio-settings\TypicalProps\ProjectBuild
 [CmdletBinding()]
 param (
     [string[]] $Configs = @("Rwin"),
-    [bool] $Clean = 1,
+    [bool] $Clean = 0,
     [bool] $Build = 1,
     [bool] $Protect = 0,
     [bool] $All = 0,
@@ -38,24 +38,19 @@ Set-Location $PSScriptRoot
 $options = [BuildOptions]::new($Configs, $PSBoundParameters)
 $options.IsDotNetBuild = $true
 
-#& (Get-Item ..\..\SharpBIM\BuildAll.ps1).FullName -Clean 1 -Configs Rwin
 Set-Location $PSScriptRoot
-if($Clean)
-{
-    $options.Initialize(".\SharpBIM.IssueTracker\SharpBIM.IssueTracker.csproj")
-    $options.InvokeBuild()
-}
-$options.FilesForMerge += [DllPathsfor]::new(@("SharpBIM.dll"))
 $options.Initialize(".\SharpBIM.IssueTracker.Core\SharpBIM.IssueTracker.Core.csproj")
+    
+
 
 if ($IncrementGit -eq 1) {
-
+    
     $gitPathString = (Get-Item ".\VersionControl.txt").FullName
     $gitPathString 
     $currentGitVersion = (Get-Content $gitPathString)
     # Split the version into major and minor parts
     $versionParts = $currentGitVersion -split '\.'
-
+    
     # Increment the last part of the version
     $minorVersion = [int]::Parse($versionParts[1])
     $minorVersion += 1
@@ -65,31 +60,14 @@ if ($IncrementGit -eq 1) {
     SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.props" $newGitVersion
     SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.cs" $newGitVersion
     SetVersionAllFiles "AssemblyVersion>(\d+\.\d+\.\d+\.\d+)</" $gitPathString.$FolderPath "*.csproj" $newGitVersion
-    SetVersionAllFiles """ Version=""(\d+\.\d+)""" $gitPathString.$FolderPath "*.vsixmanifest" $newGitVersion
-   
+    SetVersionAllFiles """ Version=""(\d+\.\d+\.\d+\.\d+)""" $gitPathString.$FolderPath "*.vsixmanifest" $newGitVersion
+    
     IsAllGood "Building IssueTracker $conf"
 }
-
 $options.InvokeBuild()
 
-if ($publish) {
-    CommitImages
-    
-    dotnet build .\SharpBIM.GitTracker.Console\SharpBIM.IssueTracker.Console.csproj -c dnowin
-    Write-Host "Updating Release"
-    & .\SharpBIM.GitTracker.Console\bin\Debug\net48\SharpBIM.IssueTracker.Console.exe
-    
-    IsAllGood "update release"
-    
-    git -C .\ add .
-    git -C .\ commit -m "Release $($(Get-Content -Path .\VersionControl.txt))"
-    git -C .\ push origin main-code -f
 
-    Write-Host "Publishing..."
-    
-    & "C:\Program Files\Microsoft Visual Studio\2022\Community\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe" publish -payload ".\SharpBim.IssueTracker\GitPublish\SharpBim.GitTracker.vsix" -publishManifest ".\SharpBim.IssueTracker\jsonmainfest.json" -ignoreWarnings "VSIXValidatorWarning01,VSIXValidatorWarning02" -personalAccessToken $env:vsMarketToken
-    Write-Host "Finished publish"
-}
+
 #################################################
 
   

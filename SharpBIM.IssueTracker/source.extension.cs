@@ -4,7 +4,7 @@
 //     Available from https://marketplace.visualstudio.com/items?itemName=MadsKristensen.VsixSynchronizer64
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace SharpBIM.IssueTracker
+namespace SharpBim.IssueTracker
 {
     internal sealed partial class Vsix
     {
@@ -12,7 +12,7 @@ namespace SharpBIM.IssueTracker
         public const string Name = "Issue Tracker";
         public const string Description = @"Issue Tracker helps to visualize & manage Git-hub issues in Visual Studio, offering an intuitive interface to track, view details, & take action easily.";
         public const string Language = "en-US";
-        public const string Version = "0.829";
+        public const string Version = "0.830.0.0";
         public const string Author = "SharpBIM";
         public const string Tags = "issue, Tracker, Github Issues, tickets";
         public const bool IsPreview = false;

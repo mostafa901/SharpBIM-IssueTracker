@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup Condition="'$(Configuration)' == 'SA'">
-		<AssemblyVersion>0.830.1.0</AssemblyVersion>
+		<AssemblyVersion>0.842.1.0</AssemblyVersion>
 		<StartupObject>SharpBIM.IssueTracker.Core.WPF.SA.App</StartupObject>
 		<RuntimeIdentifiers>win</RuntimeIdentifiers>
 		<OutputType>WinExe</OutputType>
@@ -40,7 +40,7 @@
 	<ItemGroup Condition="'$(Configuration)' == 'SA'">
 		<ApplicationDefinition Include="WPF/SA/App.xaml" />
 	</ItemGroup>
-	<ItemGroup Condition="  ($(Configuration.StartsWith('D')) OR $(Configuration.StartsWith('SA')))">
+	<ItemGroup Condition="($(Configuration.ToLower().StartsWith('d')) OR $(Configuration.ToLower().StartsWith('sa')))">
 		<PackageReference Include="AvalonEdit" Version="6.3.1.120" />
 		<PackageReference Include="MdXaml">
 			<Version>2.0.0-pre202603081301</Version>
@@ -61,7 +61,7 @@
 	<ItemGroup>
 		<Compile Include="GitHttp\Models\User.cs" />
 	</ItemGroup>
-	<ItemGroup Condition="$(Configuration.StartsWith('R'))">
+	<ItemGroup Condition="$(Configuration.ToLower().StartsWith('r'))">
 	  <Reference Include="SharpBIM">
 	    <HintPath>$(RevitlibPath)\ExternalLibraries\SharpBIM\$(Configuration)\$(TargetFramework)\SharpBIM.dll</HintPath>
 	  </Reference>

@@ -1,5 +1,11 @@
 ﻿
+using SharpBim.IssueTracker;
+
 using System.Reflection;
+
+using Community.VisualStudio.Toolkit;
+
+using Microsoft.VisualStudio.Shell;
 
 namespace SharpBIM.IssueTracker
 {
