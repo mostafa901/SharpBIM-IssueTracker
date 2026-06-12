@@ -1,6 +1,6 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
   <Metadata>
-    <Identity Id="SharpBIM.IssueTracker" Version="0.842.0.0" Language="en-US" Publisher="SharpBIM" />
+    <Identity Id="SharpBIM.IssueTracker" Version="0.843.0.0" Language="en-US" Publisher="SharpBIM" />
     <DisplayName>Issue Tracker</DisplayName>
     <Description xml:space="preserve">Issue Tracker helps to visualize &amp; manage Git-hub issues in Visual Studio, offering an intuitive interface to track, view details, &amp; take action easily.</Description>
     <MoreInfo>https://github.com/mostafa901/SharpBIM.IssueTracker</MoreInfo>

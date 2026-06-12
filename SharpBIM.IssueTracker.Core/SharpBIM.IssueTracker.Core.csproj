@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup Condition="'$(Configuration)' == 'SA'">
-		<AssemblyVersion>0.842.1.0</AssemblyVersion>
+		<AssemblyVersion>0.843.1.0</AssemblyVersion>
 		<StartupObject>SharpBIM.IssueTracker.Core.WPF.SA.App</StartupObject>
 		<RuntimeIdentifiers>win</RuntimeIdentifiers>
 		<OutputType>WinExe</OutputType>

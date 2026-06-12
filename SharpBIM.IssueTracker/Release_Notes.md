@@ -1,5 +1,5 @@
 
-## Version 0.842.0.0 - June 2026
+## Version 0.843.0.0 - June 2026
 ☑️ UI Alignments  
 ☑️ MessageBox location is fixed to be centered on the main window instead of the screen.  
 
