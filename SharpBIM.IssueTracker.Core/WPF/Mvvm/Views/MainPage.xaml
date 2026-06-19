@@ -159,10 +159,11 @@
         </Border>
 
 
-        <ui:SharpProgressView HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              DataContext="{Binding ProgressActivity}" />
-
+        <Grid Visibility="{Binding ProgressActivity.IsVisible, Converter={Conv:ConvBoolToVisibility}}">
+            <ui:SharpProgressView HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  DataContext="{Binding ProgressActivity}" />
+        </Grid>
 
     </Grid>
 </uc:SharpBIMUserControl>

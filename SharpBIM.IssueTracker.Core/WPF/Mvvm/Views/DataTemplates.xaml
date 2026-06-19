@@ -250,9 +250,24 @@
                                MaxHeight="110"
                                Margin="0,0,5,0"
                                FontSize="11"
-                               Foreground="{DynamicResource ControlBorderMidBrush}"
                                Text="{Binding Description}"
-                               TextWrapping="Wrap" />
+                               TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource DefaultTextBlockStyle}"
+                                   TargetType="{x:Type TextBlock}">
+
+                                <Setter Property="Foreground" Value="{DynamicResource ControlBorderMidBrush}" />
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="true " />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Foreground" Value="{StaticResource ControlFontSecondaryBrush}" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </Grid>
 
                 <WrapPanel Grid.Column="1"

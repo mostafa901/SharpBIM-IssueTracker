@@ -25,7 +25,7 @@ using module "D:\RevitAPI\Shared\visualstudio-settings\TypicalProps\ProjectBuild
 [CmdletBinding()]
 param (
     [string[]] $Configs = @("Rwin"),
-    [bool] $Clean = 0,
+    [bool] $Clean = 1,
     [bool] $Build = 1,
     [bool] $Protect = 0,
     [bool] $All = 1,
@@ -39,14 +39,14 @@ $options = [BuildOptions]::new($Configs, $PSBoundParameters)
 $options.BuildFrameworks = @($global:Framework48)
 $options.IsDotNetBuild = $false
 Set-Location $PSScriptRoot
-if ($All) {
-    $options.AddSharpBIM($true)
+if ($PSBoundParameters["All"]) {
+#    $options.AddSharpBIM($true, $Configs)
 }
 $options.Initialize(".\SharpBIM.IssueTracker\SharpBIM.IssueTracker.csproj")
  
 $options.InvokeBuild()
 
-if ($justPack -eq 1 -OR $publishToVSMarket) {
+if ($PSBoundParameters["justPack"] -eq 1 -OR $PSBoundParameters["publishToVSMarket"]) {
 
    
     # Define paths
@@ -130,7 +130,7 @@ foreach ($file in $filesToDelete)
     PSModuleHelpers\Log_Note "Pack location: $newVsixPath"
 }
 
-if ($publishToVSMarket) {
+if ($PSBoundParameters["publishToVSMarket"]) {
     #  CommitImages
     & "$env:msbuild10" .\SharpBIM.IssueTracker.Console\SharpBIM.IssueTracker.Console.csproj /p:Configuration=rnowin /t:Restore -clp:Summary`;ErrorsOnly
     dotnet build .\SharpBIM.IssueTracker.Console\SharpBIM.IssueTracker.Console.csproj -c rnowin

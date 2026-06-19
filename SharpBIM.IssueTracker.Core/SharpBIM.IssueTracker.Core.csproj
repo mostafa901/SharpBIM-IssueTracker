@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup Condition="'$(Configuration)' == 'SA'">
-		<AssemblyVersion>0.900.1.0</AssemblyVersion>
+		<AssemblyVersion>0.920.0.0</AssemblyVersion>
 		<StartupObject>SharpBIM.IssueTracker.Core.WPF.SA.App</StartupObject>
-		<RuntimeIdentifiers>win</RuntimeIdentifiers>
 		<OutputType>WinExe</OutputType>
 	</PropertyGroup>
 	<Import Project="..\SolutionItems\SharpBIM.Defaults.props" />
@@ -35,11 +34,6 @@
 	<ItemGroup Condition="'$(Configuration)' == 'SA'">
 		<ApplicationDefinition Include="WPF/SA/App.xaml" />
 	</ItemGroup>
-	<ItemGroup Condition="($(Configuration.ToLower().StartsWith('d')) OR $(Configuration.ToLower().StartsWith('sa')))">
-		 
- 
-		<ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj" />
-	</ItemGroup>
 	<ItemGroup>
 		<Page Remove="WPF\Helpers\Markdown.Style.xaml" />
 	</ItemGroup>
@@ -54,5 +48,8 @@
  
 	<ItemGroup Condition="!$(DefineConstants.Contains('DOTNET'))">
 	  <Reference Include="System.Web" />
+	</ItemGroup>
+	<ItemGroup Condition="$(Configuration.ToLower().StartsWith('d')) OR $(Configuration.ToLower().StartsWith('sa'))">
+		<ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj" />
 	</ItemGroup>
 </Project>

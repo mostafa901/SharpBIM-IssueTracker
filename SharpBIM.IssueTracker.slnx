@@ -16,7 +16,7 @@
     <File Path="SolutionItems/SharpBIM.Identity.props" />
   </Folder>
   <Project Path="../../SharpBIM/src/SharpBIM.csproj">
-    <BuildType Solution="SA|*" Project="DWin" />
+    <Platform Project="x64" />
   </Project>
   <Project Path="SharpBIM.IssueTracker.Console/SharpBIM.IssueTracker.Console.csproj">
     <BuildType Solution="DNoWin|*" Project="Debug" />
@@ -28,15 +28,19 @@
     <Build Solution="RWin|*" Project="false" />
     <Build Solution="SA|*" Project="false" />
   </Project>
-  <Project Path="SharpBIM.IssueTracker.Core/SharpBIM.IssueTracker.Core.csproj" />
+  <Project Path="SharpBIM.IssueTracker.Core/SharpBIM.IssueTracker.Core.csproj">
+    <Platform Project="x64" />
+  </Project>
   <Project Path="SharpBIM.IssueTracker/SharpBIM.IssueTracker.csproj">
-    <BuildType Solution="DNoWin|*" Project="RWin" />
+    <BuildType Solution="DNoWin|*" Project="DWin" />
     <BuildType Solution="RNoWin|*" Project="DWin" />
     <BuildType Solution="SA|*" Project="DWin" />
     <Platform Project="x64" />
     <Build Solution="DNoWin|*" Project="false" />
-    <Build Solution="RNoWin|*" Project="false" />
     <Deploy Solution="DWin|*" />
+    <Deploy Solution="RNoWin|*" />
+    <Deploy Solution="RWin|*" />
+    <Deploy Solution="SA|*" />
   </Project>
  
 </Solution>

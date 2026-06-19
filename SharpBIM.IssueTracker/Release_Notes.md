@@ -1,11 +1,15 @@
-## Version 0.893 - June 2026
+## Version 0.920 - June 2026
+☑️ #66 - Fix Progress randomly show up  
+☑️ #67 - text hard to read  
+
+## Version 0.896 - June 2026
 ☑️ UI Alignments  
 ☑️ MessageBox location is fixed to be centered on the main window instead of the screen.  
 
-## Version 0.896 - June 2026
+## Version 0.893 - June 2026
 ☑️ #42 - labels are missed on creating  
-☑️ Fix refresh list page upon adding issue.
-☑️ #21 - Total number of opened issues are displayed.
+☑️ Fix refresh list page upon adding issue  
+☑️ #21 - Total number of opened issues are displayed  
 ☑️ #41 - Feature visit repo
 ## Version 0.821 - May 2026
 ☑️ Press CTRL + ENTER to push comments  

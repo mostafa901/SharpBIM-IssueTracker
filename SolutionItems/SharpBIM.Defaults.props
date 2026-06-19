@@ -1,14 +1,26 @@
 ﻿<Project>
     <Import Project=".\SharpBIM.Identity.props" />
-    <PropertyGroup>
-        <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-        <Configurations>DWin;RWin;DNoWin;RNoWin;SA</Configurations>
+    <PropertyGroup >
+        <RevitBuild >false</RevitBuild>
+
     </PropertyGroup>
-    <PropertyGroup Condition="(!$(Configuration.ToLower().Contains('nowin')) OR '$(Configuration)' == 'SA')">
+    <PropertyGroup Condition="Exists('.\SharpBIM.RevitDefaults.props')">
+        <RevitBuild>true</RevitBuild>
+        <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+    </PropertyGroup>
+    <Import Condition="$(RevitBuild)" Project=".\SharpBIM.RevitDefaults.props"/>
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath Condition="!$(RevitBuild)">true</AppendTargetFrameworkToOutputPath>
+        <Configurations Condition="!$(RevitBuild)" >DWin;RWin;DNoWin;RNoWin;SA</Configurations>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(RevitBuild)">
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>    </PropertyGroup>
+    <PropertyGroup Condition="(!$(RevitBuild) AND (!$(Configuration.ToLower().Contains('nowin')) OR '$(Configuration)' == 'SA'))">
         <TargetFrameworks Condition="'$(TargetFrameworks)' == ''" >net47;net472;net48;net8.0-windows8;net10.0-windows8</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     </PropertyGroup>
-    <PropertyGroup Condition="$(Configuration.ToLower().Contains('nowin'))">
+    <PropertyGroup Condition="(!$(RevitBuild) AND $(Configuration.ToLower().Contains('nowin')))">
         <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net47;net472;net48;net8.0;net10.0</TargetFrameworks>
         <DefineConstants>$(DefineConstants);WEB</DefineConstants>
     </PropertyGroup>
@@ -17,12 +29,15 @@
         <IsDebug>true</IsDebug>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
+        <DebugRelease>Debug</DebugRelease>
         <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
     <PropertyGroup Condition="$(Configuration.ToLower().StartsWith('r'))">
         <DebugSymbols>false</DebugSymbols>
         <IsDebug>false</IsDebug>
+        <DebugRelease>Release</DebugRelease>
+
         <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
     </PropertyGroup>
     <!-- Framework-specific settings -->
@@ -98,27 +113,31 @@
         <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
         <PackageReference Include="MdXaml" Version="2.0.0-pre202603081301" />
         <PackageReference Include="HtmlAgilityPack" Version ="1.12.4"/>
-    <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
-</ItemGroup>
-<ItemGroup Condition="!$(DefineConstants.Contains('WINDOWS'))">
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-</ItemGroup>
-<ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0-beta.98" />
-    <PackageReference Include="envdte100" Version="17.14.40260" />
-    <PackageReference Include="Markdig" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Bcl.Memory" Version="9.0.14" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Text.Json" Version="10.0.4" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
-    <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET'))" />
-</ItemGroup>
-<ItemGroup>
-    <None Update="Services\DataBaseService\Database\sqlite3.dll" TargetPath="sqlite3.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-</ItemGroup>
+    </ItemGroup>
+    <ItemGroup Condition="!$(DefineConstants.Contains('WINDOWS'))">
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Auth0.OidcClient.WPF" Version="4.1.0" />
+        <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0-beta.98" />
+        <PackageReference Include="envdte100" Version="17.14.40260" />
+        <PackageReference Include="Markdig" Version="1.2.0" />
+        <PackageReference Include="Microsoft.Bcl.Memory" Version="9.0.14" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="System.Text.Json" Version="10.0.4" />
+        <PackageReference Include="System.Net.Http" Version="4.3.4" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.5.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
+        <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET'))" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="Services\DataBaseService\Database\sqlite3.dll" TargetPath="sqlite3.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <PropertyGroup>
+    		<!-- <OutputPath >.\bin\$(DebugRelease)</OutputPath> -->
+    		<OutputPath Condition="$(RevitBuild)" >.\bin\$(DebugRelease)\$(RVersion)</OutputPath>
+    </PropertyGroup>
 </Project>

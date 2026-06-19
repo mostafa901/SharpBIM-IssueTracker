@@ -39,7 +39,7 @@ Environment.Exit(0);
 #endif
 var releasePath = "D:\\RevitApi\\Shared\\Study\\SharpBim.IssueTracker\\SharpBim.IssueTracker\\Release_Notes.md";
 var releseNoteText = File.ReadAllText(releasePath);
-string releaseNote = "##" + releseNoteText.Split(new string[] { "##" }, StringSplitOptions.RemoveEmptyEntries)[1];
+string releaseNote = "##" + releseNoteText.Split(new string[] { "##" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
 var reg = new Regex(" Version=\"(\\d+\\.\\d+)\"");
 var matches = reg.Match(File.ReadAllText(@"D:\RevitApi\Shared\Study\SharpBim.IssueTracker\SharpBim.IssueTracker\source.extension.vsixmanifest"));

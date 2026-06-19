@@ -31,6 +31,8 @@
         <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+        		<Platforms>x64</Platforms>
+
         <SignAssembly>False</SignAssembly>
         <DefineConstants>$(DefineConstants);TxtJson</DefineConstants>
     </PropertyGroup>
