@@ -86,7 +86,7 @@ namespace SharpBIM.IssueTracker.Core.GitHttp
                 {
                     break;
                 }
-                    page++;
+                page++;
             }
 
             repoReport.Model = repos;

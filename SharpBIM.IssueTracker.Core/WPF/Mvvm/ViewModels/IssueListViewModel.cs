@@ -6,13 +6,14 @@ using SharpBIM.IssueTracker.Core.WPF.Helpers;
 using System.Runtime.CompilerServices;
 using SharpBIM.UIContext.Abstracts.Interfaces;
 using SharpBIM.IssueTracker.Core.WPF.Views;
+using EnvDTE;
 
 namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
 {
-
     public class IssueListViewModel : ModelViewBase<ModelBase, IssueViewModel>
     {
         #region Public Constructors
+
         protected override void FillContextCommands()
         {
             VisitRepoCommand = new SharpBIMCommand(VisitRepo, "Visit repo", Glyphs.link_vertical, (x) => true);
@@ -42,7 +43,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
             }
             else
                 RepoOwner = AppGlobals.User.RepoOwner;
-            //      await ReloadRepos(null);
         }
 
         public string TextToFilter
@@ -83,7 +83,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                 IssuesService.UpdateOwnerAccount(value);
                 AppGlobals.User.RepoOwner = value;
                 AppGlobals.AppSettings.Save();
-                ReloadRepos(null);
             }
         }
 
@@ -138,7 +137,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                 if (value != null && value == SelectedRepo)
                     return;
                 SetValue(value, nameof(SelectedRepo));
-                LoadIssuesAsync(null);
             }
         }
 
@@ -213,7 +211,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
         {
             try
             {
-
                 var pagen = Math.Max(1, PageNumber + 1);
                 if (pagen != PageNumber)
                     LoadIssuesAsync(pagen);
@@ -236,7 +233,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                 var pagen = Math.Max(1, PageNumber - 1);
                 if (pagen != PageNumber)
                     LoadIssuesAsync(pagen);
-
             }
             catch (Exception ex)
             {
@@ -306,15 +302,11 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
             set { SetValue(value, nameof(TotalIssues)); }
         }
 
-
-
         public int TotalClosed
         {
             get { return GetValue<int>(nameof(TotalClosed)); }
             set { SetValue(value, nameof(TotalClosed)); }
         }
-
-
 
         public int TotalOpened
         {
@@ -327,6 +319,9 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
         public virtual async Task LoadIssuesAsync(object x)
         {
             Children.Clear();
+
+            if (SelectedRepo == null)
+                return;
 
             if (ProgressActivity == null)
                 return;
@@ -354,14 +349,11 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                       if (SelectedRepo.has_issues)
                       {
                           await ProgressActivity.SetMessage("Fetching issues");
-
-
                           var issuesReport = await IssuesService.GetIssues(SelectedRepo, -1, CurrentState, pagenumber, FetchIssueCounts);
 
                           if (issuesReport.IsFailed)
                           {
                               AppGlobals.MsgService.AlertUser(WindowHandle, "Failed to Load", issuesReport.ErrorMessage);
-
                           }
                           else
                           {
@@ -371,7 +363,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                               if (!issues.Any())
                               {
                                   PageNumber = Math.Max(1, PageNumber - 1);
-
                               }
                               foreach (var issue in issues)
                               {
@@ -386,9 +377,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                                   issmvs.Add(issueModel);
                               }
 #endif
-
                           }
-
                       }
                   }
                   foreach (var issueModel in issmvs.ToList())
@@ -408,7 +397,6 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                   }
 
                   await AddItemsAsync(issmvs, Token);
-
               }
               catch (Exception ex)
               {
@@ -480,12 +468,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
             }
         }
 
-
         public SharpBIMCommand VisitRepoCommand { get; set; }
-
-
-
-
 
         public void VisitRepo(object x)
         {
@@ -493,12 +476,12 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
             {
                 if (SelectedRepo != null)
                     IOEx.OpenUrl(SelectedRepo.html_url);
-
             }
             catch (Exception ex)
             {
             }
         }
+
         public SharpBIMCommand ReloadReposCommand { get; set; }
 
         // Add this line to the constructor
@@ -506,8 +489,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
         public async Task ReloadRepos(object x)
         {
             ProgressActivity.Reset();
-            ProgressActivity.IsVisible = true;
-            await ProgressActivity.SetMessage("Loading Repos");
+            await ProgressActivity.SetMessage("Fetching repos");
             RepoModels.Clear();
             Children.Clear();
             IEnumerable<RepoModel> repoModels = [];
@@ -515,8 +497,8 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                {
                    try
                    {
-                       await Task.Delay(50);
                        var getRepoReport = await ReposSerivce.GetRepos();
+
                        if (getRepoReport.IsFailed)
                        {
                            AppGlobals.MsgService.AlertUser(WindowHandle, "Couldn't Get Repositories", getRepoReport.ErrorMessage);
@@ -533,23 +515,23 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
                    }
                });
 
-            foreach (var repo in repoModels)
+            foreach (var repo in repoModels.OrderBy(x=>x.name))
             {
-                RepoModels.Add(repo);
+               RepoModels.Add(repo); 
             }
+            ProgressActivity.Reset();
 
             string storedName = AppGlobals.TrackerSettings.SelectedRepo;
+            SelectedRepo = null;
             SelectedRepo = RepoModels.FirstOrDefault(o => o.name.EQ(storedName))
                 ?? RepoModels.FirstOrDefault(o => o.has_issues)
                 ?? RepoModels.FirstOrDefault();
-
         }
+
         public virtual async Task Reload(object x)
         {
-
             Children.Clear();
             await LoadOpenIssuesAsync(null);
-
         }
 
         public override IServiceReport<bool> Save()
@@ -562,7 +544,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels
             throw new NotImplementedException();
         }
 
-        async internal Task ReloadCount()
+        internal async Task ReloadCount()
         {
             var repo = await ReposSerivce.GetRepos(SelectedRepo.full_name);
             TotalOpened = repo.Model.First().open_issues_count;

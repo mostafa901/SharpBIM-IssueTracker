@@ -62,7 +62,8 @@
                                DisplayMemberPath="name"
                                IsEditable="True"
                                ItemsSource="{Binding RepoModels}"
-                               SelectedItem="{Binding SelectedRepo}" />
+                               SelectedItem="{Binding SelectedRepo}"
+                               SelectionChanged="UiComboBox_SelectionChanged" />
                 <ui:UIButton Grid.Column="2"
                              Width="auto"
                              Margin="0"

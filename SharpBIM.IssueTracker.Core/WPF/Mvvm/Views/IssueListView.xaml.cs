@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using SharpBIM.WPF.Controls.UserControls;
 using SharpBIM.IssueTracker.Core.WPF.Mvvm.ViewModels;
 
@@ -27,11 +28,20 @@ namespace SharpBIM.IssueTracker.Core.WPF.Mvvm.Views
             InitializeComponent();
         }
 
-        protected override Task<bool> OnLoadedAsync()
+        protected override async Task<bool> OnLoadedAsync()
         {
-            ViewModel.ColView.Refresh();
-            return base.OnLoadedAsync();
+            if (ViewModel.SelectedRepo == null)
+            {
+                await ViewModel.ReloadRepos(null);
+                //ViewModel.ColView.Refresh();
+            }
+            return await base.OnLoadedAsync();
         }
         private IssueListViewModel ViewModel => DataContext as IssueListViewModel;
+
+        private async void UiComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await ViewModel.LoadIssuesAsync(null);
+        }
     }
 }

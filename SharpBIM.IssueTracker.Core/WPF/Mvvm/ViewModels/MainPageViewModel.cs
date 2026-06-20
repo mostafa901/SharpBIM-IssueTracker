@@ -276,7 +276,7 @@ namespace SharpBIM.IssueTracker.Core.WPF.Views
             ShowLoginScreenCommand.Icon = Glyphs.logout;
             ShowLoginScreenCommand.Hint = "Logout";
             var vm = new IssueListViewModel() { ParentModelView = this, LoggedIn = true };
-            AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
+             AppGlobals.AppViewContext.AppNavigateTo(typeof(IssueListView), vm);
 
             await vm.Init(new DummyModelBase());
             await CheckForUpdates(null);

@@ -32,7 +32,7 @@ param (
     [bool] $IgnoreCheck = 0,
     [bool] $justPack = 1,
     [int] $PublishToServer = 0,
-    [bool] $publishToVSMarket = $true
+    [bool] $publishToVSMarket = $false
 ) 
 Set-Location $PSScriptRoot
 
