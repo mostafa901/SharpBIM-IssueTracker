@@ -6,7 +6,8 @@ using SharpBIM.ServiceContracts.Interfaces;
 using SharpBIM.IssueTracker.Core.Auth;
 using SharpBIM.IssueTracker.Core.Auth.BrowseOptions;
 using System.Threading.Tasks;
- 
+using Duende.IdentityModel.OidcClient.Browser;
+
 namespace SharpBIM.IssueTracker.Core.GitHttp
 {
     public class GitInstallation : GitClient
@@ -107,7 +108,7 @@ namespace SharpBIM.IssueTracker.Core.GitHttp
             var gitOps = new GitInstallOptions();
 
             var res = await brw.InvokeAsync(gitOps);
-            if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
+            if (res.ResultType == BrowserResultType.Success)
             {
                 if (string.IsNullOrEmpty(gitOps.InstallationId))
                 {

@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<AssemblyVersion>0.920.2.0</AssemblyVersion>
+		<AssemblyVersion>0.930.1.0</AssemblyVersion>
 		<UseWPF>true</UseWPF>
 		<Configurations>DWin;RWin</Configurations>
 		<Platforms>x64</Platforms>
@@ -92,12 +92,8 @@
 		<PackageReference Include="Community.VisualStudio.Toolkit.17" Version="17.0.551" ExcludeAssets="Runtime">
 			<IncludeAssets>all</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="SharpBIM-Rwin" Version="1.1.394" Condition="$(Configuration.ToLower().StartsWith('r'))">
-			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-			<IncludeOutputGroupsInVSIX>true</IncludeOutputGroupsInVSIX>
-			<IncludeAssets>all</IncludeAssets>
-		</PackageReference>
 	</ItemGroup>
+	
 	<ItemGroup>
 		<Folder Include="Properties\" />
 	</ItemGroup>
@@ -107,9 +103,7 @@
 	<ItemGroup>
 	  <VSCTInclude Remove="Images\**" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="IssueTracker_128x128.png" />
-	</ItemGroup>
+ 
 	<ItemGroup>
 	  <Content Include="IssueTracker_128x128.png" />
 	</ItemGroup>
@@ -174,7 +168,16 @@
 		 	<IncludeAssets>all</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
+ 
 	<ItemGroup Condition="$(Configuration.ToLower().StartsWith('d'))">
 		<ProjectReference Include="..\SharpBIM.IssueTracker.Core\SharpBIM.IssueTracker.Core.csproj" />
+	  <ProjectReference Include="..\..\..\SharpBIM\src\SharpBIM.csproj" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(Configuration.ToLower())' == 'rwin'">
+		<PackageReference Include="SharpBIM-Rwin" Version="1.1.416">
+			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+			<IncludeOutputGroupsInVSIX>true</IncludeOutputGroupsInVSIX>
+			<IncludeAssets>all</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
  </Project>

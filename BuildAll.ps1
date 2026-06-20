@@ -36,12 +36,18 @@ param (
 ) 
 Set-Location $PSScriptRoot
 $options = [BuildOptions]::new($Configs, $PSBoundParameters)
+
+if ($PSBoundParameters.Count -eq 0) {
+    foreach ($param in $MyInvocation.MyCommand.Parameters.Values) {
+        $PSBoundParameters[$param.Name] = Get-Variable -Name $param.Name -ValueOnly -ErrorAction SilentlyContinue
+    }
+}
 $options.IsDotNetBuild = $true
 
 Set-Location $PSScriptRoot
 $options.Initialize(".\SharpBIM.IssueTracker.Core\SharpBIM.IssueTracker.Core.csproj")
     
-if ($IncrementGit -eq 1) {
+if ($PSBoundParameters["IncrementGit"] -eq 1) {
     
     $gitPathString = (Get-Item ".\VersionControl.txt").FullName
     $gitPathString 

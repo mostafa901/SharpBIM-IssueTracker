@@ -7,6 +7,8 @@ using SharpBIM.IssueTracker.Core.Auth;
 using SharpBIM.IssueTracker.Core.Auth.BrowseOptions;
 using SharpBIM.Services;
 
+using Duende.IdentityModel.OidcClient.Browser;
+
 namespace SharpBIM.IssueTracker.Core.GitHttp
 {
     /// <summary>
@@ -39,10 +41,10 @@ namespace SharpBIM.IssueTracker.Core.GitHttp
             // check if the app already authorized
             var brw = new SystemBrowser();
             var gitOps = new GitLoginOptions();
-            gitOps.DisplayMode = IdentityModel.OidcClient.Browser.DisplayMode.Hidden;
+            gitOps.DisplayMode = DisplayMode.Hidden;
 
             var res = await brw.InvokeAsync(gitOps);
-            if (res.ResultType == IdentityModel.OidcClient.Browser.BrowserResultType.Success)
+            if (res.ResultType == BrowserResultType.Success)
             {
                 report.Model = gitOps.Code;
             }

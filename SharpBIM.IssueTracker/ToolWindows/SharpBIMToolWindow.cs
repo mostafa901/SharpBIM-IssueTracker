@@ -1,7 +1,10 @@
-﻿using Microsoft.VisualStudio.Imaging;
+﻿using Community.VisualStudio.Toolkit;
+
+using Microsoft.VisualStudio.Imaging;
 
 using SharpBIM.IssueTracker.Core.WPF.Views;
 
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;

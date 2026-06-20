@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using IdentityModel.OidcClient.Browser;
+
+using Duende.IdentityModel.OidcClient.Browser;
+
 using SharpBIM.IssueTracker.Core.Auth.BrowseOptions;
 using SharpBIM.ServiceContracts.QAQC;
 

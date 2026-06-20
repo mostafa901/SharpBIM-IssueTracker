@@ -1,8 +1,5 @@
 ﻿using System.Configuration;
 
-#if WINDOWS
-using IdentityModel.OidcClient;
-#endif
 
 using Microsoft;
 

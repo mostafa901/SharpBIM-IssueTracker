@@ -29,18 +29,24 @@ param (
     [bool] $Build = 1,
     [bool] $Protect = 0,
     [bool] $All = 1,
-    [bool] $IgnoreCheck = 1,
+    [bool] $IgnoreCheck = 0,
     [bool] $justPack = 1,
     [int] $PublishToServer = 0,
-    [bool] $publishToVSMarket = $false
+    [bool] $publishToVSMarket = $true
 ) 
 Set-Location $PSScriptRoot
+
 $options = [BuildOptions]::new($Configs, $PSBoundParameters)
+if ($PSBoundParameters.Count -eq 0) {
+    foreach ($param in $MyInvocation.MyCommand.Parameters.Values) {
+        $PSBoundParameters[$param.Name] = Get-Variable -Name $param.Name -ValueOnly -ErrorAction SilentlyContinue
+    }
+}
 $options.BuildFrameworks = @($global:Framework48)
 $options.IsDotNetBuild = $false
 Set-Location $PSScriptRoot
 if ($PSBoundParameters["All"]) {
-#    $options.AddSharpBIM($true, $Configs)
+    $options.AddSharpBIM($true, ($Configs + "rnowin"))
 }
 $options.Initialize(".\SharpBIM.IssueTracker\SharpBIM.IssueTracker.csproj")
  
@@ -60,18 +66,17 @@ if ($PSBoundParameters["justPack"] -eq 1 -OR $PSBoundParameters["publishToVSMark
         Remove-Item -Recurse -Force $extractPath
     }
 
-   # Delete "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\Sharpbim*.dll" 
-   # CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker.Core\Rwin\net48\*.*" "$($extractPath)"
-  #  CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\*.*" "$($extractPath)"
+    # Delete "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\Sharpbim*.dll" 
+    # CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker.Core\Rwin\net48\*.*" "$($extractPath)"
+    #  CopyData "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\*.*" "$($extractPath)"
     $filesToDelete = @("Microsoft.VisualStudio.Shell.15.0.dll",
-"Microsoft.VisualStudio.Threading.dll",
-"Microsoft.CodeAnalysis.dll")    
+        "Microsoft.VisualStudio.Threading.dll",
+        "Microsoft.CodeAnalysis.dll")    
 
-foreach ($file in $filesToDelete)
-{
-  #  Delete "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\$file" 
+    foreach ($file in $filesToDelete) {
+        #  Delete "$($env:RevitLibPath)\ExternalLibraries\SharpBIM.IssueTracker\Rwin\net48\$file" 
 
-}
+    }
     [System.IO.Compression.ZipFile]::ExtractToDirectory($vsixPath, $extractPath, $true)
     Delete "$($extractPath)\*.vsix" 
         

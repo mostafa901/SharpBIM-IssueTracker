@@ -1,5 +1,10 @@
 ﻿
+using Community.VisualStudio.Toolkit;
+
+using Microsoft.VisualStudio.Shell;
+
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SharpBIM.IssueTracker
 {

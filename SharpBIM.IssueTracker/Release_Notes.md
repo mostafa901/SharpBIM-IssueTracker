@@ -1,4 +1,4 @@
-## Version 0.920 - June 2026
+## Version 0.930 - June 2026
 ☑️ #66 - Fix Progress randomly show up  
 ☑️ #67 - text hard to read  
 

@@ -1,9 +1,9 @@
 ﻿#if WINDOWS
-using IdentityModel.OidcClient.Browser;
 using SharpBIM.ServiceContracts.Interfaces;
 using System.Net;
 using SharpBIM.IssueTracker.Core.Auth;
 using SharpBIM.ServiceContracts.Interfaces.IIssueTrackers;
+using Duende.IdentityModel.OidcClient.Browser;
 
 namespace SharpBIM.IssueTracker.Core.Auth.BrowseOptions
 {
